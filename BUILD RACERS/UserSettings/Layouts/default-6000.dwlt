@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1536
     height: 772.8
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Scene
   m_RootView: {fileID: 5}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -349,7 +349,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets
+    - Assets/Materials
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -359,16 +359,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets
+  - Assets/Materials
   m_LastFoldersGridSize: -1
-  m_LastProjectPath: "C:\\Users\\mania\\report\\2025\\\u5352\u5236\\Prj\\BUILD RACERS"
+  m_LastProjectPath: D:\Git\BuildRacer\BUILD RACERS
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 1e8c0000
-    m_LastClickedID: 35870
-    m_ExpandedIDs: 0000000024810000
+    m_SelectedIDs: ea850000
+    m_LastClickedID: 34282
+    m_ExpandedIDs: 0000000072860000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -397,7 +397,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000024810000
+    m_ExpandedIDs: 0000000072860000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -479,7 +479,7 @@ MonoBehaviour:
     x: 209.6
     y: 79.200005
     width: 932.4
-    height: 462.8
+    height: 405.2
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -497,7 +497,7 @@ MonoBehaviour:
   m_ShowGizmos: 0
   m_TargetDisplay: 0
   m_ClearColor: {r: 0, g: 0, b: 0, a: 0}
-  m_TargetSize: {x: 1165.5, y: 552.25}
+  m_TargetSize: {x: 1165.5, y: 480.25}
   m_TextureFilterMode: 0
   m_TextureHideFlags: 61
   m_RenderIMGUI: 1
@@ -514,8 +514,8 @@ MonoBehaviour:
     vZoomLockedByDefault: 0
     m_HBaseRangeMin: -466.2
     m_HBaseRangeMax: 466.2
-    m_VBaseRangeMin: -220.90001
-    m_VBaseRangeMax: 220.90001
+    m_VBaseRangeMin: -192.1
+    m_VBaseRangeMax: 192.1
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -524,7 +524,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 0
+    m_EnableMouseInput: 1
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
@@ -534,22 +534,22 @@ MonoBehaviour:
       x: 0
       y: 21
       width: 932.4
-      height: 441.8
-    m_Scale: {x: 0.99999994, y: 0.99999994}
-    m_Translation: {x: 466.2, y: 220.9}
+      height: 384.2
+    m_Scale: {x: 1, y: 1}
+    m_Translation: {x: 466.2, y: 192.1}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -466.20004
-      y: -220.90001
-      width: 932.4001
-      height: 441.80002
+      x: -466.2
+      y: -192.1
+      width: 932.4
+      height: 384.2
     m_MinimalGUI: 1
-  m_defaultScale: 0.99999994
-  m_LastWindowPixelSize: {x: 1165.5, y: 578.5}
+  m_defaultScale: 1
+  m_LastWindowPixelSize: {x: 1165.5, y: 506.5}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 00000000000000000000
@@ -1163,9 +1163,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 0, y: 0, z: 0}
+    m_Target: {x: 1.6778547, y: 0.19325002, z: -9.522243}
     speed: 2
-    m_Value: {x: 0, y: 0, z: 0}
+    m_Value: {x: 1.6778547, y: 0.19325002, z: -9.522243}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1211,13 +1211,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+    m_Target: {x: 0.2680719, y: -0.052862484, z: 0.014734663, w: 0.9618413}
     speed: 2
-    m_Value: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+    m_Value: {x: -0.2680719, y: 0.052862484, z: -0.014734663, w: -0.9618413}
   m_Size:
-    m_Target: 10
+    m_Target: 2.2962575
     speed: 2
-    m_Value: 10
+    m_Value: 2.2962575
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1292,7 +1292,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 26b3ffff
+      m_ExpandedIDs: 1cfbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 

@@ -1,49 +1,35 @@
+using Fusion;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
-    //プレイヤーの移動速度
-    public float speed = 0.01f;
-    public float jumpPower = 1;
+    private NetworkCharacterController characterController;
 
-    public Rigidbody rb;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void Spawned()
     {
-        rb = GetComponent<Rigidbody>();
-
+        characterController = GetComponent<NetworkCharacterController>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void FixedUpdateNetwork()
     {
-        //キー状況を取得
-        var current = Keyboard.current;
-        
-        //WASDで移動処理
-        if(current.wKey.isPressed)
-        {
-            this.transform.Translate(0,0,speed);
-        }
-        if (current.sKey.isPressed)
-        {
-            this.transform.Translate(0,0,-speed);
-        }
-        if (current.aKey.isPressed)
-        {
-            this.transform.Translate(-speed, 0, 0);
-        }
-        if (current.dKey.isPressed)
-        {
-            this.transform.Translate(speed, 0, 0);
-        }
+        // ローカル入力を直接読む（新InputSystem）
+        Vector2 move = Vector2.zero;
 
-        //スペースでジャンプ
-        if(current.spaceKey.isPressed)
+        if (Keyboard.current.wKey.isPressed) move.y += 1;
+        if (Keyboard.current.sKey.isPressed) move.y -= 1;
+        if (Keyboard.current.aKey.isPressed) move.x -= 1;
+        if (Keyboard.current.dKey.isPressed) move.x += 1;
+
+        var inputDirection = new Vector3(move.x, 0f, move.y);
+
+        // 移動
+        characterController.Move(inputDirection);
+
+        // ジャンプ
+        if (Keyboard.current.spaceKey.isPressed)
         {
-            rb.AddForce(0, jumpPower, 0);
+            characterController.Jump();
         }
     }
 }
