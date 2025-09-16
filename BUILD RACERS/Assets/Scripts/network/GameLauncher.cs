@@ -22,7 +22,8 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
         // 共有モードのセッションに参加する
         var result = await networkRunner.StartGame(new StartGameArgs
         {
-            GameMode = GameMode.Shared
+            GameMode = GameMode.Shared,
+            SessionName = "test01",
         });
         // 結果をコンソールに出力する
         Debug.Log(result);
@@ -62,12 +63,6 @@ public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
             // 自分自身のアバターをスポーンする
             runner.Spawn(playerAvatarPrefab, spawnPosition, Quaternion.identity);
             Debug.Log("Spawn");
-
-            //カメラの追従
-            /*
-            var view = GetComponent<PlayerView>();
-            view.MakeCameraTarget();
-            */
         }
     }
 
