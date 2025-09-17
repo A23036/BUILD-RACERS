@@ -1,35 +1,38 @@
-using Fusion;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : NetworkBehaviour
+public class PlayerController : MonoBehaviourPunCallbacks
 {
-    private NetworkCharacterController characterController;
+    private Rigidbody rb;
 
-    public override void Spawned()
+    public float moveSpeed = 1;
+
+    public float jumpPower = 5;
+
+    void Start()
     {
-        characterController = GetComponent<NetworkCharacterController>();
+        rb = GetComponent<Rigidbody>();
     }
 
-    public override void FixedUpdateNetwork()
+    void Update()
     {
-        // ローカル入力を直接読む（新InputSystem）
-        Vector2 move = Vector2.zero;
+        //自分でなければ処理しない
+        if (photonView.IsMine == false) return;
 
-        if (Keyboard.current.wKey.isPressed) move.y += 1;
-        if (Keyboard.current.sKey.isPressed) move.y -= 1;
-        if (Keyboard.current.aKey.isPressed) move.x -= 1;
-        if (Keyboard.current.dKey.isPressed) move.x += 1;
+        Vector3 move = Vector3.zero;
 
-        var inputDirection = new Vector3(move.x, 0f, move.y);
+        if (Keyboard.current.wKey.isPressed) move.z += moveSpeed;
+        if (Keyboard.current.sKey.isPressed) move.z -= moveSpeed;
+        if (Keyboard.current.aKey.isPressed) move.x -= moveSpeed;
+        if (Keyboard.current.dKey.isPressed) move.x += moveSpeed;
 
-        // 移動
-        characterController.Move(inputDirection);
+        if(move != Vector3.zero) rb.AddForce(move);
 
         // ジャンプ
-        if (Keyboard.current.spaceKey.isPressed)
+        if (Keyboard.current.spaceKey.isPressed && this.transform.position.y < 1)
         {
-            characterController.Jump();
+            rb.AddForce(new Vector3(0, jumpPower, 0));
         }
     }
 }
