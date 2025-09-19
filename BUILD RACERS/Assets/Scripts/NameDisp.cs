@@ -7,7 +7,18 @@ public class NameDisp : MonoBehaviourPunCallbacks
     private void Start()
     {
         var nameLabel = GetComponent<TextMeshPro>();
-        // プレイヤー名とプレイヤーIDを表示する
-        nameLabel.text = $"{photonView.Owner.NickName}({photonView.OwnerActorNr})";
+
+        var player = photonView.Owner;
+        /*
+        //プレイヤー名の割り当て
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        {
+            if (PhotonNetwork.PlayerList[i] != player) continue;
+            nameLabel.text = $"{photonView.Owner.NickName}{i + 1}";
+        }
+        */
+
+        int number = System.Array.IndexOf(PhotonNetwork.PlayerList, player);
+        nameLabel.text = $"{photonView.Owner.NickName}{number}";
     }
 }

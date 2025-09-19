@@ -1,0 +1,12 @@
+# ninja log v5
+65	275	7799463945000000	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	6735a633ef9fbdf7
+277	422	7799463948000000	D:/Git/BuildRacer/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/1p6b1f1w/obj/arm64-v8a/libswappywrapper.so	a6ff29774b5a2674
+8	1585	7799463944400000	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	8fa3c5b515fd7f8
+20	1611	7799463944500000	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	d7938c82cf2fc2d2
+2	1647	7799463944300000	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	e1a34eff7077dbb0
+37	1653	7799463944700000	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	b9428a2012d5f170
+56	1696	7799463944900000	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	a0a76a8295f3edda
+46	1707	7799463944900000	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	7acb0e33d949298c
+28	1807	7799463944600000	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	2a8cc081ef3bce71
+14	1839	7799463944500000	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	faaf7e43beeb48a1
+1839	1952	7799463963300000	D:/Git/BuildRacer/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/1p6b1f1w/obj/arm64-v8a/libgame.so	2623814361b225d9
