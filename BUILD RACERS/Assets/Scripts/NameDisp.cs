@@ -9,16 +9,8 @@ public class NameDisp : MonoBehaviourPunCallbacks
         var nameLabel = GetComponent<TextMeshPro>();
 
         var player = photonView.Owner;
-        /*
-        //ƒvƒŒƒCƒ„[–¼‚ÌŠ„‚è“–‚Ä
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-        {
-            if (PhotonNetwork.PlayerList[i] != player) continue;
-            nameLabel.text = $"{photonView.Owner.NickName}{i + 1}";
-        }
-        */
 
         int number = System.Array.IndexOf(PhotonNetwork.PlayerList, player);
-        nameLabel.text = $"{photonView.Owner.NickName}{number}";
+        nameLabel.text = $"{photonView.Owner.NickName}{number + 1}";
     }
 }
