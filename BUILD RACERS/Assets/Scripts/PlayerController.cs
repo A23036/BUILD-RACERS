@@ -6,9 +6,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 {
     private Rigidbody rb;
 
-    public float moveSpeed = 1;
+    public float moveSpeed;
 
-    public float jumpPower = 5;
+    public float jumpPower;
 
     void Start()
     {
@@ -22,12 +22,25 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         Vector3 move = Vector3.zero;
 
-        if (Keyboard.current.wKey.isPressed) move.z += moveSpeed;
-        if (Keyboard.current.sKey.isPressed) move.z -= moveSpeed;
-        if (Keyboard.current.aKey.isPressed) move.x -= moveSpeed;
-        if (Keyboard.current.dKey.isPressed) move.x += moveSpeed;
+        //キーボード処理
+        if(Keyboard.current != null)
+        {
+            if (Keyboard.current.wKey.isPressed) move.z += moveSpeed;
+            if (Keyboard.current.sKey.isPressed) move.z -= moveSpeed;
+            if (Keyboard.current.aKey.isPressed) move.x -= moveSpeed;
+            if (Keyboard.current.dKey.isPressed) move.x += moveSpeed;
+        }
 
-        if(move != Vector3.zero) rb.AddForce(move);
+        //コントローラー処理
+        if (Gamepad.current != null)
+        {
+            if (Gamepad.current.buttonNorth.isPressed) move.z += moveSpeed;
+            if (Gamepad.current.buttonSouth.isPressed) move.z -= moveSpeed;
+            if (Gamepad.current.buttonWest.isPressed) move.x -= moveSpeed;
+            if (Gamepad.current.buttonEast.isPressed) move.x += moveSpeed;
+        }
+
+        if (move != Vector3.zero) rb.AddForce(move);
 
         // ジャンプ
         if (Keyboard.current.spaceKey.isPressed && this.transform.position.y < 1)

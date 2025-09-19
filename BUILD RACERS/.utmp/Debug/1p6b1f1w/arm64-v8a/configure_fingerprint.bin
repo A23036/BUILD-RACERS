@@ -2,6 +2,7 @@ C/C++ Structured Log^
 \
 ZD:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\additional_project_files.txtC
 A
+<<<<<<< HEAD
 ?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	Æûû•3ð à˜Øû•3[
 Y
 WD:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\android_gradle_build.json	Æûû•3ß à˜Øû•3`
@@ -30,3 +31,33 @@ mD:\Git\BuildRacer\BUILD RACERS\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibra
 yD:\Git\BuildRacer\BUILD RACERS\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\FramePacing\CMakeLists.txt	Æûû•3Ë àÔÄû•3~
 |
 zD:\Git\BuildRacer\BUILD RACERS\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt	Æûû•3û àÔÄû•3
+=======
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	¹—ïÕ•3ð  ïÕ•3[
+Y
+WD:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\android_gradle_build.json	¹—ïÕ•3ß  ïÕ•3`
+^
+\D:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\android_gradle_build_mini.json	¹—ïÕ•3§  ïÕ•3M
+K
+ID:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\build.ninja	¹—ïÕ•3±†  ïÕ•3Q
+O
+MD:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\build.ninja.txt	º—ïÕ•3V
+T
+RD:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\build_file_index.txt	º—ïÕ•3ä ÷ØÓ•3W
+U
+SD:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\compile_commands.json	º—ïÕ•3éa  ïÕ•3[
+Y
+WD:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\compile_commands.json.bin	º—ïÕ•3	‘  ïÕ•3a
+_
+]D:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\metadata_generation_command.txt	º—ïÕ•3
+Ï ÷ØÓ•3T
+R
+PD:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\prefab_config.json	º—ïÕ•3ò ÷ØÓ•3Y
+W
+UD:\Git\BuildRacer\BUILD RACERS\.utmp\Debug\1p6b1f1w\arm64-v8a\symbol_folder_index.txt	º—ïÕ•3† ÷ØÓ•3q
+o
+mD:\Git\BuildRacer\BUILD RACERS\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt	º—ïÕ•3v  ¤ÞÕ•3}
+{
+yD:\Git\BuildRacer\BUILD RACERS\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\FramePacing\CMakeLists.txt	º—ïÕ•3Ë  ¤ÞÕ•3~
+|
+zD:\Git\BuildRacer\BUILD RACERS\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt	º—ïÕ•3û  ¤ÞÕ•3
+>>>>>>> main
