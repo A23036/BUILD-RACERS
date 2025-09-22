@@ -221,6 +221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 10
   jumpPower: 100
+  debugConsole: 0
 --- !u!114 &-1526238323878411796
 MonoBehaviour:
   m_ObjectHideFlags: 0
