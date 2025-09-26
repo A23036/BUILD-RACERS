@@ -17,9 +17,15 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private Vector3 move;
 
+    private Joystick joystick;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        //ジョイスティックの取得
+        var canvas = GameObject.Find("CanvasForAndroid");
+        joystick = canvas.transform.Find("Floating Joystick").GetComponent<Joystick>();
     }
 
     void Update()
@@ -53,6 +59,23 @@ public class PlayerController : MonoBehaviourPunCallbacks
             if (Gamepad.current.buttonSouth.isPressed) { move.z -= moveSpeed; if(debugConsole) Debug.Log("input A Button"); }
             if (Gamepad.current.buttonWest.isPressed)  { move.x -= moveSpeed; if(debugConsole) Debug.Log("input X Button"); }
             if (Gamepad.current.buttonEast.isPressed)  { move.x += moveSpeed; if(debugConsole) Debug.Log("input B Button"); }
+        }
+
+        //仮想ジョイスティック処理
+        if(joystick.Direction != Vector2.zero)
+        {
+            var dir2 = joystick.Direction;
+            float joyX, joyY, joyZ;
+
+            //8割入力ほどで最大値となるように
+            float maxRate = 0.8f;
+
+            joyX = dir2.x / maxRate;
+            joyY = 0;
+            joyZ = dir2.y / maxRate;
+
+            Vector3 dir3 = new Vector3(joyX, joyY, joyZ);
+            move += dir3 * moveSpeed;
         }
 
         if (move != Vector3.zero) rb.AddForce(move);
