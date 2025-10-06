@@ -25,7 +25,7 @@ public class PUN2 : MonoBehaviourPunCallbacks
     {
         // ランダムな座標に自身のアバター（ネットワークオブジェクト）を生成する
         var position = new Vector3(Random.Range(-3f, 3f), 3, Random.Range(-3f, 3f));
-        PhotonNetwork.Instantiate("player", position, Quaternion.identity);
+        PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
 
         Debug.Log("Sapwn Player");
     }
