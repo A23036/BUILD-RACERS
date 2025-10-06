@@ -33,6 +33,16 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        // 自分が操作するプレイヤーならカメラの追従対象に設定
+        if (photonView.IsMine)
+        {
+            var cameraController = Camera.main.GetComponent<CameraController>();
+            if (cameraController != null)
+            {
+                cameraController.SetTarget(transform);
+            }
+        }
+
         rb = GetComponent<Rigidbody>();
 
         // Yをマイナスにして下方向へ重心を移動(転倒防止)
