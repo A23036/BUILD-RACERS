@@ -273,11 +273,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f147a5ef31744448a1803676ff088b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkRunnerPrefab: {fileID: 0}
-  playerAvatarPrefab:
-    RawGuidValue:
-    - 2664460788935069173
-    - 2431432434439238874
 --- !u!114 &516575541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,6 +614,7 @@ GameObject:
   - component: {fileID: 2016620358}
   - component: {fileID: 2016620357}
   - component: {fileID: 2016620360}
+  - component: {fileID: 2016620361}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -712,8 +708,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2164d2209c748344ba685869381eb6b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerObj: {fileID: 0}
-  offset: {x: 0, y: 3, z: -5}
+--- !u!114 &2016620361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016620356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edc284bd87415ae4db55ad916073696d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 3, z: -6}
+  smoothSpeed: 5
 --- !u!1 &2137642609
 GameObject:
   m_ObjectHideFlags: 0

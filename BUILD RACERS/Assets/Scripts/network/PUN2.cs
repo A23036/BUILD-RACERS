@@ -10,7 +10,8 @@ public class PUN2 : MonoBehaviourPunCallbacks
         // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
         PhotonNetwork.ConnectUsingSettings();
 
-        PhotonNetwork.NickName = "Player";
+        //タイトルで決めた名前を反映
+        PhotonNetwork.NickName = PlayerPrefs.GetString("PlayerName");
     }
 
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
