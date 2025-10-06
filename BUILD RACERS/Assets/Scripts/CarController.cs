@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Photon.Pun;
 
-public class CarController : MonoBehaviour
+public class CarController : MonoBehaviourPunCallbacks
 {
     [System.Serializable]
     public class WheelVisual
@@ -77,6 +78,8 @@ public class CarController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (photonView.IsMine == false) return;
+
         float motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
         float steerInput = steerAction.ReadValue<float>();
 
