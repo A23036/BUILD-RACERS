@@ -1,63 +1,116 @@
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class AvatarTransformView : MonoBehaviourPunCallbacks, IPunObservable
+public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
 {
-    private const float InterpolationPeriod = 0.1f;
+    /// <summary>
+    /// trueなら線形補間をおこなう
+    /// </summary>
+    [SerializeField]
+    private bool LinearInterpolation;
+
+    /// <summary>
+    /// trueなら線形外挿をおこなう
+    /// </summary>
+    [SerializeField]
+    private bool LinearExtrapolation;
 
     private Vector3 p1, p2;
     private Quaternion r1, r2;
-    private float elapsedTime;
-    private bool isInterpolating;
 
-    private void Start()
+    private float interpolate;
+
+    private float timer;
+
+    //同期フレーム
+    [SerializeField]
+    private int INTERPOLATE;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
+        //同期フレームの設定
+        PhotonNetwork.SendRate = INTERPOLATE;
+        PhotonNetwork.SerializationRate = INTERPOLATE;
+
         p1 = transform.position;
-        p2 = p1;
+        p2 = transform.position;
+
         r1 = transform.rotation;
-        r2 = r1;
-        elapsedTime = 0f;
-        isInterpolating = false;
+        r2 = transform.rotation;
+
+        //同期フレームに応じて算出
+        interpolate = 1f / PhotonNetwork.SerializationRate;
+        timer = 0;
+
+        //デフォルトで線形補間
+        LinearInterpolation = true;
+        LinearExtrapolation = false;
     }
 
-    private void Update()
+    // Update is called once per frame
+    void Update()
     {
-        if (!photonView.IsMine && isInterpolating)
+        //自分でなければ補間
+        if (!photonView.IsMine)
         {
-            elapsedTime += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsedTime / InterpolationPeriod);
+            timer += Time.deltaTime;
+            float rate = timer / interpolate;
 
-            // 位置補間
-            transform.position = Vector3.Lerp(p1, p2, t);
-            // 回転補間
-            transform.rotation = Quaternion.Slerp(r1, r2, t);
-
-            // 補間が終わったら停止
-            if (t >= 1f)
+            //同期処理なし
+            if (rate > 1)
             {
-                isInterpolating = false;
+                transform.position = p2;
+                transform.rotation = r2;
+                return;
+            }
+
+            //補間・予測処理
+            if (LinearInterpolation)
+            {
+                //線形補間 0 <= rate <= 1
+                transform.position = Vector3.Lerp(p1, p2, rate);
+                transform.rotation = Quaternion.Slerp(r1, r2, rate);
+            }
+            else if (LinearExtrapolation)
+            {
+                //線形外挿 rateに制限はない
+                transform.position = Vector3.LerpUnclamped(p1, p2, rate);
+                transform.rotation = Quaternion.SlerpUnclamped(r1, r2, rate);
+            }
+
+            //線形補間と線形外挿の切り替え
+            if (Keyboard.current.tKey.wasPressedThisFrame)
+            {
+                LinearInterpolation = LinearExtrapolation;
+                LinearExtrapolation = !LinearInterpolation;
             }
         }
     }
 
+    //同期フレーム毎に呼ばれる
     void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
+            //自分なら座標を送信
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
         }
         else
         {
-            // 新しいデータを受信した時だけ補間開始
+            var nextPos = (Vector3)stream.ReceiveNext();
+            var nextRot = (Quaternion)stream.ReceiveNext();
+
+            //他者なら補間のための座標を更新
             p1 = transform.position;
-            p2 = (Vector3)stream.ReceiveNext();
+            p2 = nextPos;
 
             r1 = transform.rotation;
-            r2 = (Quaternion)stream.ReceiveNext();
+            r2 = nextRot;
 
-            elapsedTime = 0f;
-            isInterpolating = true;
+            timer = 0;
         }
     }
 }
