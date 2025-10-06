@@ -10,7 +10,6 @@ public class NameDisp : MonoBehaviourPunCallbacks
 
         var player = photonView.Owner;
 
-        int number = System.Array.IndexOf(PhotonNetwork.PlayerList, player);
-        nameLabel.text = $"{photonView.Owner.NickName}{number + 1}";
+        nameLabel.text = $"{photonView.Owner.NickName}{photonView.OwnerActorNr}";
     }
 }
