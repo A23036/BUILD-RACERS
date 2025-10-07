@@ -14,4 +14,10 @@ public class NameDisp : MonoBehaviourPunCallbacks
         //nameLabel.text = $"{photonView.Owner.NickName}{photonView.OwnerActorNr}";
         nameLabel.text = photonView.Owner.NickName;
     }
+
+    private void Update()
+    {
+        //名前のビルボード
+        transform.forward = Camera.main.transform.forward;
+    }
 }

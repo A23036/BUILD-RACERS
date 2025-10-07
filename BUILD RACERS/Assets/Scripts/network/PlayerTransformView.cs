@@ -22,6 +22,7 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
     private float interpolate;
 
     private float timer;
+    private float lastRecvTime;
 
     //同期フレーム
     [SerializeField]
@@ -92,7 +93,7 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
     //同期フレーム毎に呼ばれる
     void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (stream.IsWriting)
+        if (photonView.IsMine)
         {
             //自分なら座標を送信
             stream.SendNext(transform.position);
