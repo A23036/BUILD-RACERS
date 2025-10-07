@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - SpeedText
+  - Dirt
   layers:
   - Default
   - TransparentFX
