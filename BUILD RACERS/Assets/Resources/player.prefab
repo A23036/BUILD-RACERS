@@ -631,6 +631,7 @@ MonoBehaviour:
   steerAngle: 60
   turnSensitivity: 2
   maxSpeed: 20
+  speedText: {fileID: 0}
 --- !u!114 &2777997212412123024
 MonoBehaviour:
   m_ObjectHideFlags: 0

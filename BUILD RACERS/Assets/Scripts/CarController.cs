@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
+using TMPro;
 
 public class CarController : MonoBehaviourPunCallbacks
 {
@@ -24,6 +25,9 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField]
     private float maxSpeed = 20f;
 
+    [SerializeField] 
+    private TextMeshProUGUI speedText;  // 速度表示テキスト
+
     private Rigidbody rb;
     private InputAction throttleAction;
     private InputAction brakeAction;
@@ -33,6 +37,16 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        // スピード表示テキストの設定
+        if (speedText == null)
+        {
+            var text = GameObject.FindWithTag("SpeedText");
+            if (text != null)
+                speedText = text.GetComponent<TextMeshProUGUI>();
+            else
+                speedText = FindObjectOfType<TextMeshProUGUI>(); // 最終手段のフォールバック
+        }
+
         // 自分が操作するプレイヤーならカメラの追従対象に設定
         if (photonView.IsMine)
         {
@@ -115,6 +129,13 @@ public class CarController : MonoBehaviourPunCallbacks
             Vector3 forwardDir = steerRotation * transform.forward;
             float motorPower = motorInput < 0 ? motorForce * 0.6f : motorForce;
             rb.AddForce(forwardDir * motorInput * motorPower, ForceMode.Acceleration);
+        }
+
+        // --- ここに速度表示を追加 ---
+        float speed = rb.linearVelocity.magnitude * 3.6f; // m/s → km/h に変換
+        if (speedText != null)
+        {
+            speedText.text = $"{speed:F1} km/h";
         }
 
         // 横方向速度を減衰させる（横滑り防止）
