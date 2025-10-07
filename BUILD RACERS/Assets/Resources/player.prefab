@@ -630,7 +630,13 @@ MonoBehaviour:
   motorForce: 10
   steerAngle: 60
   turnSensitivity: 2
-  maxSpeed: 20
+  maxSpeed: 10
+  raycastLength: 5
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 1
+  dirtSpeedMultiplier: 0.3
+  dirtAccelMultiplier: 0.25
   speedText: {fileID: 0}
 --- !u!114 &2777997212412123024
 MonoBehaviour:

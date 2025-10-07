@@ -16,17 +16,20 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public List<WheelVisual> wheelVisuals;
 
-    [SerializeField]
-    private float motorForce = 10f;
-    [SerializeField]
-    private float steerAngle = 60f;
-    [SerializeField]
-    private float turnSensitivity = 2f;
-    [SerializeField]
-    private float maxSpeed = 20f;
+    [Header("基本パラメータ")]
+    [SerializeField] private float motorForce = 10f;
+    [SerializeField] private float steerAngle = 60f;
+    [SerializeField] private float turnSensitivity = 2f;
+    [SerializeField] private float maxSpeed = 20f;
 
-    [SerializeField] 
-    private TextMeshProUGUI speedText;  // 速度表示テキスト
+    [Header("地面関連")]
+    [SerializeField] private float raycastLength = 1.2f;  // 地面判定距離
+    [SerializeField] private LayerMask groundMask;        // 地面レイヤー
+    [SerializeField] private float dirtSpeedMultiplier = 0.6f;  // ダート上の速度倍率
+    [SerializeField] private float dirtAccelMultiplier = 0.5f;  // ダート上の加速倍率
+
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
 
     private Rigidbody rb;
     private InputAction throttleAction;
@@ -34,6 +37,7 @@ public class CarController : MonoBehaviourPunCallbacks
     private InputAction steerAction;
 
     private float currentSteer = 0f;
+    private string currentGroundTag = "Default";
 
     private void Awake()
     {
@@ -44,30 +48,23 @@ public class CarController : MonoBehaviourPunCallbacks
             if (text != null)
                 speedText = text.GetComponent<TextMeshProUGUI>();
             else
-                speedText = FindObjectOfType<TextMeshProUGUI>(); // 最終手段のフォールバック
+                speedText = FindObjectOfType<TextMeshProUGUI>();
         }
 
-        // 自分が操作するプレイヤーならカメラの追従対象に設定
+        // 自分の車にカメラ追従
         if (photonView.IsMine)
         {
             var cameraController = Camera.main.GetComponent<CameraController>();
             if (cameraController != null)
-            {
                 cameraController.SetTarget(transform);
-            }
         }
 
         rb = GetComponent<Rigidbody>();
-
-        // Yをマイナスにして下方向へ重心を移動(転倒防止)
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
-
-        // 物理挙動を補完して滑らかに動かす
         rb.interpolation = RigidbodyInterpolation.Interpolate;
-
     }
 
-    //入力処理、キーボード、コントローラーに対応
+    // 入力設定
     private void OnEnable()
     {
         throttleAction = new InputAction(type: InputActionType.Button);
@@ -102,7 +99,10 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
-        if (photonView.IsMine == false) return;
+        if (!photonView.IsMine) return;
+
+        // 地面判定を更新
+        UpdateGroundType();
 
         float motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
         float steerInput = steerAction.ReadValue<float>();
@@ -122,25 +122,35 @@ public class CarController : MonoBehaviourPunCallbacks
             }
         }
 
+        // 地面による補正
+        float accelMultiplier = 1f;
+        float speedMultiplier = 1f;
+
+        if (currentGroundTag == "Dirt")
+        {
+            accelMultiplier = dirtAccelMultiplier;
+            speedMultiplier = dirtSpeedMultiplier;
+        }
+
+        float maxAllowedSpeed = maxSpeed * speedMultiplier;
+
         // 進行方向へ力を加える
-        if (rb.linearVelocity.magnitude < maxSpeed)
+        if (rb.linearVelocity.magnitude < maxAllowedSpeed)
         {
             Quaternion steerRotation = Quaternion.Euler(0f, currentSteer, 0f);
             Vector3 forwardDir = steerRotation * transform.forward;
-            float motorPower = motorInput < 0 ? motorForce * 0.6f : motorForce;
+            float motorPower = (motorInput < 0 ? motorForce * 0.6f : motorForce) * accelMultiplier;
             rb.AddForce(forwardDir * motorInput * motorPower, ForceMode.Acceleration);
         }
 
-        // --- ここに速度表示を追加 ---
-        float speed = rb.linearVelocity.magnitude * 3.6f; // m/s → km/h に変換
+        // --- 速度表示 ---
+        float speed = rb.linearVelocity.magnitude * 3.6f;
         if (speedText != null)
-        {
             speedText.text = $"{speed:F1} km/h";
-        }
 
-        // 横方向速度を減衰させる（横滑り防止）
+        // 横滑り防止
         Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
-        localVel.x *= 0.85f; // ← 横方向の速度を抑制（値を0〜1で調整）
+        localVel.x *= 0.85f;
         rb.linearVelocity = transform.TransformDirection(localVel);
 
         // 車体の回転
@@ -153,5 +163,20 @@ public class CarController : MonoBehaviourPunCallbacks
         }
     }
 
-
+    /// <summary>
+    /// 地面の種類をRaycastで検出
+    /// </summary>
+    private void UpdateGroundType()
+    {
+        Ray ray = new Ray(transform.position + Vector3.up * 0.5f, Vector3.down);
+        if (Physics.Raycast(ray, out RaycastHit hit, raycastLength, groundMask))
+        {
+            // タグで地面判定
+            currentGroundTag = hit.collider.tag;
+        }
+        else
+        {
+            currentGroundTag = "Default";
+        }
+    }
 }
