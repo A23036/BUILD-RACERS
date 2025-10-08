@@ -6,6 +6,9 @@ using TMPro;
 
 public class CarController : MonoBehaviourPunCallbacks
 {
+    //ジョイスティック
+    private Joystick variableJoystick;
+
     [System.Serializable]
     public class WheelVisual
     {
@@ -47,6 +50,10 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        //ジョイスティック取得
+        var joystick = GameObject.Find("Floating Joystick");
+        variableJoystick = joystick.GetComponent<Joystick>();
+
         // スピード表示テキストの設定
         if (speedText == null)
         {
@@ -112,6 +119,10 @@ public class CarController : MonoBehaviourPunCallbacks
         float motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
         float steerInput = steerAction.ReadValue<float>();
         currentSteer = steerInput * steerAngle;
+
+        //ジョイスティック処理
+        motorInput = Mathf.Clamp(variableJoystick.Direction.y / 0.8f, -1, 1);
+        steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.8f, -1, 1);
 
         // --- 地面別補正 ---
         float accelMultiplier = 1f;
