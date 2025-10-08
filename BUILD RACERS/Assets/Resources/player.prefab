@@ -690,8 +690,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f347b57b189b36e4ca7907ccfb56ab3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LinearInterpolation: 1
-  LinearExtrapolation: 0
+  LinearInterpolation: 0
+  LinearExtrapolation: 1
   INTERPOLATE: 30
 --- !u!1001 &2163588244576676415
 PrefabInstance:
