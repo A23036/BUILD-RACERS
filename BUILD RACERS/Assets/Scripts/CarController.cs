@@ -25,8 +25,14 @@ public class CarController : MonoBehaviourPunCallbacks
     [Header("地面関連")]
     [SerializeField] private float raycastLength = 1.2f;  // 地面判定距離
     [SerializeField] private LayerMask groundMask;        // 地面レイヤー
+    //ダート
     [SerializeField] private float dirtSpeedMultiplier = 0.6f;  // ダート上の速度倍率
-    [SerializeField] private float dirtAccelMultiplier = 0.5f;  // ダート上の加速倍率
+    [SerializeField] private float dirtAccelMultiplier = 1.0f;  // ダート上の加速倍率
+    //ブースト
+    [SerializeField] private float boostSpeedMultiplier = 1.8f;   // ブースト時の速度倍率
+    [SerializeField] private float boostAccelMultiplier = 2.5f;   // ブースト時の加速倍率
+    [SerializeField] private float boostDuration = 2.0f;          // 効果時間（秒）
+    private float boostTimer = 0f;  // 残りブースト時間
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
@@ -101,28 +107,13 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         if (!photonView.IsMine) return;
 
-        // 地面判定を更新
         UpdateGroundType();
 
         float motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
         float steerInput = steerAction.ReadValue<float>();
-
         currentSteer = steerInput * steerAngle;
 
-        // 見た目タイヤ回転
-        foreach (var w in wheelVisuals)
-        {
-            float visualSteer = currentSteer * 0.5f;
-            if (w.steering)
-            {
-                if (w.leftWheel != null)
-                    w.leftWheel.localRotation = Quaternion.Euler(-90f, visualSteer, 90f);
-                if (w.rightWheel != null)
-                    w.rightWheel.localRotation = Quaternion.Euler(-90f, visualSteer, 90f);
-            }
-        }
-
-        // 地面による補正
+        // --- 地面別補正 ---
         float accelMultiplier = 1f;
         float speedMultiplier = 1f;
 
@@ -130,6 +121,14 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             accelMultiplier = dirtAccelMultiplier;
             speedMultiplier = dirtSpeedMultiplier;
+        }
+
+        // --- ブースト補正 ---
+        if (boostTimer > 0f)
+        {
+            accelMultiplier *= boostAccelMultiplier;
+            speedMultiplier *= boostSpeedMultiplier;
+            boostTimer -= Time.fixedDeltaTime;
         }
 
         float maxAllowedSpeed = maxSpeed * speedMultiplier;
@@ -163,20 +162,25 @@ public class CarController : MonoBehaviourPunCallbacks
         }
     }
 
-    /// <summary>
-    /// 地面の種類をRaycastで検出
-    /// </summary>
+    // 地面の種類をRaycastで検出
     private void UpdateGroundType()
     {
         Ray ray = new Ray(transform.position + Vector3.up * 0.5f, Vector3.down);
         if (Physics.Raycast(ray, out RaycastHit hit, raycastLength, groundMask))
         {
-            // タグで地面判定
             currentGroundTag = hit.collider.tag;
+
+            // --- Boostタグを検出 ---
+            if (currentGroundTag == "Boost")
+            {
+                boostTimer = boostDuration; // 効果をリセット
+            }
         }
         else
         {
             currentGroundTag = "Default";
         }
     }
+
+
 }
