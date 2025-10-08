@@ -636,7 +636,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   dirtSpeedMultiplier: 0.3
-  dirtAccelMultiplier: 0.25
+  dirtAccelMultiplier: 1
   speedText: {fileID: 0}
 --- !u!114 &2777997212412123024
 MonoBehaviour:
