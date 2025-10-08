@@ -121,10 +121,10 @@ public class CarController : MonoBehaviourPunCallbacks
         currentSteer = steerInput * steerAngle;
 
         //ジョイスティック処理
+        if(Input.touchCount > 0) motorInput = 1;
         if(variableJoystick.Direction != Vector2.zero)
         {
-            motorInput = Mathf.Clamp(variableJoystick.Direction.y / 0.8f, -1, 1);
-            steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.8f, -1, 1);
+            steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
         }
 
         // --- 地面別補正 ---
