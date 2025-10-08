@@ -6,6 +6,7 @@ TagManager:
   tags:
   - SpeedText
   - Dirt
+  - Boost
   layers:
   - Default
   - TransparentFX
