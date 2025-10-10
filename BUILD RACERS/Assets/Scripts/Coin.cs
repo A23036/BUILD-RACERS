@@ -11,6 +11,11 @@ public class coin : MonoBehaviour
     public float respawnTime = 10f;
     public float scaleUpSpeed = 5f;
 
+    [Header("エフェクト設定")]
+    public ParticleSystem getEffect; // 取得時のパーティクルエフェクト
+    public AudioClip getCoinSound;   // 取得時の効果音
+    public GameObject effectPrefab;  // エフェクトのPrefab（設定した場合）
+
     // === プライベート変数 ===
     public bool get;
     private float gettime;
@@ -19,6 +24,7 @@ public class coin : MonoBehaviour
     private Vector3 originalScale;
     private MeshRenderer meshRenderer;
     private Collider coinCollider;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -30,6 +36,14 @@ public class coin : MonoBehaviour
 
         meshRenderer = GetComponent<MeshRenderer>();
         coinCollider = GetComponent<Collider>();
+
+        // AudioSourceを取得または追加
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null && getCoinSound != null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+        }
     }
 
     void Update()
@@ -86,7 +100,33 @@ public class coin : MonoBehaviour
                 gettime = 0f;
                 rb.isKinematic = false;
                 rb.AddForce(Vector3.up * 5, ForceMode.Impulse);
+
+                // === エフェクトを再生 ===
+                PlayGetEffect();
             }
+        }
+    }
+
+    // エフェクト再生メソッド
+    void PlayGetEffect()
+    {
+        // パーティクルエフェクトを再生
+        if (getEffect != null)
+        {
+            getEffect.Play();
+        }
+
+        // Prefabからエフェクトを生成
+        if (effectPrefab != null)
+        {
+            GameObject effect = Instantiate(effectPrefab, transform.position, Quaternion.identity);
+            Destroy(effect, 3f); // 3秒後に自動削除
+        }
+
+        // 効果音を再生
+        if (getCoinSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(getCoinSound);
         }
     }
 
