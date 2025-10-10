@@ -638,8 +638,8 @@ MonoBehaviour:
   dirtSpeedMultiplier: 0.3
   dirtAccelMultiplier: 1
   boostSpeedMultiplier: 2
-  boostAccelMultiplier: 2.5
-  boostDuration: 1
+  boostAccelMultiplier: 3
+  boostDuration: 0.05
   speedText: {fileID: 0}
 --- !u!114 &2777997212412123024
 MonoBehaviour:
