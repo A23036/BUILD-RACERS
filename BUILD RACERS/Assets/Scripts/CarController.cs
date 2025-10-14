@@ -217,8 +217,11 @@ public class CarController : MonoBehaviourPunCallbacks
             if(coinScript.isCnt == false)
             {
                 coinCnt++;
-                coinText.text = $"{coinCnt:D4}";
                 coinScript.isCnt = true;
+
+                //自分以外ならテキストの更新はしない
+                if (!photonView.IsMine) return;
+                coinText.text = $"{coinCnt:D4}";
             }
         }
     }
