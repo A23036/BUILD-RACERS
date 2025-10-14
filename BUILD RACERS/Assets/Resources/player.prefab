@@ -641,6 +641,7 @@ MonoBehaviour:
   boostAccelMultiplier: 3
   boostDuration: 0.05
   speedText: {fileID: 0}
+  coinText: {fileID: 0}
 --- !u!114 &2777997212412123024
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -39,6 +39,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
+    [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
 
     private Rigidbody rb;
     private InputAction throttleAction;
@@ -46,6 +47,7 @@ public class CarController : MonoBehaviourPunCallbacks
     private InputAction steerAction;
 
     private float currentSteer = 0f;
+    private int coinCnt = 0;
     private string currentGroundTag = "Default";
 
     private void Awake()
@@ -62,6 +64,16 @@ public class CarController : MonoBehaviourPunCallbacks
                 speedText = text.GetComponent<TextMeshProUGUI>();
             else
                 speedText = FindObjectOfType<TextMeshProUGUI>();
+        }
+
+        // コイン表示テキストの設定
+        if (coinText == null)
+        {
+            var text = GameObject.FindWithTag("coinText");
+            if (text != null)
+                coinText = text.GetComponent<TextMeshProUGUI>();
+            else
+                coinText = FindObjectOfType<TextMeshProUGUI>();
         }
 
         // 自分の車にカメラ追従
@@ -196,5 +208,18 @@ public class CarController : MonoBehaviourPunCallbacks
         }
     }
 
-
+    //接触がコインならカウント
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Coin"))
+        {
+            Coin coinScript = other.GetComponent<Coin>();
+            if(coinScript.isCnt == false)
+            {
+                coinCnt++;
+                coinText.text = $"{coinCnt:D4}";
+                coinScript.isCnt = true;
+            }
+        }
+    }
 }
