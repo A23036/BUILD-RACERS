@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class coin : MonoBehaviour
+public class Coin : MonoBehaviour
 {
     // === 公開変数 (Inspectorで設定) ===
     public Rigidbody rb;
@@ -18,6 +18,8 @@ public class coin : MonoBehaviour
 
     // === プライベート変数 ===
     public bool get;
+    public bool isCnt;
+
     private float gettime;
     private Vector3 initialPosition;
     private Quaternion initialRotation;
@@ -76,6 +78,7 @@ public class coin : MonoBehaviour
 
                 // getフラグをリセット（Coroutine実行を1回だけにする）
                 get = false;
+                isCnt = false;
                 gettime = 0f;
             }
         }

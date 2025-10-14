@@ -106,6 +106,9 @@ MonoBehaviour:
   rotateSpeed: 100
   respawnTime: 3
   scaleUpSpeed: 10
+  getEffect: {fileID: 0}
+  getCoinSound: {fileID: 0}
+  effectPrefab: {fileID: 0}
   get: 0
 --- !u!54 &5546424817719835810
 Rigidbody:
