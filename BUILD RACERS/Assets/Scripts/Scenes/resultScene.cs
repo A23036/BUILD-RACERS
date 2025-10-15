@@ -1,4 +1,5 @@
 using UnityEngine;
+using Photon.Pun;
 using UnityEngine.SceneManagement;
 
 public class resultScene : baseScene
@@ -7,6 +8,9 @@ public class resultScene : baseScene
     void Start()
     {
         preSceneName = "gamePlay";
+
+        //ƒIƒ“ƒ‰ƒCƒ“‚¾‚Á‚½‚Æ‚«‚ÍÚ‘±‚ğØ‚é
+        if(PhotonNetwork.InRoom) PhotonNetwork.Disconnect();
     }
 
     // Update is called once per frame

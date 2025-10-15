@@ -103,9 +103,11 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
 
             //ëºé“Ç»ÇÁï‚ä‘ÇÃÇΩÇﬂÇÃç¿ïWÇçXêV
             p1 = p2;
+            p1 = transform.position;
             p2 = nextPos;
 
             r1 = r2;
+            r1 = transform.rotation;
             r2 = nextRot;
 
             timer = 0;
