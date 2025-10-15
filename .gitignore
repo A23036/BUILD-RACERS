@@ -1,13 +1,16 @@
-# Unity specific ignores
-Library/
-Temp/
-Logs/
-Obj/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
 MemoryCaptures/
-
-# Ignore the editor settings
+sysinfo.txt
+Logs/
+UserSettings/
 .vscode/
 .vs/
+.idea/
+*.sln.iml
 *.csproj
 *.unityproj
 *.sln
@@ -20,7 +23,51 @@ MemoryCaptures/
 *.svd
 *.pdb
 *.opendb
-
-# ビルド結果
-Build/
-Builds/
+*.VC.db
+*.VC.opendb
+*.ide/
+*.tlog
+*.dwlt
+*.layout
+*.backup
+*.orig
+*.prefs
+*.mode
+*~
+.nfs*
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.apk
+*.aab
+*.unitypackage
+*.xcodeproj/
+*.xcworkspace/
+*.xcuserdata/
+*.ipa
+*.app/
+*.app.dSYM/
+*.ninja
+.gradle/
+local.properties
+**/gradle-wrapper.jar
+*.log
+*.trace
+*.mem
+*.profraw
+*.meminfo
+*.stackdump
+*.crash
+*.dmp
+# Large files / LFS candidates (uncomment & customize if using LFS)
+# *.psd filter=lfs diff=lfs merge=lfs -text
+# *.fbx filter=lfs diff=lfs merge=lfs -text
+# *.wav filter=lfs diff=lfs merge=lfs -text
+!ProjectSettings/ProjectSettings.asset
+!ProjectSettings/EditorBuildSettings.asset
+!ProjectSettings/GraphicsSettings.asset
+!ProjectSettings/QualitySettings.asset
+!ProjectSettings/InputManager.asset

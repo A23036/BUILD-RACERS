@@ -6,6 +6,9 @@ using TMPro;
 
 public class CarController : MonoBehaviourPunCallbacks
 {
+    //ジョイスティック
+    private Joystick variableJoystick;
+
     [System.Serializable]
     public class WheelVisual
     {
@@ -36,6 +39,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
+    [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
 
     private Rigidbody rb;
     private InputAction throttleAction;
@@ -43,10 +47,15 @@ public class CarController : MonoBehaviourPunCallbacks
     private InputAction steerAction;
 
     private float currentSteer = 0f;
+    private int coinCnt = 0;
     private string currentGroundTag = "Default";
 
     private void Awake()
     {
+        //ジョイスティック取得
+        var joystick = GameObject.Find("Floating Joystick");
+        variableJoystick = joystick.GetComponent<Joystick>();
+
         // スピード表示テキストの設定
         if (speedText == null)
         {
@@ -55,6 +64,16 @@ public class CarController : MonoBehaviourPunCallbacks
                 speedText = text.GetComponent<TextMeshProUGUI>();
             else
                 speedText = FindObjectOfType<TextMeshProUGUI>();
+        }
+
+        // コイン表示テキストの設定
+        if (coinText == null)
+        {
+            var text = GameObject.FindWithTag("coinText");
+            if (text != null)
+                coinText = text.GetComponent<TextMeshProUGUI>();
+            else
+                coinText = FindObjectOfType<TextMeshProUGUI>();
         }
 
         // 自分の車にカメラ追従
@@ -112,6 +131,13 @@ public class CarController : MonoBehaviourPunCallbacks
         float motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
         float steerInput = steerAction.ReadValue<float>();
         currentSteer = steerInput * steerAngle;
+
+        //ジョイスティック処理
+        if(Input.GetMouseButton(0)) motorInput = 1;
+        if(variableJoystick.Direction != Vector2.zero)
+        {
+            steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
+        }
 
         // --- 地面別補正 ---
         float accelMultiplier = 1f;
@@ -182,5 +208,21 @@ public class CarController : MonoBehaviourPunCallbacks
         }
     }
 
+    //接触がコインならカウント
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Coin"))
+        {
+            Coin coinScript = other.GetComponent<Coin>();
+            if(coinScript.isCnt == false)
+            {
+                coinCnt++;
+                coinScript.isCnt = true;
 
+                //自分以外ならテキストの更新はしない
+                if (!photonView.IsMine) return;
+                coinText.text = $"{coinCnt:D4}";
+            }
+        }
+    }
 }

@@ -43,6 +43,8 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
 
         //同期フレームに応じて算出
         interpolate = 1f / PhotonNetwork.SerializationRate;
+        //ジッター考慮して少し長めにする
+        interpolate *= 1.2f;
         timer = 0;
 
         //デフォルトで線形補間
@@ -59,18 +61,13 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
             timer += Time.deltaTime;
             float rate = timer / interpolate;
 
-            //同期処理なし
-            if (rate > 1)
-            {
-                transform.position = p2;
-                transform.rotation = r2;
-                return;
-            }
+            //Debug.Log(rate);
 
             //補間・予測処理
             if (LinearInterpolation)
             {
-                //線形補間 0 <= rate <= 1
+                //線形補間
+                rate = Mathf.Clamp(rate, 0, 1);
                 transform.position = Vector3.Lerp(p1, p2, rate);
                 transform.rotation = Quaternion.Slerp(r1, r2, rate);
             }
@@ -105,10 +102,10 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
             var nextRot = (Quaternion)stream.ReceiveNext();
 
             //他者なら補間のための座標を更新
-            p1 = transform.position;
+            p1 = p2;
             p2 = nextPos;
 
-            r1 = transform.rotation;
+            r1 = r2;
             r2 = nextRot;
 
             timer = 0;

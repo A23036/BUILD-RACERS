@@ -7,6 +7,8 @@ TagManager:
   - SpeedText
   - Dirt
   - Boost
+  - coinText
+  - Coin
   layers:
   - Default
   - TransparentFX

@@ -2,14 +2,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class tittleManager : MonoBehaviour
+public class selectScene : baseScene
 {
-    [SerializeField]
-    private string PlaySceneName;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        preSceneName = "menu";
+
         GameObject inputField = GameObject.Find("InputFieldLegacy");
         InputField input = inputField.GetComponent<InputField>();
         input.text = PlayerPrefs.GetString("PlayerName");
@@ -26,7 +26,7 @@ public class tittleManager : MonoBehaviour
         //–¼‘O‚ªˆê•¶ŽšˆÈã‚ÅƒV[ƒ“‘JˆÚ
         if(PlayerPrefs.GetString("PlayerName").Length > 0)
         {
-            SceneManager.LoadScene(PlaySceneName);
+            SceneManager.LoadScene("gamePlay");
         }
     }
 
