@@ -24,10 +24,19 @@ public class PUN2 : MonoBehaviourPunCallbacks
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
-        // ランダムな座標に自身のアバター（ネットワークオブジェクト）を生成する
+        // プレイヤー生成（自分）
         var position = new Vector3(Random.Range(-3f, 3f), 3, Random.Range(-3f, 3f));
-        PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
+        var player = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
+        var playerCc = player.GetComponent<CarController>();
+        playerCc.SetCamera();
 
-        Debug.Log("Sapwn Player");
+        // CPUの生成　テスト
+        position = new Vector3(Random.Range(-3f, 3f), 3, Random.Range(-3f, 3f));
+        var cpu = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
+        var cpuCc = cpu.GetComponent<CarController>();
+
+        // cpu に AI を設定する。WaypointContainer を渡す（シーンに複数ある場合は適切に選択）
+        var wpContainer = FindObjectOfType<WaypointContainer>(); // 単一ならこれでOK
+        cpuCc.SetAI(wpContainer);
     }
 }

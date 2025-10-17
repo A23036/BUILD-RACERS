@@ -9,6 +9,9 @@ public class CarController : MonoBehaviourPunCallbacks
     //ジョイスティック
     private Joystick variableJoystick;
 
+    //CPU
+    private IDriver driver = null;
+
     [System.Serializable]
     public class WheelVisual
     {
@@ -76,14 +79,6 @@ public class CarController : MonoBehaviourPunCallbacks
                 coinText = FindObjectOfType<TextMeshProUGUI>();
         }
 
-        // 自分の車にカメラ追従
-        if (photonView.IsMine)
-        {
-            var cameraController = Camera.main.GetComponent<CameraController>();
-            if (cameraController != null)
-                cameraController.SetTarget(transform);
-        }
-
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -128,60 +123,71 @@ public class CarController : MonoBehaviourPunCallbacks
 
         UpdateGroundType();
 
-        float motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
-        float steerInput = steerAction.ReadValue<float>();
-        currentSteer = steerInput * steerAngle;
+        float motorInput = 0f;
+        float brakeInput = 0f;
+        float steerInput = 0f;
 
-        //ジョイスティック処理
-        if(Input.GetMouseButton(0)) motorInput = 1;
-        if(variableJoystick.Direction != Vector2.zero)
+        // AIがいればそちらから取得
+        if (driver != null)
         {
-            steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
+            driver.GetInputs(out float throttle, out float brake, out float steer);
+            motorInput = throttle;
+            brakeInput = brake;
+            steerInput = steer;
+        }
+        else
+        {
+            // 既存のプレイヤー入力
+            motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
+            steerInput = steerAction.ReadValue<float>();
+            if (Input.GetMouseButton(0)) motorInput = 1;
+            if (variableJoystick != null && variableJoystick.Direction != Vector2.zero)
+                steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
         }
 
-        // --- 地面別補正 ---
+        // combine motor & brake: motorInput 0..1, brakeInput 0..1 -> netMotor (-1..1) or separate
+        float netMotor = motorInput - brakeInput; // keep existing behavior if you like
+
+        currentSteer = steerInput * steerAngle;
+
+        // --- 地面別・ブースト補正(同じ) ---
         float accelMultiplier = 1f;
         float speedMultiplier = 1f;
-
         if (currentGroundTag == "Dirt")
         {
             accelMultiplier = dirtAccelMultiplier;
             speedMultiplier = dirtSpeedMultiplier;
         }
 
-        // --- ブースト補正 ---
         if (boostTimer > 0f)
         {
             accelMultiplier *= boostAccelMultiplier;
             speedMultiplier *= boostSpeedMultiplier;
             boostTimer -= Time.fixedDeltaTime;
         }
-
         float maxAllowedSpeed = maxSpeed * speedMultiplier;
 
-        // 進行方向へ力を加える
         if (rb.linearVelocity.magnitude < maxAllowedSpeed)
         {
             Quaternion steerRotation = Quaternion.Euler(0f, currentSteer, 0f);
             Vector3 forwardDir = steerRotation * transform.forward;
-            float motorPower = (motorInput < 0 ? motorForce * 0.6f : motorForce) * accelMultiplier;
-            rb.AddForce(forwardDir * motorInput * motorPower, ForceMode.Acceleration);
+            float motorPower = (netMotor < 0 ? motorForce * 0.6f : motorForce) * accelMultiplier;
+            rb.AddForce(forwardDir * netMotor * motorPower, ForceMode.Acceleration);
         }
 
-        // --- 速度表示 ---
+        // 速度表示など残す（rb.linearVelocity -> rb.velocity）
         float speed = rb.linearVelocity.magnitude * 3.6f;
-        if (speedText != null)
-            speedText.text = $"{speed:F1} km/h";
+        if (speedText != null && driver == null) speedText.text = $"{speed:F1} km/h";
 
         // 横滑り防止
         Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
         localVel.x *= 0.85f;
         rb.linearVelocity = transform.TransformDirection(localVel);
 
-        // 車体の回転
+        // 車体回転
         if (rb.linearVelocity.magnitude > 0.1f)
         {
-            float rotationSign = motorInput < 0 ? -1f : 1f;
+            float rotationSign = netMotor < 0 ? -1f : 1f;
             float turnAmount = steerInput * turnSensitivity * rotationSign;
             Quaternion deltaRotation = Quaternion.Euler(0f, turnAmount, 0f);
             rb.MoveRotation(rb.rotation * deltaRotation);
@@ -214,15 +220,58 @@ public class CarController : MonoBehaviourPunCallbacks
         if (other.CompareTag("Coin"))
         {
             Coin coinScript = other.GetComponent<Coin>();
-            if(coinScript.isCnt == false)
+            if (coinScript.isCnt == false)
             {
                 coinCnt++;
                 coinScript.isCnt = true;
 
                 //自分以外ならテキストの更新はしない
-                if (!photonView.IsMine) return;
+                if (!photonView.IsMine || driver != null) return;
                 coinText.text = $"{coinCnt:D4}";
             }
         }
+    }
+
+    //ドライバーをAIに変更
+    public void SetAI(WaypointContainer waypointContainer = null)
+    {
+        if (driver == null)
+        {
+            var aiComp = gameObject.AddComponent<AIDriver>();
+            driver = aiComp;
+
+            // waypointContainerが渡されていれば設定。渡されなければシーン内のものを拾う（安全策）
+            if (waypointContainer != null)
+            {
+                aiComp.SetWaypointContainer(waypointContainer);
+            }
+            else
+            {
+                var wc = FindObjectOfType<WaypointContainer>();
+                if (wc != null)
+                    aiComp.SetWaypointContainer(wc);
+                else
+                    Debug.LogWarning("[CarController] SetAI: WaypointContainer が見つかりません。実行時に経路をセットしてください。");
+            }
+
+            //名前をCPUに変更
+            Transform labelTransform = transform.Find("NameLabel");
+            if (labelTransform != null)
+            {
+                TextMeshPro nameLabel = labelTransform.GetComponent<TextMeshPro>();
+                if (nameLabel != null)
+                {
+                    nameLabel.text = "CPU";
+                }
+            }
+        }
+    }
+
+    //カメラの設定
+    public void SetCamera()
+    {
+        var cameraController = Camera.main.GetComponent<CameraController>();
+        if (cameraController != null)
+            cameraController.SetTarget(transform);
     }
 }

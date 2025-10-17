@@ -1,6 +1,7 @@
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 // MonoBehaviourPunCallbacksを継承して、photonViewプロパティを使えるようにする
 public class NameDisp : MonoBehaviourPunCallbacks
@@ -12,7 +13,7 @@ public class NameDisp : MonoBehaviourPunCallbacks
         var player = photonView.Owner;
 
         //nameLabel.text = $"{photonView.Owner.NickName}{photonView.OwnerActorNr}";
-        nameLabel.text = photonView.Owner.NickName;
+        if(nameLabel.text != "CPU") nameLabel.text = photonView.Owner.NickName;
     }
 
     private void Update()
