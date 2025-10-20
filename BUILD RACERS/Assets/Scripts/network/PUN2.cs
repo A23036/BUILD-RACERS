@@ -5,6 +5,8 @@ using UnityEngine;
 // MonoBehaviourPunCallbacksを継承して、PUNのコールバックを受け取れるようにする
 public class PUN2 : MonoBehaviourPunCallbacks
 {
+    [Tooltip("BOTの生成数")]
+    [SerializeField] int GenerateBotsNum = 0;
     private void Start()
     {
         // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
@@ -30,13 +32,24 @@ public class PUN2 : MonoBehaviourPunCallbacks
         var playerCc = player.GetComponent<CarController>();
         playerCc.SetCamera();
 
-        // CPUの生成　テスト
-        position = new Vector3(Random.Range(-3f, 3f), 3, Random.Range(-3f, 3f));
-        var cpu = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
-        var cpuCc = cpu.GetComponent<CarController>();
+        float geneX = 0, geneZ = 0;
+        for(int i = 0;i < GenerateBotsNum;i++)
+        {
+            // CPUの生成　テスト
+            position = new Vector3(geneX, 3, -i*geneZ);
+            var cpu = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
+            var cpuCc = cpu.GetComponent<CarController>();
 
-        // cpu に AI を設定する。WaypointContainer を渡す（シーンに複数ある場合は適切に選択）
-        var wpContainer = FindObjectOfType<WaypointContainer>(); // 単一ならこれでOK
-        cpuCc.SetAI(wpContainer);
+            // cpu に AI を設定する。WaypointContainer を渡す（シーンに複数ある場合は適切に選択）
+            var wpContainer = FindObjectOfType<WaypointContainer>(); // 単一ならこれでOK
+            cpuCc.SetAI(wpContainer);
+
+            geneX++;
+            if(geneX >= 3)
+            {
+                geneX = 0;
+                geneZ += .1f;
+            }
+        }
     }
 }

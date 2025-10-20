@@ -21,10 +21,28 @@ public class CameraController : MonoBehaviour
 
         // --- カメラの追従位置を計算 ---
         Quaternion flatRotation = Quaternion.LookRotation(forwardFlat);
-        Vector3 desiredPosition = target.position + flatRotation * offset;
+        Vector3 desiredPosition;
+        //Bで後方カメラ
+        if (Input.GetKey(KeyCode.B))
+        {
+            Vector3 backOffset = offset;
+            backOffset.z *= -1;
+            desiredPosition = target.position + flatRotation * backOffset;
+        }
+        else
+        {
+            desiredPosition = target.position + flatRotation * offset;
+        }
 
         // --- スムーズに追従 ---
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+        if(Input.GetKey(KeyCode.B)) transform.position = desiredPosition;
+        else transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+
+        //背面カメラから戻るときにスムーズが入らないように
+        if (Input.GetKeyUp("b"))
+        {
+            transform.position = desiredPosition;
+        }
 
         // --- カメラをプレイヤーの方向に向ける ---
         transform.LookAt(target.position + Vector3.up * 1.5f); // 1.5fで少し上を見させる

@@ -17,7 +17,8 @@ public class AIDriver : MonoBehaviour, IDriver
     [SerializeField] private int startIndex = 0;
 
     [Header("ウェイポイント設定")]
-    [SerializeField] private float waypointRadius = 4f;   // 少し狭めて安定化
+    [SerializeField] private float MaxWpRadius = 12f;   // 目的地の最大半径
+    [SerializeField] private float MinWpRadius = 4f;    // 目的地の最小半径
     [SerializeField] private bool loopPath = true;
 
     [Header("ステアリング調整")]
@@ -26,12 +27,12 @@ public class AIDriver : MonoBehaviour, IDriver
     [SerializeField] private float maxSteerAngle = 45f;
 
     [Header("速度制御")]
-    [SerializeField] private float targetMaxSpeedKmh = 36f;
+    [SerializeField] private float targetMaxSpeedKmh = 73f;
     [SerializeField] private float cornerMinSpeedKmh = 16f;
 
     [Header("挙動調整")]
     [SerializeField] private float reactionTime = 0.05f;
-    [SerializeField] private float noiseAmount = 0.02f;
+    [SerializeField] private float noiseAmount = 1f;
 
     private Rigidbody rb;
     private Transform tf;
@@ -49,6 +50,9 @@ public class AIDriver : MonoBehaviour, IDriver
     {
         rb = GetComponent<Rigidbody>();
         tf = transform;
+
+        //入力ノイズをランダムで設定
+        noiseAmount = Random.Range(0.5f,2.5f);
     }
 
     private void Start()
@@ -72,12 +76,20 @@ public class AIDriver : MonoBehaviour, IDriver
 
         Transform curr = waypoints[currentIndex];
 
+        //目的地点が近づくほど、到着判定を広くする
+        int preIdx = currentIndex - 1;
+        if(preIdx < 0) preIdx = waypoints.Count - 1;
+        float betDist = (waypoints[preIdx].position - curr.position).magnitude;
+        float nowDist = (tf.position - curr.position).magnitude;
+        float rate = 1f -   nowDist / betDist;
+        float waypointRadius = Mathf.Lerp(MinWpRadius, MaxWpRadius,rate);
+
         // --- 到達判定（進行方向ベース） ---
         Vector3 toWp = curr.position - tf.position;
         float dist = toWp.magnitude;
         float forwardDot = Vector3.Dot(tf.forward, toWp.normalized);
         // 前方にあり、かつ近ければ次へ
-        if (dist < waypointRadius && forwardDot > 0.0f)
+        if (dist < waypointRadius/* && forwardDot > 0.0f*/)
         {
             AdvanceWaypoint();
             curr = waypoints[currentIndex];
@@ -110,9 +122,9 @@ public class AIDriver : MonoBehaviour, IDriver
         float desiredThrottle = (speedDiff > 0.1f) ? 1.0f : 0.4f;
         float desiredBrake = (speedDiff < -0.2f) ? 0.2f : 0f;
 
-        // --- ノイズ追加 ---
+        // --- ノイズ追加 ---　アクセルのみノイズを適用
         rawSteer += Random.Range(-noiseAmount, noiseAmount);
-        desiredThrottle += Random.Range(-noiseAmount, noiseAmount);
+        //desiredThrottle += Random.Range(-noiseAmount, noiseAmount);
 
         // --- スムージング ---
         float alpha = Mathf.Clamp01(Time.fixedDeltaTime / Mathf.Max(reactionTime, 1e-5f));

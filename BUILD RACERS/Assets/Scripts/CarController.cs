@@ -134,6 +134,8 @@ public class CarController : MonoBehaviourPunCallbacks
             motorInput = throttle;
             brakeInput = brake;
             steerInput = steer;
+
+            Debug.Log(rb.linearVelocity.magnitude * 3.6f + " km/h");
         }
         else
         {
@@ -163,6 +165,12 @@ public class CarController : MonoBehaviourPunCallbacks
             }
         }
 
+        // --- Boostタグを検出 ---
+        if (currentGroundTag == "Boost")
+        {
+            boostTimer = boostDuration; // 効果をリセット
+        }
+
         // --- 地面別・ブースト補正(同じ) ---
         float accelMultiplier = 1f;
         float speedMultiplier = 1f;
@@ -171,6 +179,8 @@ public class CarController : MonoBehaviourPunCallbacks
             accelMultiplier = dirtAccelMultiplier;
             speedMultiplier = dirtSpeedMultiplier;
         }
+
+        Debug.Log(currentGroundTag);
 
         if (boostTimer > 0f)
         {
@@ -214,12 +224,6 @@ public class CarController : MonoBehaviourPunCallbacks
         if (Physics.Raycast(ray, out RaycastHit hit, raycastLength, groundMask))
         {
             currentGroundTag = hit.collider.tag;
-
-            // --- Boostタグを検出 ---
-            if (currentGroundTag == "Boost")
-            {
-                boostTimer = boostDuration; // 効果をリセット
-            }
         }
         else
         {
