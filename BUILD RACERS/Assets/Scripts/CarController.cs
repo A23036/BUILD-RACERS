@@ -150,6 +150,19 @@ public class CarController : MonoBehaviourPunCallbacks
 
         currentSteer = steerInput * steerAngle;
 
+        // 見た目タイヤ回転
+        foreach (var w in wheelVisuals)
+        {
+            float visualSteer = currentSteer * 0.5f;
+            if (w.steering)
+            {
+                if (w.leftWheel != null)
+                    w.leftWheel.localRotation = Quaternion.Euler(-90f, visualSteer, 90f);
+                if (w.rightWheel != null)
+                    w.rightWheel.localRotation = Quaternion.Euler(-90f, visualSteer, 90f);
+            }
+        }
+
         // --- 地面別・ブースト補正(同じ) ---
         float accelMultiplier = 1f;
         float speedMultiplier = 1f;
