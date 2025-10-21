@@ -61,8 +61,6 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
             timer += Time.deltaTime;
             float rate = timer / interpolate;
 
-            //Debug.Log(rate);
-
             //•âŠÔE—\‘ªˆ—
             if (LinearInterpolation)
             {

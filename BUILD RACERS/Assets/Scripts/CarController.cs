@@ -134,12 +134,10 @@ public class CarController : MonoBehaviourPunCallbacks
             motorInput = throttle;
             brakeInput = brake;
             steerInput = steer;
-
-            Debug.Log(rb.linearVelocity.magnitude * 3.6f + " km/h");
         }
         else
         {
-            // 既存のプレイヤー入力
+            //　プレイヤー入力
             motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
             steerInput = steerAction.ReadValue<float>();
             if (Input.GetMouseButton(0)) motorInput = 1;
@@ -179,8 +177,6 @@ public class CarController : MonoBehaviourPunCallbacks
             accelMultiplier = dirtAccelMultiplier;
             speedMultiplier = dirtSpeedMultiplier;
         }
-
-        Debug.Log(currentGroundTag);
 
         if (boostTimer > 0f)
         {
@@ -250,14 +246,14 @@ public class CarController : MonoBehaviourPunCallbacks
     }
 
     //ドライバーをAIに変更
-    public void SetAI(WaypointContainer waypointContainer = null)
+    public void SetAI<T>(WaypointContainer waypointContainer = null)
+        where T : Component , IDriver
     {
         if (driver == null)
         {
-            var aiComp = gameObject.AddComponent<AIDriver>();
+            var aiComp = gameObject.AddComponent<T>();
             driver = aiComp;
 
-            // waypointContainerが渡されていれば設定。渡されなければシーン内のものを拾う（安全策）
             if (waypointContainer != null)
             {
                 aiComp.SetWaypointContainer(waypointContainer);
@@ -270,7 +266,24 @@ public class CarController : MonoBehaviourPunCallbacks
                 else
                     Debug.LogWarning("[CarController] SetAI: WaypointContainer が見つかりません。実行時に経路をセットしてください。");
             }
-
+            /*
+            // waypointContainerが渡されていれば設定。渡されなければシーン内のものを拾う（安全策）
+            if (aiComp is AIDriver)
+            {
+                if (waypointContainer != null)
+                {
+                    aiComp.SetWaypointContainer(waypointContainer);
+                }
+                else
+                {
+                    var wc = FindObjectOfType<WaypointContainer>();
+                    if (wc != null)
+                        aiComp.SetWaypointContainer(wc);
+                    else
+                        Debug.LogWarning("[CarController] SetAI: WaypointContainer が見つかりません。実行時に経路をセットしてください。");
+                }
+            }
+            */
             //名前をCPUに変更
             Transform labelTransform = transform.Find("NameLabel");
             if (labelTransform != null)

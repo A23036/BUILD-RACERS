@@ -2,12 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// AIDriver 改良版（ウェイポイント到達時の不安定挙動を改善）
-///
-/// - 到達判定を「進行方向による通過ベース」に変更
-/// - ステアD項を弱めて安定化
-/// - 速度に応じてルックアヘッド距離を可変
-/// - 直線〜コーナー遷移が滑らか
+/// AIDriver ウェイポイントを巡回するAI
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class AIDriver : MonoBehaviour, IDriver
@@ -88,8 +83,8 @@ public class AIDriver : MonoBehaviour, IDriver
         Vector3 toWp = curr.position - tf.position;
         float dist = toWp.magnitude;
         float forwardDot = Vector3.Dot(tf.forward, toWp.normalized);
-        // 前方にあり、かつ近ければ次へ
-        if (dist < waypointRadius/* && forwardDot > 0.0f*/)
+        // 近ければ次へ
+        if (dist < waypointRadius)
         {
             AdvanceWaypoint();
             curr = waypoints[currentIndex];
@@ -130,6 +125,7 @@ public class AIDriver : MonoBehaviour, IDriver
         float alpha = Mathf.Clamp01(Time.fixedDeltaTime / Mathf.Max(reactionTime, 1e-5f));
         steer = Mathf.Lerp(lastSteer, rawSteer, alpha);
         throttle = Mathf.Lerp(lastThrottle, desiredThrottle, alpha);
+        throttle = 1;
         brake = Mathf.Lerp(lastBrake, desiredBrake, alpha);
 
         lastSteer = steer;
@@ -182,24 +178,6 @@ public class AIDriver : MonoBehaviour, IDriver
         {
             foreach (var wp in waypointContainer.Waypoints)
                 if (wp != null) waypoints.Add(wp);
-        }
-    }
-
-    private void RefreshWaypointsIfChanged()
-    {
-        if (waypointContainer == null) return;
-        if (waypoints.Count != waypointContainer.Waypoints.Count)
-        {
-            RefreshWaypoints();
-            return;
-        }
-        for (int i = 0; i < waypoints.Count; i++)
-        {
-            if (waypoints[i] != waypointContainer.Waypoints[i])
-            {
-                RefreshWaypoints();
-                return;
-            }
         }
     }
 

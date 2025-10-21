@@ -992,6 +992,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Course (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 82f98238928209945acbdf1ec564364b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 82f98238928209945acbdf1ec564364b, type: 3}
+      propertyPath: m_TagString
+      value: Road
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2806,7 +2814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ffc80e8cac54d4499f0aa3fc38d97e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GenerateBotsNum: 1
+  GenerateBotsNum: 10
 --- !u!1001 &534315945
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10348,7 +10356,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2041170821
 Transform:
   m_ObjectHideFlags: 0

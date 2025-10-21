@@ -34,15 +34,9 @@ public class CameraController : MonoBehaviour
             desiredPosition = target.position + flatRotation * offset;
         }
 
-        // --- スムーズに追従 ---
-        if(Input.GetKey(KeyCode.B)) transform.position = desiredPosition;
+        // --- スムーズに追従 --- 背面カメラの時はスムーズを適用しない
+        if(Input.GetKeyDown("b") || Input.GetKeyUp("b")) transform.position = desiredPosition;
         else transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
-
-        //背面カメラから戻るときにスムーズが入らないように
-        if (Input.GetKeyUp("b"))
-        {
-            transform.position = desiredPosition;
-        }
 
         // --- カメラをプレイヤーの方向に向ける ---
         transform.LookAt(target.position + Vector3.up * 1.5f); // 1.5fで少し上を見させる

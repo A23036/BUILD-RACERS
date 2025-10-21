@@ -9,6 +9,7 @@ TagManager:
   - Boost
   - coinText
   - Coin
+  - Road
   layers:
   - Default
   - TransparentFX

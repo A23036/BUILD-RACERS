@@ -42,7 +42,10 @@ public class PUN2 : MonoBehaviourPunCallbacks
 
             // cpu に AI を設定する。WaypointContainer を渡す（シーンに複数ある場合は適切に選択）
             var wpContainer = FindObjectOfType<WaypointContainer>(); // 単一ならこれでOK
-            cpuCc.SetAI(wpContainer);
+            
+            //AIをクラス指定で選択して生成　引数はウェイポイント
+            //cpuCc.SetAI<AIDriver>(wpContainer);
+            cpuCc.SetAI<AIDriver_v2>();
 
             geneX++;
             if(geneX >= 3)

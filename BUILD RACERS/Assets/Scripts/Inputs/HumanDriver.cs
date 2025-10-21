@@ -63,4 +63,9 @@ public class HumanDriver : IDriver
     }
 
     public bool RequestBoost() => false;
+
+    public void SetWaypointContainer(WaypointContainer container)
+    {
+
+    }
 }
