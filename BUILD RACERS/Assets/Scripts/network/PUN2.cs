@@ -44,8 +44,8 @@ public class PUN2 : MonoBehaviourPunCallbacks
             var wpContainer = FindObjectOfType<WaypointContainer>(); // 単一ならこれでOK
             
             //AIをクラス指定で選択して生成　引数はウェイポイント
-            //cpuCc.SetAI<AIDriver>(wpContainer);
-            cpuCc.SetAI<AIDriver_v2>();
+            cpuCc.SetAI<AIDriver>(wpContainer);
+            //cpuCc.SetAI<AIDriver_v2>();
 
             geneX++;
             if(geneX >= 3)
