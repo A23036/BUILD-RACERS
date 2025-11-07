@@ -1,0 +1,52 @@
+using Photon.Pun;
+using System.Linq;
+using UnityEngine;
+
+public class iconButton : MonoBehaviour
+{
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    [SerializeField] private int driverNum = -1;
+    [SerializeField] private int builderNum = -1;
+
+    private selectSystem ss;
+
+    void Start()
+    {
+    }
+
+    private void Awake()
+    {
+    }
+
+    // Update is called once per frame
+    
+    public void PushIcon()
+    {
+        Debug.Log("PUSH ICON");
+
+        if(ss == null)
+        {
+            Debug.Log("NULL");
+
+            //自分のセレクターを検索する
+            PhotonView[] allss = FindObjectsOfType<PhotonView>();
+            Debug.Log("CONNECTS COUNT : " + allss.Count());
+            foreach(var css in allss)
+            {
+                if (css.IsMine)
+                {
+                    Debug.Log("HIT");
+                    ss = css.GetComponent<selectSystem>();
+                }
+            }
+        }
+        
+        //ssが見つかれば位置を更新
+        if(ss != null)
+        {
+            ss.SetNum(driverNum, builderNum);
+            Debug.Log(driverNum + " " + builderNum);
+        }
+    }
+}
