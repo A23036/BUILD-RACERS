@@ -10,27 +10,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: ab3b506be99ce8f489d83565061b2eb9, type: 3}
       propertyPath: m_LocalScale.x
-      value: 15
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ab3b506be99ce8f489d83565061b2eb9, type: 3}
       propertyPath: m_LocalScale.y
-      value: 15
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ab3b506be99ce8f489d83565061b2eb9, type: 3}
       propertyPath: m_LocalScale.z
-      value: 15
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ab3b506be99ce8f489d83565061b2eb9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.749286
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ab3b506be99ce8f489d83565061b2eb9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 52.582424
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ab3b506be99ce8f489d83565061b2eb9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -48.611355
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ab3b506be99ce8f489d83565061b2eb9, type: 3}
       propertyPath: m_LocalRotation.w
@@ -106,7 +106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakEffectPrefab: {fileID: 6206140973678171037, guid: 0c359ec20ae6d1b479ed15ccd18e4032, type: 3}
   enableRespawn: 1
-  respawnTime: 5
+  respawnTime: 1
   visualObject: {fileID: 8072807281771084947}
   respawnAnimationDuration: 0.5
   respawnStartScale: 0

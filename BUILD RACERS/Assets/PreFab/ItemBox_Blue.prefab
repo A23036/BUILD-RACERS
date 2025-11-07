@@ -135,7 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakEffectPrefab: {fileID: 6206140973678171037, guid: eef94f3faf3d09e479ddeac702139a94, type: 3}
   enableRespawn: 1
-  respawnTime: 5
+  respawnTime: 1
   visualObject: {fileID: 371982945783935244}
   respawnAnimationDuration: 0.5
   respawnStartScale: 0
