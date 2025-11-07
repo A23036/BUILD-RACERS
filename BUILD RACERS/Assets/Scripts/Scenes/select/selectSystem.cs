@@ -70,8 +70,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             var ss = css.GetComponent<selectSystem>();
             if (ss == null) continue;
             ss.GetNums(out int dn, out int bn);
-            Debug.Log("PUSH : " + driver + " " + builder);
-            Debug.Log("FILLED : " + dn + " " + bn);
             if (dn == driver && bn == builder)
             {
                 isCapaOver = true;
@@ -109,16 +107,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             // このクライアントが所有者なら送る
             stream.SendNext(selectDriverNum);
             stream.SendNext(selectBuilderNum);
-
-            Debug.Log($"[Serialize] Send: {selectDriverNum}, {selectBuilderNum}");
         }
         else
         {
             // 他クライアントから受け取る
             selectDriverNum = (int)stream.ReceiveNext();
             selectBuilderNum = (int)stream.ReceiveNext();
-
-            Debug.Log($"[Serialize] Recv: {selectDriverNum}, {selectBuilderNum}");
         }
     }
 
