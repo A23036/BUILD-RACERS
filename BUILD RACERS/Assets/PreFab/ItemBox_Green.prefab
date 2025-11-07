@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a6b563389db2cc243825e094209865d2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a6b563389db2cc243825e094209865d2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.62
+      value: 53
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a6b563389db2cc243825e094209865d2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.0187833
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a6b563389db2cc243825e094209865d2, type: 3}
       propertyPath: m_LocalRotation.w
@@ -100,6 +100,8 @@ MonoBehaviour:
   enableRespawn: 1
   respawnTime: 5
   visualObject: {fileID: 28605778757805302}
+  respawnAnimationDuration: 0.5
+  respawnStartScale: 0
   scaleSpeed: 0.3
   minScale: 0.95
   maxScale: 1.05
