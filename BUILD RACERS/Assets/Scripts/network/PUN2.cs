@@ -10,19 +10,22 @@ public class PUN2 : MonoBehaviourPunCallbacks
     private void Start()
     {
         // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
-        PhotonNetwork.ConnectUsingSettings();
+        //PhotonNetwork.ConnectUsingSettings();
 
         //タイトルで決めた名前を反映
         PhotonNetwork.NickName = PlayerPrefs.GetString("PlayerName");
     }
 
+    /*
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnConnectedToMaster()
     {
         // "Room"という名前のルームに参加する（ルームが存在しなければ作成して参加する）
         PhotonNetwork.JoinOrCreateRoom("Room", new RoomOptions(), TypedLobby.Default);
     }
+    */
 
+    /*
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
@@ -55,4 +58,5 @@ public class PUN2 : MonoBehaviourPunCallbacks
             }
         }
     }
+    */
 }

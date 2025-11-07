@@ -1,9 +1,10 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 //シーンの親クラス
 
-public class baseScene : MonoBehaviour
+public class baseScene : MonoBehaviourPunCallbacks
 {
     /// <summary>
     /// 前のシーンの名前
