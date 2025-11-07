@@ -23,12 +23,8 @@ public class iconButton : MonoBehaviour
     
     public void PushIcon()
     {
-        Debug.Log("PUSH ICON");
-
         if(ss == null)
         {
-            Debug.Log("NULL");
-
             //自分のセレクターを検索する
             PhotonView[] allss = FindObjectsOfType<PhotonView>();
             Debug.Log("CONNECTS COUNT : " + allss.Count());
@@ -36,7 +32,6 @@ public class iconButton : MonoBehaviour
             {
                 if (css.IsMine)
                 {
-                    Debug.Log("HIT");
                     ss = css.GetComponent<selectSystem>();
                 }
             }
@@ -46,7 +41,6 @@ public class iconButton : MonoBehaviour
         if(ss != null)
         {
             ss.SetNum(driverNum, builderNum);
-            Debug.Log(driverNum + " " + builderNum);
         }
     }
 }
