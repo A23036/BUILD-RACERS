@@ -33,8 +33,10 @@ public class selectScene : baseScene
         //名前が一文字以上でシーン遷移
         if(PlayerPrefs.GetString("PlayerName").Length > 0)
         {
-
             SceneManager.LoadScene("gamePlay");
+
+            //セレクターの削除
+            PhotonNetwork.Destroy(selector);
         }
     }
 
@@ -65,7 +67,5 @@ public class selectScene : baseScene
 
     ~selectScene()
     {
-        //セレクターの削除
-        PhotonNetwork.Destroy(selector);
     }
 }
