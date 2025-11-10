@@ -12,6 +12,8 @@ public class baseScene : MonoBehaviourPunCallbacks
     /// </summary>
     protected string preSceneName;
 
+    private float logTimer;
+
     /// <summary>
     /// そのシーンをネットワークに繋げるか
     /// </summary>
@@ -20,7 +22,7 @@ public class baseScene : MonoBehaviourPunCallbacks
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected void Start()
     {
-        
+        logTimer = 0f;
     }
 
     protected void Awake()
@@ -40,8 +42,15 @@ public class baseScene : MonoBehaviourPunCallbacks
     // Update is called once per frame
     protected void Update()
     {
-        if (PhotonNetwork.IsConnected) Debug.Log("[NETWORK STAT] ONLINE");
-        else Debug.Log("[NETWORK STAT] OFFLINE");
+        //接続状態をコンソールに表示
+        logTimer += Time.deltaTime;
+        if (logTimer >= 1f)
+        {
+            if (PhotonNetwork.IsConnected) Debug.Log("[NETWORK STAT] ONLINE");
+            else Debug.Log("[NETWORK STAT] OFFLINE");
+            
+            logTimer = 0f;
+        }
     }
 
     protected void PushBackButton()
