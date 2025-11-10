@@ -12,6 +12,38 @@ public class playScene : baseScene
     {
         preSceneName = "select";
 
+        GenerateKarts();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.R))
+        {
+            ToResult();
+        }
+
+        base.Update();
+    }
+
+    public void ToResult()
+    {
+        SceneManager.LoadScene("result");
+    }
+
+    public override void OnJoinedRoom()
+    {
+        //カートの生成
+        GenerateKarts();
+
+        Debug.Log("接続成功");
+    }
+
+    public void GenerateKarts()
+    {
+        //オフラインなら処理なし
+        if (!PhotonNetwork.IsConnected) return;
+
         // プレイヤー生成（自分）
         var position = new Vector3(Random.Range(-3f, 3f), 3, Random.Range(-3f, 3f));
         var player = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
@@ -40,19 +72,5 @@ public class playScene : baseScene
                 geneZ += .1f;
             }
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKey(KeyCode.R))
-        {
-            ToResult();
-        }
-    }
-
-    public void ToResult()
-    {
-        SceneManager.LoadScene("result");
     }
 }

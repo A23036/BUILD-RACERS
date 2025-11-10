@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,21 +11,54 @@ public class baseScene : MonoBehaviourPunCallbacks
     /// 前のシーンの名前
     /// </summary>
     protected string preSceneName;
-    
+
+    /// <summary>
+    /// そのシーンをネットワークに繋げるか
+    /// </summary>
+    [SerializeField] protected bool isConnect = true;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected void Start()
     {
         
+    }
+
+    protected void Awake()
+    {
+        //未接続なら接続処理を実行
+        if (isConnect && !PhotonNetwork.IsConnected)
+        {
+            Connect();
+        }
+        //オフラインシーンで接続がされていれば切断
+        else if(!isConnect && PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.Disconnect();
+        }
     }
 
     // Update is called once per frame
-    void Update()
+    protected void Update()
     {
-        
+        if (PhotonNetwork.IsConnected) Debug.Log("[NETWORK STAT] ONLINE");
+        else Debug.Log("[NETWORK STAT] OFFLINE");
     }
 
-    public void PushBackButton()
+    protected void PushBackButton()
     {
         if(preSceneName != null) SceneManager.LoadScene(preSceneName);
+    }
+
+    protected void Connect()
+    {
+        // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
+        PhotonNetwork.ConnectUsingSettings();
+    }
+
+    // マスターサーバーへの接続が成功した時に呼ばれるコールバック
+    public override void OnConnectedToMaster()
+    {
+        // "Room"という名前のルームに参加する（ルームが存在しなければ作成して参加する）
+        PhotonNetwork.JoinOrCreateRoom("Room", new RoomOptions(), TypedLobby.Default);
     }
 }

@@ -11,6 +11,6 @@ public class optionScene : baseScene
     // Update is called once per frame
     void Update()
     {
-        
+        base.Update();
     }
 }

@@ -16,7 +16,7 @@ public class resultScene : baseScene
     // Update is called once per frame
     void Update()
     {
-        
+        base.Update();
     }
 
     public void PushMenuButton()

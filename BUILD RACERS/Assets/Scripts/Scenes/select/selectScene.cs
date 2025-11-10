@@ -17,15 +17,11 @@ public class selectScene : baseScene
         GameObject inputField = GameObject.Find("InputFieldLegacy");
         InputField input = inputField.GetComponent<InputField>();
         input.text = PlayerPrefs.GetString("PlayerName");
-
-        // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
-        PhotonNetwork.ConnectUsingSettings();
     }
 
     // Update is called once per frame
     void FixUpdate()
     {
-        
     }
 
     public void PushStartButton()
@@ -47,13 +43,6 @@ public class selectScene : baseScene
 
         //プレイヤーの名前を保存
         PlayerPrefs.SetString("PlayerName", input.text);
-    }
-
-    // マスターサーバーへの接続が成功した時に呼ばれるコールバック
-    public override void OnConnectedToMaster()
-    {
-        // "Room"という名前のルームに参加する（ルームが存在しなければ作成して参加する）
-        PhotonNetwork.JoinOrCreateRoom("Room", new RoomOptions(), TypedLobby.Default);
     }
 
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック

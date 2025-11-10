@@ -17,5 +17,7 @@ public class tittleScene : baseScene
         {
             SceneManager.LoadScene("menu");
         }
+
+        base.Update();
     }
 }

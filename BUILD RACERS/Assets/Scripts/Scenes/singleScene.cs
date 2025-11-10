@@ -12,7 +12,7 @@ public class singleScene : baseScene
     // Update is called once per frame
     void Update()
     {
-        
+        base.Update();
     }
 
     public void PushSelectButton()

@@ -2868,6 +2868,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2151695b9183e6f498a623f2fa9274f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isConnect: 1
   GenerateBotsNum: 1
 --- !u!1 &458937789
 GameObject:
