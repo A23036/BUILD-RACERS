@@ -10,6 +10,7 @@ TagManager:
   - coinText
   - Coin
   - Road
+  - branch
   layers:
   - Default
   - TransparentFX

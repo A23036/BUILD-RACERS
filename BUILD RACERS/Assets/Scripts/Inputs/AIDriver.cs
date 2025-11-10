@@ -140,6 +140,17 @@ public class AIDriver : MonoBehaviour, IDriver
         currentIndex++;
         if (currentIndex >= waypoints.Count)
             currentIndex = loopPath ? 0 : waypoints.Count - 1;
+
+        //分岐なら分岐処理
+        if (waypoints[currentIndex].transform.gameObject.tag == "branch")
+        {
+            //仮で子オブジェクトからランダムに決定
+            int childCount = waypoints[currentIndex].transform.childCount;
+            int rnd = Random.Range(0, childCount);
+            waypoints[currentIndex] = waypoints[currentIndex].transform.GetChild(rnd);
+
+            Debug.Log("DECIDE BRANCH : " + (rnd + 1));
+        }
     }
 
     // --- ルックアヘッド点計算 ---
