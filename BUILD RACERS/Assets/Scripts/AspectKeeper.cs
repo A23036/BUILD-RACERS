@@ -7,7 +7,7 @@ public class AspectKeeper : MonoBehaviour
     private Camera targetCamera;   // 固定比率を適用するカメラ（例：Main Camera）
 
     [SerializeField]
-    private Vector2 aspectVec = new Vector2(9, 16);  // 目的比率（例：9:16、16:9、4:3など）
+    private Vector2 aspectVec = new Vector2(16,9);  // 目的比率（例：9:16、16:9、4:3など）
 
     private void Update()
     {
