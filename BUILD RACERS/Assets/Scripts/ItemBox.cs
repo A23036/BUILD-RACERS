@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections; // コルーチンを使用するために追加
 
 public class ItemBoxController : MonoBehaviour
 {
@@ -65,6 +64,7 @@ public class ItemBoxController : MonoBehaviour
             else
             {
                 // イージング関数を使って滑らかに拡大
+                // EaseOutBackを使うと少しバウンドする感じになります
                 float easedProgress = EaseOutBack(progress);
                 float currentScale = Mathf.Lerp(respawnStartScale, 1.0f, easedProgress);
                 transform.localScale = originalScale * currentScale;
@@ -76,91 +76,48 @@ public class ItemBoxController : MonoBehaviour
         if (isDestroyed) return;
 
         // 1. ピンポン運動の値を取得
+        // Time.time * scaleSpeed で時間の流れを速め、Mathf.PingPongで0～1.0の範囲を往復
         float pingPongValue = Mathf.PingPong(Time.time * scaleSpeed, 1.0f);
 
         // 2. 0～1.0の値を minScale と maxScale の間に変換
+        // Lerp（線形補間）で、最小値と最大値の間の適切な値を計算します
         float scale = Mathf.Lerp(minScale, maxScale, pingPongValue);
 
         // 3. 計算したスケールをオブジェクトに適用
+        // X, Y, Zすべての軸で同じ倍率を適用します
         transform.localScale = originalScale * scale;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // すでに破壊されている、または復活アニメーション中は無視
-        if (isDestroyed || isRespawning) return;
+        // すでに破壊されている場合は何もしない
+        if (isDestroyed) return;
 
         if (other.gameObject.CompareTag("Player"))
         {
             // --- アイテムボックスが破壊されるときの処理 ---
             // 1. アイテムを渡す処理をここに記述（あれば）
 
-            // 破壊状態にして、見た目とコライダーを非表示/無効化
-            HideBox();
-
-            // コルーチンを開始し、エフェクト再生後に次の処理を行う
-            StartCoroutine(HandleBoxBreak());
-        }
-    }
-
-    /// <summary>
-    /// アイテムボックスが破壊された後の処理（エフェクト再生、復活待機または完全破棄）
-    /// </summary>
-    private IEnumerator HandleBoxBreak()
-    {
-        // 2. 破壊エフェクトを生成し、終了まで待機
-        if (breakEffectPrefab != null)
-        {
-            // エフェクトを生成し、インスタンスを保持
-            GameObject effectInstance = Instantiate(breakEffectPrefab, transform.position, Quaternion.identity);
-
-            float effectDuration = 0f;
-            ParticleSystem ps = effectInstance.GetComponent<ParticleSystem>();
-
-            if (ps != null)
+            // 2. 破壊エフェクトを生成する
+            if (breakEffectPrefab != null) // プレハブが設定されているか確認
             {
-                // エフェクトが完全に終わるまでの時間を計算 (Duration + Start Lifetime)
-                // ParticleSystemの設定によっては constantMax でなく他の値を使う必要がある場合があります。
-                effectDuration = ps.main.duration + ps.main.startLifetime.constantMax;
+                // アイテムボックスがあった場所にエフェクトを生成
+                Instantiate(breakEffectPrefab, transform.position, Quaternion.identity);
             }
 
-            // エフェクトの再生時間分待機
-            if (effectDuration > 0f)
+            // 3. 復活機能が有効なら、見た目だけ非表示にして復活処理を開始
+            if (enableRespawn)
             {
-                yield return new WaitForSeconds(effectDuration);
+                HideBox();
+                Invoke(nameof(RespawnBox), respawnTime);
             }
             else
             {
-                // 再生時間が不明な場合は最低限の待機時間
-                yield return new WaitForSeconds(1.5f);
+                // 復活機能が無効なら完全に破壊
+                Destroy(gameObject);
             }
-
-            // エフェクトオブジェクトを破棄（自動で消えない設定のエフェクトでもこれで確実に消える）
-            if (effectInstance != null)
-            {
-                Destroy(effectInstance);
-            }
-        }
-        else
-        {
-            // エフェクトがない場合は次のフレームまで待機
-            yield return null;
-        }
-
-        // 3. 復活機能の処理
-        if (enableRespawn)
-        {
-            // 復活時間分待機
-            yield return new WaitForSeconds(respawnTime);
-            RespawnBox(); // 復活処理を呼び出す
-        }
-        else
-        {
-            // 復活機能が無効なら完全に破壊
-            Destroy(gameObject);
         }
     }
-
 
     /// <summary>
     /// アイテムボックスを非表示にする
@@ -217,10 +174,9 @@ public class ItemBoxController : MonoBehaviour
         return 1f + c3 * Mathf.Pow(t - 1f, 3f) + c1 * Mathf.Pow(t - 1f, 2f);
     }
 
-    // Unity Editorで停止した時にInvokeとコルーチンをキャンセル
+    // Unity Editorで停止した時にInvokeをキャンセル
     private void OnDisable()
     {
         CancelInvoke();
-        StopAllCoroutines();
     }
 }
