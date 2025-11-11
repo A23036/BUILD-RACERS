@@ -99,10 +99,12 @@ public class ItemBoxController : MonoBehaviour
             // 1. アイテムを渡す処理をここに記述（あれば）
 
             // 2. 破壊エフェクトを生成する
-            if (breakEffectPrefab != null) // プレハブが設定されているか確認
+            if (breakEffectPrefab != null)
             {
-                // アイテムボックスがあった場所にエフェクトを生成
-                Instantiate(breakEffectPrefab, transform.position, Quaternion.identity);
+                GameObject effect = Instantiate(breakEffectPrefab, transform.position, Quaternion.identity);
+
+                // エフェクトを2秒後に破壊（時間は調整してください）
+                Destroy(effect, 2f);
             }
 
             // 3. 復活機能が有効なら、見た目だけ非表示にして復活処理を開始
