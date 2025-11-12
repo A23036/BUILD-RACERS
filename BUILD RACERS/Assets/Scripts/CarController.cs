@@ -57,7 +57,7 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
-        variableJoystick = joystick.GetComponent<Joystick>();
+        if(joystick != null) variableJoystick = joystick.GetComponent<Joystick>();
 
         // スピード表示テキストの設定
         if (speedText == null)
@@ -112,9 +112,9 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void OnDisable()
     {
-        throttleAction.Disable();
-        brakeAction.Disable();
-        steerAction.Disable();
+        if(throttleAction != null) throttleAction.Disable();
+        if(brakeAction != null) brakeAction.Disable();
+        if(steerAction != null) steerAction.Disable();
     }
 
     private void FixedUpdate()

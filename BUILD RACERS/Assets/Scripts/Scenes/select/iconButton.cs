@@ -27,7 +27,10 @@ public class iconButton : MonoBehaviour
         {
             //自分のセレクターを検索する
             PhotonView[] allss = FindObjectsOfType<PhotonView>();
+
+            //接続数をコンソールに出力
             Debug.Log("CONNECTS COUNT : " + allss.Count());
+            
             foreach(var css in allss)
             {
                 if (css.IsMine)

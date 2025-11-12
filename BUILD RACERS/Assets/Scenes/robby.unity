@@ -657,8 +657,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: singleScene, Assembly-CSharp
+      - m_Target: {fileID: 1421747474}
+        m_TargetAssemblyTypeName: robbyScene, Assembly-CSharp
         m_MethodName: PushSelectButton
         m_Mode: 1
         m_Arguments:
@@ -806,9 +806,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.00005930662
+    x: 0.00026080012
     y: 0
-    width: 0.9998814
+    width: 0.9994784
     height: 1
   near clip plane: 0.3
   far clip plane: 1000

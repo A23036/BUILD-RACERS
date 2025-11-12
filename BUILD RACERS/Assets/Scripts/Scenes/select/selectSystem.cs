@@ -1,12 +1,20 @@
 using Photon.Pun;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 {
+    //同期対象の変数
     private int selectDriverNum;
     private int selectBuilderNum;
+    private int colorNumber;
+
+    //カラーパレット
+    Color[] colorPalette;
+    private int playersCount = 16;
 
     [SerializeField] private Vector3 offset;
 
@@ -20,6 +28,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     {
         selectDriverNum = -1;
         selectBuilderNum = -1;
+        colorNumber = -1;
     }
 
     private void Awake()
@@ -32,13 +41,25 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         //キャンバスの子供に設定
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
         transform.SetParent(canvas.transform, false);
+
+        //セレクターの色をプレイヤーの数で分割
+        Color[] cols = new Color[playersCount];
+        for (int i = 0; i < playersCount; i++)
+        {
+            float h = i / (float)playersCount; // 0..1
+            cols[i] = Color.HSVToRGB(h, 1, 1);
+        }
+        colorPalette = cols;
     }
 
     void Update()
     {
+        //色の更新
+        UpdateColor();
+
         // 表示（自分のオブジェクトにだけ描画を任せる場合）
         if (!photonView.IsMine) return;
-
+        
         if (selectDriverNum == -1 && selectBuilderNum == -1)
         {
             transform.position = new Vector3(-100, -100, -100);
@@ -50,11 +71,15 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             {
                 transform.position = driverIcons[selectDriverNum].position + offset;
                 text.text = "NOW SELECT : DRIVER" + (selectDriverNum + 1);
+                PlayerPrefs.SetInt("driver", selectDriverNum + 1);
+                PlayerPrefs.SetInt("builder", -1);
             }
             else
             {
                 transform.position = builderIcons[selectBuilderNum].position + offset;
                 text.text = "NOW SELECT : BUILDER" + (selectBuilderNum + 1);
+                PlayerPrefs.SetInt("driver", -1);
+                PlayerPrefs.SetInt("builder", selectBuilderNum + 1);
             }
         }
     }
@@ -107,13 +132,34 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             // このクライアントが所有者なら送る
             stream.SendNext(selectDriverNum);
             stream.SendNext(selectBuilderNum);
+            stream.SendNext(colorNumber);
         }
         else
         {
             // 他クライアントから受け取る
             selectDriverNum = (int)stream.ReceiveNext();
             selectBuilderNum = (int)stream.ReceiveNext();
+            colorNumber = (int)stream.ReceiveNext();
         }
+    }
+
+    //セレクターの色の割り当て
+    public void DecideColor()
+    {
+        //自分のみ色を指定　他プレイヤーは同期で色を受け取る
+        if (!photonView.IsMine) return;
+
+        colorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        UpdateColor();
+    }
+
+    public void UpdateColor()
+    {
+        //未設定なら処理なし
+        if (colorNumber == -1) return;
+
+        GetComponent<Image>().color = colorPalette[colorNumber % playersCount];
     }
 
     void OnDestroy()
