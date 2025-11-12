@@ -24,8 +24,8 @@ public class RocketMove : MonoBehaviour
         // 初期の反射回数を設定
         currentReflectCount = maxReflectCount;
 
-        // 初期の移動方向をローカルの上方向（Y軸）に設定
-        currentDirection = transform.up;
+        // 初期の移動方向をローカルの上方向（Z軸）に設定
+        currentDirection = transform.forward;
     }
 
     void Update()
