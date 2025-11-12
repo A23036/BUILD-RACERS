@@ -50,6 +50,8 @@ public class selectScene : baseScene
     {
         //選択アイコンの生成　最初は画面外に生成
         selector = PhotonNetwork.Instantiate("Selector", new Vector3(-100,-100,-100), Quaternion.identity);
+        var ss = selector.GetComponent<selectSystem>();
+        ss.DecideColor();
 
         Debug.Log("接続成功");
     }

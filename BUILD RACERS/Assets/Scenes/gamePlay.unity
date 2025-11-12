@@ -2952,6 +2952,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isConnect: 1
   GenerateBotsNum: 6
+  DriverUI: {fileID: 1684157463}
+  BuilderUI: {fileID: 1512813107}
 --- !u!1 &458937789
 GameObject:
   m_ObjectHideFlags: 0
@@ -12168,9 +12170,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.00022673607
+    x: 0
     y: 0
-    width: 0.9995465
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
