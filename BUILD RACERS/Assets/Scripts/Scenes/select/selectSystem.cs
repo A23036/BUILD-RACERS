@@ -16,7 +16,10 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     Color[] colorPalette;
     private int playersCount = 16;
 
+    private float timer;
+
     [SerializeField] private Vector3 offset;
+    [SerializeField] private bool gamingColor;
 
     private IconManager im;
     private List<Transform> driverIcons;
@@ -29,6 +32,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         selectDriverNum = -1;
         selectBuilderNum = -1;
         colorNumber = -1;
+
+        timer = 0f;
     }
 
     private void Awake()
@@ -60,6 +65,17 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         // 表示（自分のオブジェクトにだけ描画を任せる場合）
         if (!photonView.IsMine) return;
         
+        //ゲーミングカラー
+        if(gamingColor)
+        {
+            timer += Time.deltaTime;
+            if (timer >= .5f)
+            {
+                colorNumber++;
+                timer = 0f;
+            }
+        }
+
         if (selectDriverNum == -1 && selectBuilderNum == -1)
         {
             transform.position = new Vector3(-100, -100, -100);
@@ -151,6 +167,13 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         colorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
+        photonView.RPC(nameof(RPC_SetColorNumber), RpcTarget.OthersBuffered, colorNumber);
+    }
+
+    [PunRPC]
+    void RPC_SetColorNumber(int receivedColorNumber, PhotonMessageInfo info)
+    {
+        colorNumber = receivedColorNumber;
         UpdateColor();
     }
 
