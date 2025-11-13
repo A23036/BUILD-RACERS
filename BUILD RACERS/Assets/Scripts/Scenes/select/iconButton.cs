@@ -44,6 +44,7 @@ public class iconButton : MonoBehaviour
         if(ss != null)
         {
             ss.SetNum(driverNum, builderNum);
+            ss.PrintLog();
         }
     }
 }

@@ -31,7 +31,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     {
         selectDriverNum = -1;
         selectBuilderNum = -1;
-        colorNumber = -1;
 
         timer = 0f;
     }
@@ -166,15 +165,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         if (!photonView.IsMine) return;
 
         colorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
-
-        photonView.RPC(nameof(RPC_SetColorNumber), RpcTarget.OthersBuffered, colorNumber);
-    }
-
-    [PunRPC]
-    void RPC_SetColorNumber(int receivedColorNumber, PhotonMessageInfo info)
-    {
-        colorNumber = receivedColorNumber;
-        UpdateColor();
+        
+        PrintLog();
     }
 
     public void UpdateColor()
@@ -183,6 +175,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         if (colorNumber == -1) return;
 
         GetComponent<Image>().color = colorPalette[colorNumber % playersCount];
+    }
+
+    public void PrintLog()
+    {
+        int actorNumber = photonView.Owner.ActorNumber;
+        Debug.Log("No." + actorNumber + " COLOR : " + colorNumber);
     }
 
     void OnDestroy()
