@@ -4,66 +4,102 @@ public class RocketMove : MonoBehaviour
 {
     // Inspectorで速度を設定できるように public にします
     public float speed = 20f;
-
     // ロケットが発射されてから自動的に消滅するまでの時間
     public float lifeTime = 5f;
 
-    // ★ 新しく追加 ★
     [Header("Reflect Settings")]
     [Tooltip("ロケットが反射できる最大回数")]
     public int maxReflectCount = 3;
-
     private int currentReflectCount;
     private Vector3 currentDirection; // 現在の移動方向を格納する変数
+
+    [Header("Height Maintenance Settings")]
+    [Tooltip("地面から維持したい高さ")]
+    public float targetHeight = 2f;
+    [Tooltip("高さ調整の強度（大きいほど素早く調整）")]
+    public float heightAdjustSpeed = 5f;
+    [Tooltip("Raycastの最大距離")]
+    public float raycastDistance = 10f;
+    [Tooltip("地面として認識するレイヤー")]
+    public LayerMask groundLayer = -1; // -1は全てのレイヤー
 
     void Start()
     {
         // 破壊タイマーを開始
         Destroy(gameObject, lifeTime);
-
         // 初期の反射回数を設定
         currentReflectCount = maxReflectCount;
-
         // 初期の移動方向をローカルの上方向（Z軸）に設定
         currentDirection = transform.forward;
     }
 
     void Update()
     {
+        // 高さ維持処理
+        MaintainHeight();
+
         // 毎フレーム、currentDirectionに基づいて移動します
         transform.Translate(currentDirection * speed * Time.deltaTime, Space.World);
 
-        // ★ 修正: 水平姿勢を維持しつつ、進行方向を向く ★
+        // 水平姿勢を維持しつつ、進行方向を向く
         if (currentDirection != Vector3.zero)
         {
-            // 進行方向（currentDirection）を前方（Z軸）に、
-            // ワールドの真上（Vector3.up）をロケットの上（Y軸）に指定します。
             transform.rotation = Quaternion.LookRotation(currentDirection, Vector3.up);
+        }
+    }
+
+    // ★ 高さ維持処理 ★
+    void MaintainHeight()
+    {
+        RaycastHit hit;
+        // 下方向にRayを飛ばす
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer))
+        {
+            float currentHeight = hit.distance;
+            float heightDifference = targetHeight - currentHeight;
+
+            // 高さの差に応じて上下に移動
+            Vector3 newPosition = transform.position;
+            newPosition.y += heightDifference * heightAdjustSpeed * Time.deltaTime;
+            transform.position = newPosition;
+
+            // デバッグ用：Rayを可視化（Sceneビューで確認可能）
+            Debug.DrawRay(transform.position, Vector3.down * hit.distance, Color.green);
+        }
+        else
+        {
+            // 地面が検出されない場合（高すぎる、または地面がない）
+            Debug.DrawRay(transform.position, Vector3.down * raycastDistance, Color.red);
         }
     }
 
     // ★ 衝突処理 ★
     void OnCollisionEnter(Collision collision)
     {
-        // 反射回数が残っているか確認
-        if (currentReflectCount > 0)
+        // ★ Wallタグの壁に当たった場合のみ反射 ★
+        if (collision.gameObject.CompareTag("Wall"))
         {
-            Vector3 incomingVector = currentDirection;
-            Vector3 surfaceNormal = collision.contacts[0].normal;
-
-            // 新しい方向を計算
-            currentDirection = Vector3.Reflect(incomingVector, surfaceNormal).normalized;
-
-            // ★ 修正: 水平姿勢を維持しつつ、新しい進行方向を向く ★
-            // 衝突時に即座に回転を更新
-            transform.rotation = Quaternion.LookRotation(currentDirection, Vector3.up);
-
-            // 反射回数を減らす
-            currentReflectCount--;
+            // 反射回数が残っているか確認
+            if (currentReflectCount > 0)
+            {
+                Vector3 incomingVector = currentDirection;
+                Vector3 surfaceNormal = collision.contacts[0].normal;
+                // 新しい方向を計算
+                currentDirection = Vector3.Reflect(incomingVector, surfaceNormal).normalized;
+                // 衝突時に即座に回転を更新
+                transform.rotation = Quaternion.LookRotation(currentDirection, Vector3.up);
+                // 反射回数を減らす
+                currentReflectCount--;
+            }
+            else
+            {
+                // 反射回数が残っていない場合、ロケットを破壊する
+                Destroy(gameObject);
+            }
         }
         else
         {
-            // 反射回数が残っていない場合、ロケットを破壊する
+            // ★ Wall以外のオブジェクトに当たったら即座に破壊 ★
             Destroy(gameObject);
         }
     }

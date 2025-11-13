@@ -75,9 +75,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: befaaffa917020b4e97f3fdd80637be5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 50
-  lifeTime: 5
-  maxReflectCount: 3
+  speed: 25
+  lifeTime: 100
+  maxReflectCount: 10
+  targetHeight: 1.5
+  heightAdjustSpeed: 5
+  raycastDistance: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!96 &6699846087362780702
 TrailRenderer:
   serializedVersion: 3
