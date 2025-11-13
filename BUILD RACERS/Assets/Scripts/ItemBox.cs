@@ -32,6 +32,11 @@ public class ItemBoxController : MonoBehaviour
     public float maxScale = 1.05f;
     private Vector3 originalScale;
 
+    [SerializeField]
+    private PartsType partsType;
+
+    ItemManager itemManager;
+
     void Start()
     {
         // オブジェクトの元のスケールを保存しておきます
@@ -95,8 +100,11 @@ public class ItemBoxController : MonoBehaviour
 
         if (other.gameObject.CompareTag("Player"))
         {
+            itemManager = other.GetComponentInParent<ItemManager>();
+
             // --- アイテムボックスが破壊されるときの処理 ---
             // 1. アイテムを渡す処理をここに記述（あれば）
+            itemManager.Enqueue(itemManager.GetRandomItem(partsType));
 
             // 2. 破壊エフェクトを生成する
             if (breakEffectPrefab != null)

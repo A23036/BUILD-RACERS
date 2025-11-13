@@ -19,6 +19,7 @@ public class ItemManager : MonoBehaviour
             nodeMap[itemId] = new List<LinkedListNode<int>>();
 
         nodeMap[itemId].Add(node);
+        PrintQueue();
     }
 
     // 最も古いアイテムを取り出す
@@ -35,6 +36,7 @@ public class ItemManager : MonoBehaviour
         if (nodeMap[id].Count == 0)
             nodeMap.Remove(id);
 
+        PrintQueue();
         return id;
     }
 
@@ -59,6 +61,7 @@ public class ItemManager : MonoBehaviour
                 nodeMap.Remove(itemId);
         }
 
+        PrintQueue();
         return true;
     }
 
@@ -68,5 +71,20 @@ public class ItemManager : MonoBehaviour
         foreach (var id in itemQueue)
             s += id + " ";
         Debug.Log(s);
+    }
+
+    public int GetRandomItem(PartsType type)
+    {
+        switch (type)
+        {
+            case PartsType.Passive:
+                return Random.Range(0, 3);
+            case PartsType.Item:
+                return Random.Range(4, 6);
+            case PartsType.Gimmick:
+                return Random.Range(7, 10);
+            default:
+                return 0;
+        }
     }
 }
