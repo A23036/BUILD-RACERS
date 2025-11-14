@@ -23,6 +23,12 @@ public class RocketMove : MonoBehaviour
     [Tooltip("地面として認識するレイヤー")]
     public LayerMask groundLayer = -1; // -1は全てのレイヤー
 
+    [Header("Effect Settings")]
+    [Tooltip("破壊時に再生するエフェクトのPrefab")]
+    public GameObject destroyEffectPrefab;
+    [Tooltip("エフェクトが自動で消えるまでの時間")]
+    public float effectLifeTime = 2f;
+
     void Start()
     {
         // 破壊タイマーを開始
@@ -73,6 +79,18 @@ public class RocketMove : MonoBehaviour
         }
     }
 
+    // ★ エフェクト再生処理 ★
+    void PlayDestroyEffect()
+    {
+        if (destroyEffectPrefab != null)
+        {
+            // エフェクトを衝突位置に生成
+            GameObject effect = Instantiate(destroyEffectPrefab, transform.position, Quaternion.identity);
+            // エフェクトを一定時間後に自動削除
+            Destroy(effect, effectLifeTime);
+        }
+    }
+
     // ★ 衝突処理 ★
     void OnCollisionEnter(Collision collision)
     {
@@ -99,7 +117,10 @@ public class RocketMove : MonoBehaviour
         }
         else
         {
-            // ★ Wall以外のオブジェクトに当たったら即座に破壊 ★
+            // ★ Wall以外のオブジェクトに当たったら ★
+            // エフェクトを再生
+            PlayDestroyEffect();
+            // ロケットを破壊
             Destroy(gameObject);
         }
     }
