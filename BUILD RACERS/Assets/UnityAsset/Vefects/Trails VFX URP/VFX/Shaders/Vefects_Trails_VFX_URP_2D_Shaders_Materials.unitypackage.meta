@@ -1,8 +1,14 @@
 fileFormatVersion: 2
-guid: 4d61b356143dcb34c866cd74021cd479
-NativeFormatImporter:
+guid: 01134bbbb3462c541bc7da67e013434e
+DefaultImporter:
   externalObjects: {}
-  mainObjectFileID: 8400000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 242574
+  packageName: Trails VFX - URP
+  packageVersion: 1.0.20251
+  assetPath: Assets/UnityAsset/Vefects/Trails VFX URP/VFX/Shaders/Vefects_Trails_VFX_URP_2D_Shaders_Materials.unitypackage
+  uploadId: 770211

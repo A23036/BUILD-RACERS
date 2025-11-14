@@ -59,12 +59,8 @@ Material:
         m_Texture: {fileID: 2800000, guid: aec738f429fa4ab4a8b574c7c804886c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _IntensityMask:
-        m_Texture: {fileID: 2800000, guid: fa6235bc65ac4064f8d49fcc0c8ff503, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 44f79ad6c2cec8b4fa3ac7ec979859de, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mask:
@@ -75,20 +71,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _NoiseEdgesTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _NoiseTexture:
-        m_Texture: {fileID: 2800000, guid: 3327b545e30728e47b34b9588ff64aef, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OpacityMask:
-        m_Texture: {fileID: 2800000, guid: 171b695a70c8bb2439da87f69178c81b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
@@ -116,10 +100,7 @@ Material:
     - _AlphaAffectsOpacity: 1
     - _AlphaCutoff: 0.5
     - _AlphaIsDissolve: 1
-    - _BaseColorEdgesLerp: 0
     - _BumpScale: 1
-    - _CameraDepthFadeLength: 3
-    - _CameraDepthFadeOffset: 0.1
     - _CameraOffset: 0
     - _ColorSmoothstep: 0
     - _ColorSmoothstepSmoothness: 0.3
@@ -128,22 +109,13 @@ Material:
     - _DepthFade: 0
     - _DetailNormalMapScale: 1
     - _DistortionAmount: 0.3
-    - _DistortionIntensity: 1
-    - _DistortionLerp: 1
     - _DistortionMaskIntensity: 1
     - _Distortion_Amount: 0
     - _Dst: 10
     - _DstBlend: 0
-    - _EdgesBias: 0
-    - _EdgesMultiply: 1
-    - _EdgesPower: 1
-    - _EmissionIntensity: 1
     - _EmissiveIntensity: 5
-    - _EnvironmentReflections: 1
-    - _Erosion: 0
     - _ErosionMultiply: 1
     - _ErosionPower: 1
-    - _ErosionSmoothness: 1
     - _ErosionSmoothstep: 0
     - _ErosionSmoothstepSmoothness: 0.1
     - _Erosion_Intensity: 1
@@ -157,8 +129,6 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _IntensityMaskMultiply: 1
-    - _IntensityMaskPower: 1
     - _MaskDistortionIntensity: 1
     - _MaskMultiply: 1
     - _MaskPower: 1
@@ -168,22 +138,14 @@ Material:
     - _Mask_Power: 1
     - _Metallic: 0
     - _Mode: 0
-    - _Noise01Intensity: -1
-    - _NoiseDepth: 0
-    - _NoiseMultiply: 1
     - _OcclusionStrength: 1
-    - _OpacityMaskMultiply: 1
-    - _OpacityMaskPower: 1
-    - _OpacityMultiply: 1
     - _Opacity_Boost: 1
     - _OverallSpeed: 1
     - _Parallax: 0.02
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
-    - _Specular: 0
     - _SpecularHighlights: 1
     - _Src: 5
     - _SrcBlend: 1
@@ -193,7 +155,6 @@ Material:
     - _ZWrite: 0
     - __dirty: 0
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color01: {r: 1, g: 1, b: 1, a: 0}
     - _Color02: {r: 0.3773585, g: 0.3773585, b: 0.3773585, a: 0}
@@ -208,22 +169,13 @@ Material:
     - _DistortionUVScale: {r: 0.1, g: 0.5, b: 0, a: 0}
     - _Distortion_Scale: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _Distortion_Speed: {r: 0, g: 0, b: 0, a: 0}
-    - _EdgesColor: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ErosionPanSpeed: {r: -0.337, g: 0.07, b: 0, a: 0}
     - _ErosionUVScale: {r: 0.1, g: 0.3, b: 0, a: 0}
     - _Erosion_Scale: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _Erosion_Speed: {r: 0.25, g: 0, b: 0, a: 0}
-    - _IntensityMaskOffset: {r: 0, g: 0, b: 0, a: 0}
-    - _IntensityMaskPanSpeed: {r: 0, g: 0, b: 0, a: 0}
-    - _IntensityMaskUVS: {r: 1, g: 1, b: 0, a: 0}
     - _MaskPanSpeed: {r: -2.2, g: 0, b: 0, a: 0}
     - _MaskUVScale: {r: 0.25, g: 1, b: 0, a: 0}
     - _Mask_Scale: {r: 0.5, g: 1, b: 0, a: 0}
     - _Mask_Speed: {r: 0.5, g: 0, b: 0, a: 0}
-    - _Noise01UVP: {r: 0.1, g: 0.3, b: 0, a: 0}
-    - _Noise01UVS: {r: 1, g: 1, b: 0, a: 0}
-    - _WorldNoiseSpeed: {r: 0, g: 0, b: 0, a: 0}
-    - _WorldNoiseTiling: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
-  m_AllowLocking: 1
