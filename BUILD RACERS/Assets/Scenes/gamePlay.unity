@@ -13824,6 +13824,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2776085554063711493, guid: 3727f03d56777704ab071cf1b85161f8, type: 3}
+      propertyPath: destroyEffectPrefab
+      value: 
+      objectReference: {fileID: 8294947810415399850, guid: 7a16f43b4abbc0846a15aa17f7ba39bd, type: 3}
     - target: {fileID: 3261097858096690942, guid: 3727f03d56777704ab071cf1b85161f8, type: 3}
       propertyPath: m_Name
       value: PetBottle_Rocket_Green
