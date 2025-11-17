@@ -16,6 +16,7 @@ public class playScene : baseScene
         preSceneName = "select";
 
         GenerateKarts();
+        //Debug.Log("THROUGH START");
     }
 
     // Update is called once per frame
