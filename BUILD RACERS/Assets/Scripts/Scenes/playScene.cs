@@ -8,7 +8,7 @@ public class playScene : baseScene
     [SerializeField] int GenerateBotsNum = 0;
 
     [SerializeField] private GameObject DriverUI;
-    [SerializeField] private GameObject BuilderUI;
+    [SerializeField] private GameObject EngineerUI;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -81,13 +81,13 @@ public class playScene : baseScene
 
             //UIの表示・非表示
             DriverUI.SetActive(true);
-            BuilderUI.SetActive(false);
+            EngineerUI.SetActive(false);
         }
-        else if(PlayerPrefs.GetInt("builder") != -1)
+        else if(PlayerPrefs.GetInt("engineer") != -1)
         {
             //UIの表示・非表示
             DriverUI.SetActive(false);
-            BuilderUI.SetActive(true);
+            EngineerUI.SetActive(true);
         }
         else
         {

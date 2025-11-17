@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class IconManager : MonoBehaviour
 {
     [SerializeField] private List<Transform> driverIcons;
-    [SerializeField] private List<Transform> builderIcons;
+    [SerializeField] private List<Transform> engineerIcons;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,8 +21,8 @@ public class IconManager : MonoBehaviour
         return driverIcons;
     }
 
-    public List<Transform> GetBuilderIconsList()
+    public List<Transform> GetEngineerIconsList()
     {
-        return builderIcons;
+        return engineerIcons;
     }
 }

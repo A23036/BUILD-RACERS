@@ -3041,7 +3041,7 @@ MonoBehaviour:
   isConnect: 1
   GenerateBotsNum: 6
   DriverUI: {fileID: 1684157463}
-  BuilderUI: {fileID: 1512813107}
+  EngineerUI: {fileID: 1512813107}
 --- !u!1 &458937789
 GameObject:
   m_ObjectHideFlags: 0
@@ -7212,6 +7212,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1321941563365313387, guid: 2ba16b1814b9a8d45b72d3914f881b0c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 77f05f98bd0b8ca4da61ba9a39ef8a56, type: 2}
     - target: {fileID: 6600040074325872115, guid: 2ba16b1814b9a8d45b72d3914f881b0c, type: 3}
       propertyPath: m_Name
       value: Course_1

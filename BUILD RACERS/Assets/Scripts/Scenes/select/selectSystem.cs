@@ -10,7 +10,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 {
     //同期対象の変数
     private int selectDriverNum;
-    private int selectBuilderNum;
+    private int selectEngineerNum;
     private int colorNumber;
 
     //カラーパレット
@@ -29,20 +29,20 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     private IconManager im;
     private List<Transform> driverIcons;
-    private List<Transform> builderIcons;
+    private List<Transform> engineerIcons;
 
     private TextMeshProUGUI text;
 
     void Start()
     {
         selectDriverNum = -1;
-        selectBuilderNum = -1;
+        selectEngineerNum = -1;
 
         timer = 0f;
 
         //セレクトの初期化
         PlayerPrefs.SetInt("driver", 1);
-        PlayerPrefs.SetInt("builder", -1);
+        PlayerPrefs.SetInt("engineer", -1);
     }
 
     private void Awake()
@@ -50,7 +50,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         text = GameObject.Find("DebugMessage").GetComponent<TextMeshProUGUI>();
         im = GameObject.Find("IconManager").GetComponent<IconManager>();
         driverIcons = im.GetDriverIconsList();
-        builderIcons = im.GetBuilderIconsList();
+        engineerIcons = im.GetEngineerIconsList();
 
         //キャンバスの子供に設定
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
@@ -107,7 +107,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
 
-        if (selectDriverNum == -1 && selectBuilderNum == -1)
+        if (selectDriverNum == -1 && selectEngineerNum == -1)
         {
             transform.position = new Vector3(-100, -100, -100);
             text.text = "NOW SELECT : NONE";
@@ -119,14 +119,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
                 transform.position = driverIcons[selectDriverNum].position + offset;
                 text.text = "NOW SELECT : DRIVER" + (selectDriverNum + 1);
                 PlayerPrefs.SetInt("driver", selectDriverNum + 1);
-                PlayerPrefs.SetInt("builder", -1);
+                PlayerPrefs.SetInt("engineer", -1);
             }
             else
             {
-                transform.position = builderIcons[selectBuilderNum].position + offset;
-                text.text = "NOW SELECT : BUILDER" + (selectBuilderNum + 1);
+                transform.position = engineerIcons[selectEngineerNum].position + offset;
+                text.text = "NOW SELECT : ENGINEER" + (selectEngineerNum + 1);
                 PlayerPrefs.SetInt("driver", -1);
-                PlayerPrefs.SetInt("builder", selectBuilderNum + 1);
+                PlayerPrefs.SetInt("engineer", selectEngineerNum + 1);
             }
         }
     }
@@ -168,10 +168,10 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         return false;
     }
 
-    public void SetNum(int driver, int builder)
+    public void SetNum(int driver, int engineer)
     {
         // 予約をリクエスト　ローカルの確定・更新はコールバックで行う
-        pendingkey = (driver != -1) ? $"D_{driver + 1}" : $"B_{builder + 1}";
+        pendingkey = (driver != -1) ? $"D_{driver + 1}" : $"B_{engineer + 1}";
         if (!TryReserveSlot(pendingkey))
         {
             text.text = "NOW SELECT : CAPA OVER";
@@ -195,11 +195,11 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             if (pendingkey.StartsWith("D_"))
             {
                 selectDriverNum = int.Parse(pendingkey.Substring(2)) - 1;
-                selectBuilderNum = -1;
+                selectEngineerNum = -1;
             }
             else
             {
-                selectBuilderNum = int.Parse(pendingkey.Substring(2)) - 1;
+                selectEngineerNum = int.Parse(pendingkey.Substring(2)) - 1;
                 selectDriverNum = -1;
             }
 
@@ -218,7 +218,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     public void GetNums(out int dn, out int bn)
     {
         dn = selectDriverNum;
-        bn = selectBuilderNum;
+        bn = selectEngineerNum;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -227,14 +227,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         {
             // このクライアントが所有者なら送る
             stream.SendNext(selectDriverNum);
-            stream.SendNext(selectBuilderNum);
+            stream.SendNext(selectEngineerNum);
             stream.SendNext(colorNumber);
         }
         else
         {
             // 他クライアントから受け取る
             selectDriverNum = (int)stream.ReceiveNext();
-            selectBuilderNum = (int)stream.ReceiveNext();
+            selectEngineerNum = (int)stream.ReceiveNext();
             colorNumber = (int)stream.ReceiveNext();
         }
     }
