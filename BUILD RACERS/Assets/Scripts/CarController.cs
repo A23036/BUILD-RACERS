@@ -55,6 +55,8 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        Debug.Log("AWAKE");
+
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
         if(joystick != null) variableJoystick = joystick.GetComponent<Joystick>();
@@ -249,6 +251,8 @@ public class CarController : MonoBehaviourPunCallbacks
     public void SetAI<T>(WaypointContainer waypointContainer = null)
         where T : Component , IDriver
     {
+        Debug.Log("SET AI");
+
         if (driver == null)
         {
             var aiComp = gameObject.AddComponent<T>();

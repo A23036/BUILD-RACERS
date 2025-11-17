@@ -1,9 +1,10 @@
 using Photon.Pun;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using ExitGames.Client.Photon;
+using Photon.Realtime;
 
 public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -15,6 +16,11 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //カラーパレット
     Color[] colorPalette;
     private int playersCount = 16;
+
+    // セレクターが重ならないように
+    private string key;
+    private string oldkey;
+    private string pendingkey;
 
     private float timer;
 
@@ -33,6 +39,10 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         selectBuilderNum = -1;
 
         timer = 0f;
+
+        //セレクトの初期化
+        PlayerPrefs.SetInt("driver", 1);
+        PlayerPrefs.SetInt("builder", -1);
     }
 
     private void Awake()
@@ -63,14 +73,36 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         // 表示（自分のオブジェクトにだけ描画を任せる場合）
         if (!photonView.IsMine) return;
-        
+
         //ゲーミングカラー
-        if(gamingColor)
+        if (gamingColor)
         {
             timer += Time.deltaTime;
-            if (timer >= .5f)
+            if (timer >= .1f)
             {
                 colorNumber++;
+                timer = 0f;
+            }
+        }
+
+        //Debug numbers
+        if (true)
+        {
+            timer += Time.deltaTime;
+            if (timer >= 1f)
+            {
+                //座標確認
+                //Debug.Log(selectDriverNum + "," + selectBuilderNum);
+
+                //カスタムプロパティ確認
+                var props = PhotonNetwork.CurrentRoom.CustomProperties;
+
+                Debug.Log($"[RoomPropCount] {props.Count}");
+                foreach (var kv in props)
+                {
+                    Debug.Log($"[RoomProp] {kv.Key} = {kv.Value}");
+                }
+
                 timer = 0f;
             }
         }
@@ -98,40 +130,89 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
     }
-
-    public void SetNum(int driver, int builder)
+    public bool TryReserveSlot(string key)
     {
-        // 他プレイヤーと重ならないように確認
-        bool isCapaOver = false;
-        PhotonView[] allss = FindObjectsOfType<PhotonView>();
-        foreach (var css in allss)
+        int actor = PhotonNetwork.LocalPlayer.ActorNumber;
+        var propsToSet = new Hashtable { { key, actor } };
+        var expected = new Hashtable { { key, null } }; // キーが無ければ予約できる（原子的）
+        bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
+        if (success) PlayerPrefs.SetString("reservedSlot", key);
+        return success;
+    }
+
+    public bool ReleaseSlot(string key)
+    {
+        int actor = PhotonNetwork.LocalPlayer.ActorNumber;
+        // 自分が占有しているか確認してから解除するのが安全
+        object cur;
+        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(key, out cur))
         {
-            if (css.IsMine) continue;
-            var ss = css.GetComponent<selectSystem>();
-            if (ss == null) continue;
-            ss.GetNums(out int dn, out int bn);
-            if (dn == driver && bn == builder)
+            if (cur is int owner && owner == actor)
             {
-                isCapaOver = true;
-                break;
+                /*
+                var propsToSet = new Hashtable { { key, null } };
+                var expected = new Hashtable { { key, actor } }; // 自分が所有していれば解除
+                bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
+                Debug.Log("DELETE KEY");
+                return success;
+                */
             }
         }
 
-        if (isCapaOver)
+        var propsToSet = new Hashtable { { key, null } };
+        var expected = new Hashtable { { key, actor } }; // 自分が所有していれば解除
+        bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
+        Debug.Log("DELETE KEY");
+        return success;
+
+        return false;
+    }
+
+    public void SetNum(int driver, int builder)
+    {
+        // 予約をリクエスト　ローカルの確定・更新はコールバックで行う
+        pendingkey = (driver != -1) ? $"D_{driver + 1}" : $"B_{builder + 1}";
+        if (!TryReserveSlot(pendingkey))
         {
             text.text = "NOW SELECT : CAPA OVER";
             return;
         }
+    }
 
-        if (driver == selectDriverNum && builder == selectBuilderNum)
+    // 
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable changed)
+    {
+        base.OnRoomPropertiesUpdate(changed);
+
+        if (pendingkey == null) return;
+        // 自分が予約したキーが変更された時だけ処理
+        if (!changed.ContainsKey(pendingkey)) return;
+
+        //希望値がとれていればローカルを更新
+        object value = changed[pendingkey];
+        if (value is int number && number == PhotonNetwork.LocalPlayer.ActorNumber)
         {
-            selectDriverNum = -1;
-            selectBuilderNum = -1;
-            return;
+            if (pendingkey.StartsWith("D_"))
+            {
+                selectDriverNum = int.Parse(pendingkey.Substring(2)) - 1;
+                selectBuilderNum = -1;
+            }
+            else
+            {
+                selectBuilderNum = int.Parse(pendingkey.Substring(2)) - 1;
+                selectDriverNum = -1;
+            }
+
+            //キーのリリース
+            if(oldkey != null)
+            {
+                ReleaseSlot(oldkey);
+            }
+            oldkey = pendingkey;
         }
 
-        selectDriverNum = driver;
-        selectBuilderNum = builder;
+        //希望値をリセット
+        pendingkey = null;
     }
 
     public void GetNums(out int dn, out int bn)
@@ -165,8 +246,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         if (!photonView.IsMine) return;
 
         colorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
-        
-        PrintLog();
     }
 
     public void UpdateColor()
