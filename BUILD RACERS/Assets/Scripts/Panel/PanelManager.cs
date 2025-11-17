@@ -2,21 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 
-public enum PartsType
-{
-    Passive = 0,
-    Item,
-    Gimmick,
-}
-
-public enum PartsID
-{
-    Energy = 0,
-    Rocket,
-    Flask,
-
-}
-
 public class PanelManager : MonoBehaviour
 {
     // デバッグ用テキスト
