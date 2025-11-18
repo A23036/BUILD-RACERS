@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using ExitGames.Client.Photon;
-using Photon.Realtime;
 
 public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -130,14 +129,26 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
     }
-    public bool TryReserveSlot(string key)
+    public bool TryReserveSlot(string pendkey)
     {
         int actor = PhotonNetwork.LocalPlayer.ActorNumber;
-        var propsToSet = new Hashtable { { key, actor } };
-        var expected = new Hashtable { { key, null } }; // キーが無ければ予約できる（原子的）
-        bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
-        if (success) PlayerPrefs.SetString("reservedSlot", key);
-        return success;
+        
+        //自分を選択のときはCASの確認をせずにセット
+        if(pendingkey != null && key == pendkey)
+        {
+            Debug.Log("自分を選択");
+            var propsToSet = new Hashtable { { pendkey, null } };
+            bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet);
+            return success;
+        }
+        else
+        {
+            Debug.Log("自分以外を選択");
+            var propsToSet = new Hashtable { { pendkey, actor } };
+            var expected = new Hashtable { { pendkey, null } }; // キーが無ければ予約できる（原子的）
+            bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
+            return success;
+        }
     }
 
     public bool ReleaseSlot(string key)
@@ -164,32 +175,58 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
         Debug.Log("DELETE KEY");
         return success;
-
-        return false;
     }
 
     public void SetNum(int driver, int engineer)
     {
+        //送信済みならコールバックまで送信しない
+        if (pendingkey != null)
+        {
+            Debug.Log("予約送信済み");
+            return;
+        }
+
         // 予約をリクエスト　ローカルの確定・更新はコールバックで行う
         pendingkey = (driver != -1) ? $"D_{driver + 1}" : $"B_{engineer + 1}";
+        
+        // キーの予約リクエストの送信
         if (!TryReserveSlot(pendingkey))
         {
-            text.text = "NOW SELECT : CAPA OVER";
-            return;
+            //予約失敗なら希望値をリセット
+            pendingkey = null;
+            Debug.Log("予約失敗");
+        }
+        else
+        {
+            Debug.Log("予約成功");
         }
     }
 
-    // 
+    //カスタムプロパティのコールバック
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable changed)
     {
+        Debug.Log("[Custom CallBack]");
+
         base.OnRoomPropertiesUpdate(changed);
 
-        if (pendingkey == null) return;
-        // 自分が予約したキーが変更された時だけ処理
-        if (!changed.ContainsKey(pendingkey)) return;
+        // 希望値がない or 希望値が含まれていない　なら処理なし
+        if (pendingkey == null)
+        {
+            Debug.Log("予約なし");
+            return;
+        }
+
+        if(!changed.ContainsKey(pendingkey))
+        {
+            Debug.Log("希望値を含まない");
+            return;
+        }
 
         //希望値がとれていればローカルを更新
         object value = changed[pendingkey];
+
+        Debug.Log(value);
+        
         if (value is int number && number == PhotonNetwork.LocalPlayer.ActorNumber)
         {
             if (pendingkey.StartsWith("D_"))
@@ -208,7 +245,27 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             {
                 ReleaseSlot(oldkey);
             }
+
             oldkey = pendingkey;
+            key = pendingkey;
+
+            Debug.Log("獲得成功");
+        }
+        else if(pendingkey == key)
+        {
+            if(key != null) ReleaseSlot(key);
+
+            selectDriverNum = -1;
+            selectEngineerNum = -1;
+
+            oldkey = null;
+            key = null;
+
+            Debug.Log("解除成功");
+        }
+        else
+        {
+            Debug.Log("獲得失敗");
         }
 
         //希望値をリセット
