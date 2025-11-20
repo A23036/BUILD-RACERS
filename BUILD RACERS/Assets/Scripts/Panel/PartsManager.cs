@@ -18,7 +18,7 @@ public enum PartsID
 public class PartsManager : MonoBehaviour
 {
     [Header("パーツプレハブリスト")]
-    public List<Parts> partsPrefabs = new List<Parts>();
+    public List<GameObject> partsPrefabs = new List<GameObject>();
 
     // ID → プレハブ の辞書
     private Dictionary<PartsID, Parts> partsDictionary;
@@ -36,12 +36,13 @@ public class PartsManager : MonoBehaviour
 
         foreach (var prefab in partsPrefabs)
         {
+            Parts parts = prefab.GetComponent<Parts>();
             if (prefab == null) continue;
 
-            if (!partsDictionary.ContainsKey(prefab.GetPartsID()))
-                partsDictionary.Add(prefab.GetPartsID(), prefab);
+            if (!partsDictionary.ContainsKey(parts.GetPartsID()))
+                partsDictionary.Add(parts.GetPartsID(), parts);
             else
-                Debug.LogWarning($"PartsID {prefab.GetPartsID()} が重複しています！");
+                Debug.LogWarning($"PartsID {parts.GetPartsID()} が重複しています！");
         }
     }
 

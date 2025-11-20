@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using ExitGames.Client.Photon;
 
 public class selectScene : baseScene
 {
@@ -26,8 +27,14 @@ public class selectScene : baseScene
 
     public void PushStartButton()
     {
+        // ネットワークオブジェクトにdriverNumとengineerNumを登録
+        Hashtable hash = new Hashtable();
+        hash["driverNum"] = PlayerPrefs.GetInt("driverNum");
+        hash["engineerNum"] = PlayerPrefs.GetInt("engineerNum");
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+
         //名前が一文字以上でシーン遷移
-        if(PlayerPrefs.GetString("PlayerName").Length > 0)
+        if (PlayerPrefs.GetString("PlayerName").Length > 0)
         {
             SceneManager.LoadScene("gamePlay");
 

@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
 using TMPro;
+using Photon.Realtime;
+using Unity.VisualScripting;
 
 public class CarController : MonoBehaviourPunCallbacks
 {
@@ -53,9 +55,14 @@ public class CarController : MonoBehaviourPunCallbacks
     private int coinCnt = 0;
     private string currentGroundTag = "Default";
 
+    private Player pairPlayer;
+
     private void Awake()
     {
         Debug.Log("AWAKE");
+
+        // ペアを探す
+        TryPairPlayers();
 
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
@@ -84,6 +91,24 @@ public class CarController : MonoBehaviourPunCallbacks
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
+
+    private void TryPairPlayers()
+    {
+        Player[] players = PhotonNetwork.PlayerList;
+
+        foreach (var p in players)
+        {
+            if (!p.CustomProperties.ContainsKey("engineerNum")) continue;
+
+            // 同番号のドライバーを探す
+            int e = (int)p.CustomProperties["engineerNum"];
+            if (e == PlayerPrefs.GetInt("driverNum"))
+            {
+                pairPlayer = p;
+                break;
+            }
+        }
     }
 
     // 入力設定
@@ -212,6 +237,14 @@ public class CarController : MonoBehaviourPunCallbacks
             float turnAmount = steerInput * turnSensitivity * rotationSign;
             Quaternion deltaRotation = Quaternion.Euler(0f, turnAmount, 0f);
             rb.MoveRotation(rb.rotation * deltaRotation);
+        }
+
+        //test マウスクリックでエンジニア画面にアイテム生成
+        if (Mouse.current.leftButton.wasPressedThisFrame && driver == null)
+        {
+            // 例: Energy を生成したい場合
+            photonView.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
+            Debug.Log("エンジニアへアイテム生成リクエスト送信");
         }
     }
 

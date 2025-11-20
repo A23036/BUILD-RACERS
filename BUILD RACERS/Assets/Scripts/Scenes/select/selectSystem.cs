@@ -40,8 +40,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         timer = 0f;
 
         //ÉZÉåÉNÉgÇÃèâä˙âª
-        PlayerPrefs.SetInt("driver", 1);
-        PlayerPrefs.SetInt("engineer", -1);
+        PlayerPrefs.SetInt("driverNum", 1);
+        PlayerPrefs.SetInt("engineerNum", -1);
     }
 
     private void Awake()
@@ -117,15 +117,15 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             {
                 transform.position = driverIcons[selectDriverNum].position + offset;
                 text.text = "NOW SELECT : DRIVER" + (selectDriverNum + 1);
-                PlayerPrefs.SetInt("driver", selectDriverNum + 1);
-                PlayerPrefs.SetInt("engineer", -1);
+                PlayerPrefs.SetInt("driverNum", selectDriverNum + 1);
+                PlayerPrefs.SetInt("engineerNum", -1);
             }
             else
             {
                 transform.position = engineerIcons[selectEngineerNum].position + offset;
                 text.text = "NOW SELECT : ENGINEER" + (selectEngineerNum + 1);
-                PlayerPrefs.SetInt("driver", -1);
-                PlayerPrefs.SetInt("engineer", selectEngineerNum + 1);
+                PlayerPrefs.SetInt("driverNum", -1);
+                PlayerPrefs.SetInt("engineerNum", selectEngineerNum + 1);
             }
         }
     }
