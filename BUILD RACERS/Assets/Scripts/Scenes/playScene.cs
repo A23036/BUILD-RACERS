@@ -48,7 +48,7 @@ public class playScene : baseScene
         //オフラインなら処理なし
         if (!PhotonNetwork.IsConnected) return;
 
-        if(PlayerPrefs.GetInt("driver") != -1)
+        if(PlayerPrefs.GetInt("driverNum") != -1)
         {
             // プレイヤー生成（自分）
             var position = new Vector3(Random.Range(-3f, 3f), 3, Random.Range(-3f, 3f));
@@ -83,7 +83,7 @@ public class playScene : baseScene
             DriverUI.SetActive(true);
             EngineerUI.SetActive(false);
         }
-        else if(PlayerPrefs.GetInt("engineer") != -1)
+        else if(PlayerPrefs.GetInt("engineerNum") != -1)
         {
             //UIの表示・非表示
             DriverUI.SetActive(false);

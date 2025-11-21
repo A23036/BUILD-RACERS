@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 using Photon.Pun;
 using TMPro;
 using Photon.Realtime;
-using Unity.VisualScripting;
 
 public class CarController : MonoBehaviourPunCallbacks
 {
@@ -62,7 +61,7 @@ public class CarController : MonoBehaviourPunCallbacks
         Debug.Log("AWAKE");
 
         // ペアを探す
-        TryPairPlayers();
+        //TryPairPlayers();
 
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
@@ -109,6 +108,11 @@ public class CarController : MonoBehaviourPunCallbacks
                 break;
             }
         }
+
+        if (pairPlayer == null && driver == null)
+        {
+            Debug.Log("pair is null");
+        }
     }
 
     // 入力設定
@@ -135,6 +139,8 @@ public class CarController : MonoBehaviourPunCallbacks
             .With("Positive", "<Keyboard>/rightArrow");
         steerAction.AddBinding("<Gamepad>/leftStick/x");
         steerAction.Enable();
+
+        base.OnEnable();
     }
 
     private void OnDisable()
@@ -142,6 +148,8 @@ public class CarController : MonoBehaviourPunCallbacks
         if(throttleAction != null) throttleAction.Disable();
         if(brakeAction != null) brakeAction.Disable();
         if(steerAction != null) steerAction.Disable();
+
+        base.OnDisable();
     }
 
     private void FixedUpdate()
@@ -239,8 +247,8 @@ public class CarController : MonoBehaviourPunCallbacks
             rb.MoveRotation(rb.rotation * deltaRotation);
         }
 
-        //test マウスクリックでエンジニア画面にアイテム生成
-        if (Mouse.current.leftButton.wasPressedThisFrame && driver == null)
+        //test スペースキーでエンジニア画面にアイテム生成
+        if (Keyboard.current.spaceKey.wasPressedThisFrame && driver == null)
         {
             // 例: Energy を生成したい場合
             photonView.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
@@ -341,4 +349,14 @@ public class CarController : MonoBehaviourPunCallbacks
         if (cameraController != null)
             cameraController.SetTarget(transform);
     }
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
+    {
+        Debug.Log("CALL BACK");
+        if (changed["engineerNum"] is int number && number == PlayerPrefs.GetInt("driverNum"))
+        {
+            TryPairPlayers();
+        }
+    }
+
 }
