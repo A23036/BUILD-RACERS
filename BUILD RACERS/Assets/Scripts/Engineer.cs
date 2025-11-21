@@ -18,7 +18,7 @@ public class Engineer : MonoBehaviourPunCallbacks
         partsManager = GetComponentInChildren<PartsManager>();
 
         // ƒyƒA‚ð’T‚·
-        TryPairPlayers();
+        //TryPairPlayers();
     }
 
     private void TryPairPlayers()
@@ -53,4 +53,14 @@ public class Engineer : MonoBehaviourPunCallbacks
 
         partsManager.SpawnParts(partsID);
     }
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
+    {
+        Debug.Log("CALL BACK");
+        if (changed["driverNum"] is int number && number == PlayerPrefs.GetInt("engineerNum"))
+        {
+            TryPairPlayers();
+        }
+    }
+    
 }

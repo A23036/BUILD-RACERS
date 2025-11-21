@@ -70,7 +70,7 @@ public class ItemManager : MonoBehaviour
         string s = "Queue: ";
         foreach (var id in itemQueue)
             s += id + " ";
-        Debug.Log(s);
+        //Debug.Log(s);
     }
 
     public int GetRandomItem(PartsType type)
