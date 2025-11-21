@@ -321,9 +321,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     void OnDestroy()
     {
-        //ÉLÅ[ÇÃâï˙
-        if (key != null) ReleaseSlot(key);
-
         Debug.Log($"selectSystem OnDestroy called on {gameObject.name} instID={this.GetInstanceID()}");
     }
 }
