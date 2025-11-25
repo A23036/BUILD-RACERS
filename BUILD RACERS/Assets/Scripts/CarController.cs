@@ -92,6 +92,16 @@ public class CarController : MonoBehaviourPunCallbacks
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
+    // ネットワークルームに参加したときに自動で呼ばれる
+    public override void OnJoinedRoom()
+    {
+        if (driver == null)
+        {
+            var rpcObj = PhotonNetwork.Instantiate("PlayerRPCReceiver", Vector3.zero, Quaternion.identity);
+            rpcObj.GetComponent<PhotonView>().Owner.TagObject = rpcObj.GetComponent<PhotonView>();
+        }
+    }
+
     private void TryPairPlayers()
     {
         Player[] players = PhotonNetwork.PlayerList;
@@ -105,6 +115,7 @@ public class CarController : MonoBehaviourPunCallbacks
             if (e == PlayerPrefs.GetInt("driverNum"))
             {
                 pairPlayer = p;
+                Debug.Log("FOUND PAIR!");
                 break;
             }
         }
@@ -250,10 +261,18 @@ public class CarController : MonoBehaviourPunCallbacks
         //test スペースキーでエンジニア画面にアイテム生成
         if (Keyboard.current.spaceKey.wasPressedThisFrame && driver == null)
         {
-            // 例: Energy を生成したい場合
-            photonView.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
-            Debug.Log("エンジニアへアイテム生成リクエスト送信");
+            RPC_SpawnItem();
         }
+    }
+
+    [PunRPC]
+    void RPC_SpawnItem()
+    {
+        // 例: Energy を生成したい場合
+        //photonView.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
+        PhotonView pv = pairPlayer.TagObject as PhotonView;
+        pv.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
+        Debug.Log("エンジニアへアイテム生成リクエスト送信");
     }
 
     // 地面の種類をRaycastで検出

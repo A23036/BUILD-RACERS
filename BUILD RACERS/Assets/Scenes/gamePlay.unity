@@ -3039,7 +3039,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isConnect: 1
-  GenerateBotsNum: 6
+  GenerateBotsNum: 0
   DriverUI: {fileID: 1684157463}
   EngineerUI: {fileID: 1512813107}
 --- !u!1 &458937789
@@ -7456,9 +7456,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wall
       objectReference: {fileID: 0}
+    - target: {fileID: 3893771998911656109, guid: 822d02065a7fe974c9fb1b6dda4bfeaa, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6911907272056998504, guid: 822d02065a7fe974c9fb1b6dda4bfeaa, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.02
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 6911907272056998504, guid: 822d02065a7fe974c9fb1b6dda4bfeaa, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7466,7 +7470,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6911907272056998504, guid: 822d02065a7fe974c9fb1b6dda4bfeaa, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12.16
+      value: -19.2
       objectReference: {fileID: 0}
     - target: {fileID: 6911907272056998504, guid: 822d02065a7fe974c9fb1b6dda4bfeaa, type: 3}
       propertyPath: m_LocalRotation.w
@@ -8453,6 +8457,10 @@ PrefabInstance:
     - target: {fileID: 2622146079113070769, guid: 65cf759b017f40047b5d1f984e257d92, type: 3}
       propertyPath: m_Name
       value: Jumping_Platform
+      objectReference: {fileID: 0}
+    - target: {fileID: 2622146079113070769, guid: 65cf759b017f40047b5d1f984e257d92, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8402293572175783209, guid: 65cf759b017f40047b5d1f984e257d92, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9947,6 +9955,7 @@ GameObject:
   - component: {fileID: 1477508803}
   - component: {fileID: 1477508802}
   - component: {fileID: 1477508805}
+  - component: {fileID: 1477508806}
   m_Layer: 0
   m_Name: SubCamera
   m_TagString: MainCamera
@@ -10072,6 +10081,20 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &1477508806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1477508801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fb7172213c93ba45b595914c0ad2dd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetCamera: {fileID: 1477508803}
+  aspectVec: {x: 16, y: 9}
 --- !u!1 &1483167895
 GameObject:
   m_ObjectHideFlags: 0
@@ -14736,6 +14759,10 @@ PrefabInstance:
     - target: {fileID: 3261097858096690942, guid: 3727f03d56777704ab071cf1b85161f8, type: 3}
       propertyPath: m_Name
       value: PetBottle_Rocket_Green
+      objectReference: {fileID: 0}
+    - target: {fileID: 3261097858096690942, guid: 3727f03d56777704ab071cf1b85161f8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

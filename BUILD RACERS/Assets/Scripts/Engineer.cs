@@ -21,6 +21,13 @@ public class Engineer : MonoBehaviourPunCallbacks
         //TryPairPlayers();
     }
 
+    // ネットワークルームに参加したときに自動で呼ばれる
+    public override void OnJoinedRoom()
+    {
+        var rpcObj = PhotonNetwork.Instantiate("PlayerRPCReceiver", Vector3.zero, Quaternion.identity);
+        rpcObj.GetComponent<PhotonView>().Owner.TagObject = rpcObj.GetComponent<PhotonView>();
+    }
+
     private void TryPairPlayers()
     {
         Player[] players = PhotonNetwork.PlayerList;
@@ -34,6 +41,7 @@ public class Engineer : MonoBehaviourPunCallbacks
             if(d == engineerNum)
             {
                 pairPlayer = p;
+                Debug.Log("FOUND PAIR!");
                 break;
             }
         }
