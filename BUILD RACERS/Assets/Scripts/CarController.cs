@@ -95,10 +95,16 @@ public class CarController : MonoBehaviourPunCallbacks
     // ネットワークルームに参加したときに自動で呼ばれる
     public override void OnJoinedRoom()
     {
+        /*
         if (driver == null)
         {
             var rpcObj = PhotonNetwork.Instantiate("PlayerRPCReceiver", Vector3.zero, Quaternion.identity);
             rpcObj.GetComponent<PhotonView>().Owner.TagObject = rpcObj.GetComponent<PhotonView>();
+        }
+        */
+        if(driver == null)
+        {
+            TryPairPlayers();
         }
     }
 
@@ -270,7 +276,26 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         // 例: Energy を生成したい場合
         //photonView.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
+        /*
         PhotonView pv = pairPlayer.TagObject as PhotonView;
+        pv.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
+        */
+        if (pairPlayer == null)
+        {
+            TryPairPlayers();
+            if (pairPlayer == null)
+            {
+                Debug.LogWarning("pairPlayer is null. RPC送信できません");
+                return;
+            }
+        }
+
+        if (!(pairPlayer.TagObject is PhotonView pv))
+        {
+            Debug.LogWarning("pairPlayer.TagObjectがPhotonViewではありません");
+            return;
+        }
+
         pv.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
         Debug.Log("エンジニアへアイテム生成リクエスト送信");
     }

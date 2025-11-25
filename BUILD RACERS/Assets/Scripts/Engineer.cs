@@ -16,9 +16,6 @@ public class Engineer : MonoBehaviourPunCallbacks
         engineerNum = PlayerPrefs.GetInt("engineerNum");
 
         partsManager = GetComponentInChildren<PartsManager>();
-
-        // ペアを探す
-        //TryPairPlayers();
     }
 
     // ネットワークルームに参加したときに自動で呼ばれる
