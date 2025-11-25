@@ -11,6 +11,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     private int selectDriverNum;
     private int selectEngineerNum;
     private int colorNumber;
+    private bool isReady;
 
     //ƒJƒ‰[ƒpƒŒƒbƒg
     Color[] colorPalette;
@@ -32,6 +33,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     private TextMeshProUGUI text;
 
+    private GameObject checkmark;
+
     void Start()
     {
         selectDriverNum = -1;
@@ -47,6 +50,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     private void Awake()
     {
         text = GameObject.Find("DebugMessage").GetComponent<TextMeshProUGUI>();
+        text.color = Color.black;
         im = GameObject.Find("IconManager").GetComponent<IconManager>();
         driverIcons = im.GetDriverIconsList();
         engineerIcons = im.GetEngineerIconsList();
@@ -63,6 +67,16 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             cols[i] = Color.HSVToRGB(h, 1, 1);
         }
         colorPalette = cols;
+
+        //q‚Ìƒ`ƒFƒbƒNƒ}[ƒN‚Ìæ“¾
+        checkmark = transform.Find("i_checkmark").gameObject;
+        
+        //ƒ`ƒFƒbƒNƒ}[ƒN@F‚Ì•ÏX
+        var image = checkmark.GetComponent<Image>();
+        if(image != null)
+        {
+            image.color = Color.green;  
+        }
     }
 
     void Update()
@@ -70,14 +84,16 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         //F‚ÌXV
         UpdateColor();
 
-        // •\¦i©•ª‚ÌƒIƒuƒWƒFƒNƒg‚É‚¾‚¯•`‰æ‚ğ”C‚¹‚éê‡j
+        //ƒ`ƒFƒbƒNƒ}[ƒN‚ÌƒAƒNƒeƒBƒu‚ğXV
+        UpdateCheckmark();
+
         if (!photonView.IsMine) return;
 
         //ƒQ[ƒ~ƒ“ƒOƒJƒ‰[
         if (gamingColor)
         {
             timer += Time.deltaTime;
-            if (timer >= .1f)
+            if (timer >= .2f)
             {
                 colorNumber++;
                 timer = 0f;
@@ -153,6 +169,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     public bool ReleaseSlot(string key)
     {
+        if (key == null) return false;
+
         int actor = PhotonNetwork.LocalPlayer.ActorNumber;
         // ©•ª‚ªè—L‚µ‚Ä‚¢‚é‚©Šm”F‚µ‚Ä‚©‚ç‰ğœ‚·‚é‚Ì‚ªˆÀ‘S
         object cur;
@@ -160,21 +178,23 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (cur is int owner && owner == actor)
             {
-                /*
+                ///*
                 var propsToSet = new Hashtable { { key, null } };
                 var expected = new Hashtable { { key, actor } }; // ©•ª‚ªŠ—L‚µ‚Ä‚¢‚ê‚Î‰ğœ
                 bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
                 Debug.Log("DELETE KEY");
                 return success;
-                */
+                //*/
+            }
+            else
+            {
+                return false;
             }
         }
-
-        var propsToSet = new Hashtable { { key, null } };
-        var expected = new Hashtable { { key, actor } }; // ©•ª‚ªŠ—L‚µ‚Ä‚¢‚ê‚Î‰ğœ
-        bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
-        Debug.Log("DELETE KEY");
-        return success;
+        else
+        {
+            return false;
+        }
     }
 
     public void SetNum(int driver, int engineer)
@@ -286,6 +306,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(selectDriverNum);
             stream.SendNext(selectEngineerNum);
             stream.SendNext(colorNumber);
+            stream.SendNext(isReady);
         }
         else
         {
@@ -293,6 +314,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             selectDriverNum = (int)stream.ReceiveNext();
             selectEngineerNum = (int)stream.ReceiveNext();
             colorNumber = (int)stream.ReceiveNext();
+            isReady = (bool)stream.ReceiveNext();
         }
     }
 
@@ -313,6 +335,29 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         GetComponent<Image>().color = colorPalette[colorNumber % playersCount];
     }
 
+    public void UpdateCheckmark()
+    {
+        checkmark.SetActive(isReady);
+    }
+
+    public bool IsReady()
+    {
+        return isReady;
+    }
+
+    //READY‰Ÿ‚µ‚½‚çƒtƒ‰ƒO”½“]
+    public void PushedReady()
+    {
+        isReady = !isReady;
+        checkmark.SetActive(isReady);
+    }
+
+    //ƒQ[ƒ~ƒ“ƒOƒJƒ‰[‚ÌƒAƒNƒeƒBƒu•ÏX
+    public void GamingMode(bool b)
+    {
+        gamingColor = b;
+    }
+
     public void PrintLog()
     {
         int actorNumber = photonView.Owner.ActorNumber;
@@ -321,7 +366,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     void OnDestroy()
     {
-        //ï¿½Lï¿½[ï¿½Ì‰ï¿½ï¿½
+        //E½LE½[E½Ì‰ï¿½E½
         if (key != null) ReleaseSlot(key);
 
         Debug.Log($"selectSystem OnDestroy called on {gameObject.name} instID={this.GetInstanceID()}");

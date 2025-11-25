@@ -9,6 +9,7 @@ using ExitGames.Client.Photon;
 public class selectScene : baseScene
 {
     private GameObject selector;
+    private selectSystem ss;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -39,14 +40,30 @@ public class selectScene : baseScene
             SceneManager.LoadScene("gamePlay");
 
             //セレクターの削除
-            PhotonNetwork.Destroy(selector);
+            if(selector != null) PhotonNetwork.Destroy(selector);
         }
+    }
+
+    public void PushReadyButton()
+    {
+        ss.PushedReady();
     }
 
     public void InputText()
     {
         GameObject inputField = GameObject.Find("InputFieldLegacy");
         InputField input = inputField.GetComponent<InputField>();
+
+        //ゲーミングカラー
+        if(input.text == "rainbow")
+        {
+            ss.GamingMode(true);
+            input.text = "";
+        }
+        else
+        {
+            ss.GamingMode(false);
+        }
 
         //プレイヤーの名前を保存
         PlayerPrefs.SetString("PlayerName", input.text);
@@ -57,7 +74,7 @@ public class selectScene : baseScene
     {
         //選択アイコンの生成　最初は画面外に生成
         selector = PhotonNetwork.Instantiate("Selector", new Vector3(-100,-100,-100), Quaternion.identity);
-        var ss = selector.GetComponent<selectSystem>();
+        ss = selector.GetComponent<selectSystem>();
         ss.DecideColor();
 
         Debug.Log("接続成功");
