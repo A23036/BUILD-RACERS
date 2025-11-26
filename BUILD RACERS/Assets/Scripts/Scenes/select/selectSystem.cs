@@ -199,6 +199,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     public void SetNum(int driver, int engineer)
     {
+        if(isReady)
+        {
+            Debug.Log("準備完了しています");
+            return;
+        }
+
         //送信済みならコールバックまで送信しない
         if (pendingkey != null)
         {
@@ -350,12 +356,26 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     {
         isReady = !isReady;
         checkmark.SetActive(isReady);
+
+        //ルームマスターに送信
+        if(!PhotonNetwork.IsMasterClient) SendToMaster(isReady);
     }
 
     //ゲーミングカラーのアクティブ変更
     public void GamingMode(bool b)
     {
         gamingColor = b;
+    }
+
+    //ルームマスターに準備状態を送信
+    void SendToMaster(bool readyStat)
+    {
+        //テストでID201で固定
+        int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterSelectorViewID"];
+        PhotonView target = PhotonView.Find(viewID);
+
+        target.RPC("RPC_OnSelectorChanged", RpcTarget.MasterClient, readyStat, PhotonNetwork.LocalPlayer.ActorNumber);
+        Debug.Log("SendToMaster");
     }
 
     public void PrintLog()
@@ -366,7 +386,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     void OnDestroy()
     {
-        //・ｽL・ｽ[・ｽﾌ会ｿｽ・ｽ
         if (key != null) ReleaseSlot(key);
 
         Debug.Log($"selectSystem OnDestroy called on {gameObject.name} instID={this.GetInstanceID()}");

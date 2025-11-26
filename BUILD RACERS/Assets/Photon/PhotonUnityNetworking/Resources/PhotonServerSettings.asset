@@ -42,6 +42,7 @@ MonoBehaviour:
   - RPC_SetNums
   - RPC_SetColorNumber
   - RPC_SpawnItem
+  - RPC_OnSelectorChanged
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7301379928836679407}
   - component: {fileID: 2882188682804811730}
   - component: {fileID: -7449684566482403125}
+  - component: {fileID: -2506797744656423604}
   m_Layer: 5
   m_Name: Selector
   m_TagString: Untagged
@@ -133,6 +134,19 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &-2506797744656423604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4419186613906830339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85089f10df6cf2a4aafe2039b4e1aa01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterSelectorViewID: 777
 --- !u!1 &4981595678402665447
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,9 +5,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using ExitGames.Client.Photon;
+using TMPro;
 
 public class selectScene : baseScene
 {
+    [SerializeField] private GameObject readyButtonText;
+
     private GameObject selector;
     private selectSystem ss;
 
@@ -47,6 +50,22 @@ public class selectScene : baseScene
     public void PushReadyButton()
     {
         ss.PushedReady();
+
+        var text = readyButtonText.GetComponent<TextMeshProUGUI>();
+        if(text == null)
+        {
+            Debug.Log("NOT FOUND TEXT");
+            return;
+        }
+
+        if (ss.IsReady())
+        {
+            text.text = "CANCEL";
+        }
+        else
+        {
+            text.text = "READY";
+        }
     }
 
     public void InputText()
