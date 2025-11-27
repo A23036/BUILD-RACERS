@@ -51,6 +51,8 @@ public class PartsManager : MonoBehaviour
     // ---------------------------------------------------------
     public Parts SpawnParts(PartsID id)
     {
+        Debug.Log("Start Parts Create");
+
         if (!partsDictionary.TryGetValue(id, out Parts prefab))
         {
             Debug.LogError($"PartsID {id} のプレハブが見つかりません！");

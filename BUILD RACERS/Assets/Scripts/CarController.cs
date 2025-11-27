@@ -54,14 +54,21 @@ public class CarController : MonoBehaviourPunCallbacks
     private int coinCnt = 0;
     private string currentGroundTag = "Default";
 
+    private int driverNum = -1;
     private Player pairPlayer;
+    private int pairID;
 
     private void Awake()
     {
         Debug.Log("AWAKE");
 
         // ペアを探す
-        //TryPairPlayers();
+        TryPairPlayers();
+
+        PhotonView pv = GetComponent<PhotonView>();
+        pv.ViewID = driverNum;
+        pairID = driverNum + 8;
+        Debug.Log("Pair Engineer ViewID: " + pairID);
 
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
@@ -92,22 +99,6 @@ public class CarController : MonoBehaviourPunCallbacks
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
-    // ネットワークルームに参加したときに自動で呼ばれる
-    public override void OnJoinedRoom()
-    {
-        /*
-        if (driver == null)
-        {
-            var rpcObj = PhotonNetwork.Instantiate("PlayerRPCReceiver", Vector3.zero, Quaternion.identity);
-            rpcObj.GetComponent<PhotonView>().Owner.TagObject = rpcObj.GetComponent<PhotonView>();
-        }
-        */
-        if(driver == null)
-        {
-            TryPairPlayers();
-        }
-    }
-
     private void TryPairPlayers()
     {
         Player[] players = PhotonNetwork.PlayerList;
@@ -116,7 +107,7 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             if (!p.CustomProperties.ContainsKey("engineerNum")) continue;
 
-            // 同番号のドライバーを探す
+            // 同番号のエンジニアを探す
             int e = (int)p.CustomProperties["engineerNum"];
             if (e == PlayerPrefs.GetInt("driverNum"))
             {
@@ -267,37 +258,12 @@ public class CarController : MonoBehaviourPunCallbacks
         //test スペースキーでエンジニア画面にアイテム生成
         if (Keyboard.current.spaceKey.wasPressedThisFrame && driver == null)
         {
-            RPC_SpawnItem();
-        }
-    }
+            PhotonView target = PhotonView.Find(pairID);
 
-    [PunRPC]
-    void RPC_SpawnItem()
-    {
-        // 例: Energy を生成したい場合
-        //photonView.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
-        /*
-        PhotonView pv = pairPlayer.TagObject as PhotonView;
-        pv.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
-        */
-        if (pairPlayer == null)
-        {
-            TryPairPlayers();
-            if (pairPlayer == null)
-            {
-                Debug.LogWarning("pairPlayer is null. RPC送信できません");
-                return;
-            }
+            // ペアのエンジニア画面にアイテムを生成
+            target.RPC("RPC_SpawnItem", pairPlayer, PartsID.Energy, PhotonNetwork.LocalPlayer.ActorNumber);
+            
         }
-
-        if (!(pairPlayer.TagObject is PhotonView pv))
-        {
-            Debug.LogWarning("pairPlayer.TagObjectがPhotonViewではありません");
-            return;
-        }
-
-        pv.RPC("RPC_SpawnItem", pairPlayer, (int)PartsID.Energy);
-        Debug.Log("エンジニアへアイテム生成リクエスト送信");
     }
 
     // 地面の種類をRaycastで検出
