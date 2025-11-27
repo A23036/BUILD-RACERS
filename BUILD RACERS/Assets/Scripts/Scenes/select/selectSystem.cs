@@ -170,6 +170,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     public bool ReleaseSlot(string key)
     {
         if (key == null) return false;
+        if (!PhotonNetwork.IsConnected) return false;
 
         int actor = PhotonNetwork.LocalPlayer.ActorNumber;
         // 自分が占有しているか確認してから解除するのが安全
@@ -379,7 +380,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     void SendToMaster(bool readyStat)
     {
         //テストでID201で固定
-        int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterSelectorViewID"];
+        int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClienViewID"];
         PhotonView target = PhotonView.Find(viewID);
 
         target.RPC("RPC_OnSelectorChanged", RpcTarget.MasterClient, readyStat, PhotonNetwork.LocalPlayer.ActorNumber);
