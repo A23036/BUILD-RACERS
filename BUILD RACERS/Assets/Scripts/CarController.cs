@@ -55,8 +55,8 @@ public class CarController : MonoBehaviourPunCallbacks
     private string currentGroundTag = "Default";
 
     private int driverNum = -1;
-    private Player pairPlayer;
-    private int pairID;
+    private Player pairPlayer = null;
+    private int pairID = -1;
 
     private void Awake()
     {
@@ -101,6 +101,8 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void TryPairPlayers()
     {
+        if (pairID != -1) return;
+
         Player[] players = PhotonNetwork.PlayerList;
 
         foreach (var p in players)
@@ -111,8 +113,17 @@ public class CarController : MonoBehaviourPunCallbacks
             int e = (int)p.CustomProperties["engineerNum"];
             if (e == PlayerPrefs.GetInt("driverNum"))
             {
-                pairPlayer = p;
-                Debug.Log("FOUND PAIR!");
+                // PlayerViewID が設定されるまで待つ
+                if (p.CustomProperties.ContainsKey("PlayerViewID"))
+                {
+                    pairID = (int)p.CustomProperties["PlayerViewID"];
+                    pairPlayer = p;
+                    Debug.Log("FOUND PAIR! pairID=" + pairID);
+                }
+                else
+                {
+                    Debug.Log("FOUND PAIR BUT PlayerViewID is not set yet.");
+                }
                 break;
             }
         }
@@ -260,6 +271,10 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             PhotonView target = PhotonView.Find(pairID);
 
+            if (target == null) Debug.Log("target is null");
+            if (pairPlayer == null) Debug.Log("pair player is null");
+            if(photonView == null) Debug.Log("photon view is null");
+
             // ペアのエンジニア画面にアイテムを生成
             target.RPC("RPC_SpawnItem", pairPlayer, PartsID.Energy, PhotonNetwork.LocalPlayer.ActorNumber);
             
@@ -360,13 +375,11 @@ public class CarController : MonoBehaviourPunCallbacks
             cameraController.SetTarget(transform);
     }
 
+    
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
         Debug.Log("CALL BACK");
-        if (changed["engineerNum"] is int number && number == PlayerPrefs.GetInt("driverNum"))
-        {
-            TryPairPlayers();
-        }
+        TryPairPlayers();
     }
 
 }

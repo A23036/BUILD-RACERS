@@ -14,14 +14,15 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        engineerNum = PlayerPrefs.GetInt("engineerNum");
-
         partsManager = GetComponentInChildren<PartsManager>();
 
+        engineerNum = PlayerPrefs.GetInt("engineerNum");
+        
         PhotonView pv = GetComponent<PhotonView>();
-        pv.ViewID = engineerNum;
-        pairID = engineerNum - 8;
-        Debug.Log("Pair Driver ViewID: " + pairID);
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
+
+        Debug.Log("My ViewID: " + pv.ViewID);
     }
 
     // í êMópä÷êî
