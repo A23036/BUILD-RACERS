@@ -11,7 +11,6 @@ public class SelectorManager : MonoBehaviourPunCallbacks
     private bool isEveryoneReady;
     private float startTimer;
 
-    [SerializeField] private int masterSelectorViewID;
     [SerializeField] private float timeUntilStart;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -23,13 +22,13 @@ public class SelectorManager : MonoBehaviourPunCallbacks
     private void Awake()
     {
         isEveryoneReady = false;
-        startTimer = 0f;
+        startTimer = timeUntilStart;
+        selectorsStat = new Dictionary<int, bool>();
 
         if (PhotonNetwork.IsMasterClient)
         {
             //マスタークライアントのIDを登録
             PhotonView pv = GetComponent<PhotonView>();
-            pv.ViewID = masterSelectorViewID;
             PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable{{"MasterSelectorViewID", pv.ViewID}});
         }
     }
@@ -41,6 +40,7 @@ public class SelectorManager : MonoBehaviourPunCallbacks
         if (isEveryoneReady)
         {
             startTimer -= Time.deltaTime;
+            Debug.Log("UNTIL START : " + startTimer);
         }
         else
         {
@@ -50,7 +50,6 @@ public class SelectorManager : MonoBehaviourPunCallbacks
         if(startTimer <= 0f)
         {
             //シーン遷移
-            var sm = GameObject.Find("SceneMananger").GetComponent<selectScene>();
             PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "isEveryoneReady", isEveryoneReady } });
         }
     }
@@ -58,6 +57,11 @@ public class SelectorManager : MonoBehaviourPunCallbacks
     //他プレイヤーがルームに参加したときに呼ばれるコールバック
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
+    }
+
+    public void MasterSelectorChanged(bool isReady, int senderID)
+    {
+        selectorsStat[senderID] = isReady;
     }
 
     [PunRPC]
@@ -73,6 +77,15 @@ public class SelectorManager : MonoBehaviourPunCallbacks
         Debug.Log("SELECTOR ID : " + senderID + " , " + "STAT : " + (isReady ? "READY" : "NOT READY"));
 
         selectorsStat[senderID] = isReady;
+
+        Debug.Log("準備状態の配列数：" + selectorsStat.Count);
+
+        //全員分の状態が登録されていなければ準備まだ判定
+        if (PhotonNetwork.PlayerList.Length != selectorsStat.Count)
+        {
+            isEveryoneReady = false;
+            return;
+        }
 
         //全員が準備完了か判定
         foreach(var vk in selectorsStat)

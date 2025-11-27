@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85089f10df6cf2a4aafe2039b4e1aa01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  masterSelectorViewID: 777
+  timeUntilStart: 3
 --- !u!1 &4981595678402665447
 GameObject:
   m_ObjectHideFlags: 0
