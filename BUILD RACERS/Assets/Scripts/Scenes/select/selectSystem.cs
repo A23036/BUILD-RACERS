@@ -233,6 +233,13 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     {
         Debug.Log("[Custom CallBack]");
 
+        //シーン遷移
+        if(changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)
+        {
+            var sm = GameObject.Find("SceneManager").GetComponent<selectScene>();
+            sm.PushStartButton();
+        }
+
         base.OnRoomPropertiesUpdate(changed);
 
         // 希望値がない or 希望値が含まれていない　なら処理なし
@@ -358,7 +365,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         checkmark.SetActive(isReady);
 
         //ルームマスターに送信
-        if(!PhotonNetwork.IsMasterClient) SendToMaster(isReady);
+        //if(!PhotonNetwork.IsMasterClient) SendToMaster(isReady);
+        SendToMaster(isReady);
     }
 
     //ゲーミングカラーのアクティブ変更
