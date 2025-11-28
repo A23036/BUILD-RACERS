@@ -36,6 +36,7 @@ public class Engineer : MonoBehaviourPunCallbacks
             return;
         }
 
-        partsManager.SpawnParts(id);
+        GameObject canvas = GameObject.Find("EngineerCanvas");
+        partsManager.SpawnParts(id, canvas.transform);
     }
 }

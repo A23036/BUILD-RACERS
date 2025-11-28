@@ -65,7 +65,7 @@ public class CarController : MonoBehaviourPunCallbacks
         driverNum = PlayerPrefs.GetInt("driverNum");
 
         // ペアを探す
-        TryPairPlayers();
+        //TryPairPlayers();
 
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
@@ -269,6 +269,7 @@ public class CarController : MonoBehaviourPunCallbacks
         //test スペースキーでエンジニア画面にアイテム生成
         if (Keyboard.current.spaceKey.wasPressedThisFrame && driver == null)
         {
+            Debug.Log("space is pressed");
             PhotonView target = PhotonView.Find(pairViewID);
 
             if (target == null) Debug.Log("target is null");
@@ -276,8 +277,7 @@ public class CarController : MonoBehaviourPunCallbacks
             if(photonView == null) Debug.Log("photon view is null");
 
             // ペアのエンジニア画面にアイテムを生成
-            target.RPC("RPC_SpawnItem", pairPlayer, PartsID.Energy, PhotonNetwork.LocalPlayer.ActorNumber);
-            
+            target.RPC("RPC_SpawnItem", pairPlayer, PartsID.Energy);
         }
     }
 

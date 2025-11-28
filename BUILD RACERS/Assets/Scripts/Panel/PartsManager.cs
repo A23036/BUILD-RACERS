@@ -49,7 +49,7 @@ public class PartsManager : MonoBehaviour
     // ---------------------------------------------------------
     // ID を指定してパーツを生成する関数
     // ---------------------------------------------------------
-    public Parts SpawnParts(PartsID id)
+    public Parts SpawnParts(PartsID id,Transform parent)
     {
         Debug.Log("Start Parts Create");
 
@@ -60,7 +60,10 @@ public class PartsManager : MonoBehaviour
         }
 
         // プレハブ生成
-        Parts newParts = Instantiate(prefab, spawnPos, Quaternion.identity);
+        Parts newParts = Instantiate(prefab, parent);
+
+        // ローカル位置を spawnPos に設定
+        newParts.transform.localPosition = spawnPos;
 
         Debug.Log($"[PartsManager] {id} を生成しました");
 
