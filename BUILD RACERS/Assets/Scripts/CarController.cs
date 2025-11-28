@@ -56,19 +56,16 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private int driverNum = -1;
     private Player pairPlayer = null;
-    private int pairID = -1;
+    private int pairViewID = -1;
 
     private void Awake()
     {
         Debug.Log("AWAKE");
 
+        driverNum = PlayerPrefs.GetInt("driverNum");
+
         // ペアを探す
         TryPairPlayers();
-
-        PhotonView pv = GetComponent<PhotonView>();
-        pv.ViewID = driverNum;
-        pairID = driverNum;
-        Debug.Log("Pair Engineer ViewID: " + pairID);
 
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
@@ -101,28 +98,31 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void TryPairPlayers()
     {
-        if (pairID != -1) return;
+        // ペアを発見済みの場合、処理を行わない
+        if (pairViewID != -1) return;
 
         Player[] players = PhotonNetwork.PlayerList;
 
+        // ネットワークに接続中のplayerを一人ずつ調査
         foreach (var p in players)
         {
-            if (!p.CustomProperties.ContainsKey("engineerNum")) continue;
-
-            // 同番号のエンジニアを探す
+            // ドライバーはcontinue(エンジニアのみ探す)
+            if ((int)p.CustomProperties["engineerNum"] == -1) continue;
+            
+            // 自身と同番号のエンジニアを探す
             int e = (int)p.CustomProperties["engineerNum"];
             if (e == PlayerPrefs.GetInt("driverNum"))
             {
-                // PlayerViewID が設定されるまで待つ
+                // PlayerViewID が設定済みならpairViewIDに保存
                 if (p.CustomProperties.ContainsKey("PlayerViewID"))
                 {
-                    pairID = (int)p.CustomProperties["PlayerViewID"];
+                    pairViewID = (int)p.CustomProperties["PlayerViewID"];
                     pairPlayer = p;
-                    Debug.Log("FOUND PAIR! pairID=" + pairID);
+                    Debug.Log("FOUND PAIR! pairID:" + pairViewID);
                 }
                 else
                 {
-                    Debug.Log("FOUND PAIR BUT PlayerViewID is not set yet.");
+                    Debug.Log("FOUND PAIR BUT PlayerViewID is not set.");
                 }
                 break;
             }
@@ -130,7 +130,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         if (pairPlayer == null && driver == null)
         {
-            Debug.Log("pair is null");
+            Debug.Log("Pair is null");
         }
     }
 
@@ -269,7 +269,7 @@ public class CarController : MonoBehaviourPunCallbacks
         //test スペースキーでエンジニア画面にアイテム生成
         if (Keyboard.current.spaceKey.wasPressedThisFrame && driver == null)
         {
-            PhotonView target = PhotonView.Find(pairID);
+            PhotonView target = PhotonView.Find(pairViewID);
 
             if (target == null) Debug.Log("target is null");
             if (pairPlayer == null) Debug.Log("pair player is null");
