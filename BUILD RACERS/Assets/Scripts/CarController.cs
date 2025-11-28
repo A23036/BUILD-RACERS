@@ -67,7 +67,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         PhotonView pv = GetComponent<PhotonView>();
         pv.ViewID = driverNum;
-        pairID = driverNum + 8;
+        pairID = driverNum;
         Debug.Log("Pair Engineer ViewID: " + pairID);
 
         //ジョイスティック取得
