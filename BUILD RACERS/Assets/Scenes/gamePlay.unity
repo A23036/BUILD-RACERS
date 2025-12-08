@@ -12401,8 +12401,9 @@ GameObject:
   - component: {fileID: 1448708586}
   - component: {fileID: 1448708585}
   - component: {fileID: 1448708584}
+  - component: {fileID: 1448708587}
   m_Layer: 0
-  m_Name: MiniMap
+  m_Name: MiniMapCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12417,7 +12418,7 @@ Transform:
   m_GameObject: {fileID: 1448708582}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -32.62435, y: 139.97005, z: 27.75319}
+  m_LocalPosition: {x: 0, y: 50, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12509,8 +12510,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 50
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -12526,6 +12527,23 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1448708587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448708582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8ddb15133b60164ebb66dd28ac755d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  miniMapCamera: {fileID: 1448708586}
+  zoomSpeed: 5
+  minSize: 10
+  maxSize: 80
+  offset: {x: 0, y: 50, z: 0}
 --- !u!1001 &1463716509
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19139,6 +19157,10 @@ PrefabInstance:
     - target: {fileID: 3983102052385279053, guid: e360199485970a84e91b12b19963a585, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4796166533748456555, guid: e360199485970a84e91b12b19963a585, type: 3}
+      propertyPath: finalScale
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7011438752912030972, guid: e360199485970a84e91b12b19963a585, type: 3}
       propertyPath: m_Name

@@ -35,6 +35,7 @@ public class ItemBoxController : MonoBehaviour
     [SerializeField]
     private PartsType partsType;
 
+    CarController carController;
     ItemManager itemManager;
 
     void Start()
@@ -101,10 +102,12 @@ public class ItemBoxController : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             itemManager = other.GetComponentInParent<ItemManager>();
+            carController = other.GetComponentInParent<CarController>();
 
             // --- アイテムボックスが破壊されるときの処理 ---
             // 1. アイテムを渡す処理をここに記述（あれば）
-            itemManager.Enqueue(itemManager.GetRandomItem(partsType));
+            carController.SendItem(itemManager.GetRandomItem(partsType));
+            //itemManager.Enqueue(itemManager.GetRandomItem(partsType));
 
             // 2. 破壊エフェクトを生成する
             if (breakEffectPrefab != null)

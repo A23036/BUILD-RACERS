@@ -5,24 +5,70 @@ using Photon.Pun;
 
 public class Engineer : MonoBehaviourPunCallbacks
 {
-    int engineerNum = -1;
-    private Player pairPlayer;
     private PartsManager partsManager;
-    private int pairID;
-    
-    public int GetEngineerNum() => engineerNum;
+    MiniMapCamera miniMapCamera;
+
+    private Player pairPlayer = null;
+    private int pairViewID = -1;
 
     void Awake()
     {
         partsManager = GetComponentInChildren<PartsManager>();
-
-        engineerNum = PlayerPrefs.GetInt("engineerNum");
         
         PhotonView pv = GetComponent<PhotonView>();
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
 
         Debug.Log("My ViewID: " + pv.ViewID);
+    }
+
+    private void TryPairPlayers()
+    {
+        // ペアを発見済みの場合、処理を行わない
+        if (pairViewID != -1) return;
+
+        Player[] players = PhotonNetwork.PlayerList;
+
+        // ネットワークに接続中のplayerを一人ずつ調査
+        foreach (var p in players)
+        {
+            // エンジニアはcontinue(ドライバーのみ探す)
+            if ((int)p.CustomProperties["driverNum"] == -1) continue;
+
+            // 自身と同番号のドライバーを探す
+            int d = (int)p.CustomProperties["driverNum"];
+            if (d == PlayerPrefs.GetInt("engineerNum"))
+            {
+                // PlayerViewID が設定済みならpairViewIDに保存
+                if (p.CustomProperties.ContainsKey("PlayerViewID"))
+                {
+                    pairViewID = (int)p.CustomProperties["PlayerViewID"];
+                    pairPlayer = p;
+                    Debug.Log("FOUND PAIR! pairID:" + pairViewID);
+                }
+                else
+                {
+                    Debug.Log("FOUND PAIR BUT PlayerViewID is not set.");
+                }
+                break;
+            }
+        }
+
+        if (pairPlayer == null)
+        {
+            Debug.Log("Pair is null");
+        }
+
+        // ミニマップカメラに対象を指定
+        PhotonView targetPV = PhotonView.Find(pairViewID);
+        miniMapCamera = FindAnyObjectByType<MiniMapCamera>();
+        miniMapCamera.SetTarget(targetPV.transform);
+    }
+    
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
+    {
+        Debug.Log("CALL BACK");
+        TryPairPlayers();
     }
 
     // 通信用関数

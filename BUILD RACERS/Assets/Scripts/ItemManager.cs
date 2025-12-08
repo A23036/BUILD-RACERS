@@ -61,7 +61,7 @@ public class ItemManager : MonoBehaviour
                 nodeMap.Remove(itemId);
         }
 
-        PrintQueue();
+        //PrintQueue();
         return true;
     }
 
@@ -70,19 +70,19 @@ public class ItemManager : MonoBehaviour
         string s = "Queue: ";
         foreach (var id in itemQueue)
             s += id + " ";
-        //Debug.Log(s);
+        Debug.Log(s);
     }
 
-    public int GetRandomItem(PartsType type)
+    public PartsID GetRandomItem(PartsType type)
     {
         switch (type)
         {
+            /* //パッシブもここに追加
             case PartsType.Passive:
                 return Random.Range(0, 3);
+            */
             case PartsType.Item:
-                return Random.Range(4, 6);
-            case PartsType.Gimmick:
-                return Random.Range(7, 10);
+                return PartsID.Energy;
             default:
                 return 0;
         }

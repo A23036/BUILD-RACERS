@@ -57,7 +57,7 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _WaterSpeed: 0.01
+    - _WaterSpeed: 0.1
     - _WaterVelocity: 0
     - _WaterWaveX: 0
     - _WaterWaveZ: 0

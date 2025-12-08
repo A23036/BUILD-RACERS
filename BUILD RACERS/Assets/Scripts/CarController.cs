@@ -64,8 +64,9 @@ public class CarController : MonoBehaviourPunCallbacks
 
         driverNum = PlayerPrefs.GetInt("driverNum");
 
-        // ペアを探す
-        //TryPairPlayers();
+        PhotonView pv = GetComponent<PhotonView>();
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
 
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
@@ -365,6 +366,18 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
             }
         }
+    }
+
+    public void SendItem(PartsID id)
+    {
+        PhotonView target = PhotonView.Find(pairViewID);
+
+        if (target == null) Debug.Log("target is null");
+        if (pairPlayer == null) Debug.Log("pair player is null");
+        if (photonView == null) Debug.Log("photon view is null");
+
+        // ペアのエンジニア画面にアイテムを生成
+        target.RPC("RPC_SpawnItem", pairPlayer, id);
     }
 
     //カメラの設定
