@@ -12540,7 +12540,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniMapCamera: {fileID: 1448708586}
-  zoomSpeed: 5
+  zoomSpeed: 50
   minSize: 10
   maxSize: 80
   offset: {x: 0, y: 50, z: 0}
@@ -16925,6 +16925,7 @@ GameObject:
   - component: {fileID: 1881033434}
   - component: {fileID: 1881033436}
   - component: {fileID: 1881033435}
+  - component: {fileID: 1881033437}
   m_Layer: 5
   m_Name: RawImage
   m_TagString: Untagged
@@ -16986,6 +16987,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1881033433}
   m_CullTransparentMesh: 1
+--- !u!114 &1881033437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881033433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88527dc3173016d4a806fac2f46769b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  miniMapCamera: {fileID: 1448708586}
+  miniMapUI: {fileID: 1881033434}
+  spawnPrefab: {fileID: 7011438752912030972, guid: e360199485970a84e91b12b19963a585, type: 3}
 --- !u!1 &1903604219
 GameObject:
   m_ObjectHideFlags: 0
@@ -19118,6 +19134,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1641505707536141859, guid: e360199485970a84e91b12b19963a585, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2445939655226531987, guid: e360199485970a84e91b12b19963a585, type: 3}
+      propertyPath: sceneViewId
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3983102052385279053, guid: e360199485970a84e91b12b19963a585, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.82
