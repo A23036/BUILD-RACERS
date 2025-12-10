@@ -12,6 +12,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     private int selectEngineerNum;
     private int colorNumber;
     private bool isReady;
+    private bool isRoomMaster;
 
     //カラーパレット
     Color[] colorPalette;
@@ -33,7 +34,9 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     private TextMeshProUGUI text;
 
+    //画像オブジェクト
     private GameObject checkmark;
+    private GameObject crown;
 
     void Start()
     {
@@ -76,6 +79,18 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         if(image != null)
         {
             image.color = Color.green;  
+        }
+
+        //子の王冠マークの取得
+        crown = transform.Find("crown").gameObject;
+
+        //ルームマスターならアクティブにする
+        isRoomMaster = false;
+        
+        if(photonView.IsMine && PhotonNetwork.IsMasterClient)
+        {
+            isRoomMaster = true;
+            crown.SetActive(true);
         }
     }
 
@@ -196,6 +211,28 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         {
             return false;
         }
+    }
+
+    //すべてのキーの解放　切断時に呼び出す
+    public void ReleaseSlotAll()
+    {
+        //接続確認
+        if (!PhotonNetwork.IsConnected) return;
+
+        int actor = PhotonNetwork.LocalPlayer.ActorNumber;
+        var props = PhotonNetwork.CurrentRoom.CustomProperties;
+        var propsToSet = new Hashtable();
+
+        foreach (var kv in props)
+        {
+            if(kv.Value is int n && n == actor)
+            {
+                propsToSet[kv.Key] = null;
+            }
+        }
+
+        //プロパティに反映させる
+        if(propsToSet.Count > 0) PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet);
     }
 
     public void SetNum(int driver, int engineer)
@@ -321,6 +358,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(selectEngineerNum);
             stream.SendNext(colorNumber);
             stream.SendNext(isReady);
+            stream.SendNext(isRoomMaster);
         }
         else
         {
@@ -329,6 +367,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             selectEngineerNum = (int)stream.ReceiveNext();
             colorNumber = (int)stream.ReceiveNext();
             isReady = (bool)stream.ReceiveNext();
+            bool isRM = (bool)stream.ReceiveNext();
+
+            //変化があればSetActive
+            if(isRM != isRoomMaster)
+            {
+                crown.SetActive(isRM);
+            }
+            isRoomMaster = isRM;
         }
     }
 
@@ -393,9 +439,22 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log("No." + actorNumber + " COLOR : " + colorNumber);
     }
 
+    //ルームマスターが変更された際のコールバック
+    public override void OnMasterClientSwitched(Photon.Realtime.Player newMaster)
+    {
+        if(photonView.IsMine && PhotonNetwork.IsMasterClient)
+        {
+            isRoomMaster = true;
+            crown.SetActive(true);
+        }
+    }
+
     void OnDestroy()
     {
-        if (key != null) ReleaseSlot(key);
+        //if (key != null) ReleaseSlot(key);
+
+        //キーの解放　重複の可能性も考えてすべてのプロパティを確認
+        ReleaseSlotAll();
 
         Debug.Log($"selectSystem OnDestroy called on {gameObject.name} instID={this.GetInstanceID()}");
     }
