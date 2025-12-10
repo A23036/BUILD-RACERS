@@ -2,6 +2,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ExitGames.Client.Photon;
 
 //シーンの親クラス
 
@@ -36,6 +37,14 @@ public class baseScene : MonoBehaviourPunCallbacks
         else if(!isConnect && PhotonNetwork.IsConnected)
         {
             PhotonNetwork.Disconnect();
+        }
+
+        //現在のマスターがいるシーンを更新・共有できるように
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var props = new Hashtable();
+            props["masterGameScene"] = SceneManager.GetActiveScene().name;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
         }
     }
 

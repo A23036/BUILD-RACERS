@@ -29,7 +29,7 @@ public class SelectorManager : MonoBehaviourPunCallbacks
         {
             //マスタークライアントのIDを登録
             PhotonView pv = GetComponent<PhotonView>();
-            PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable{{"MasterSelectorViewID", pv.ViewID}});
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable{{"MasterClienViewID", pv.ViewID}});
         }
     }
 
