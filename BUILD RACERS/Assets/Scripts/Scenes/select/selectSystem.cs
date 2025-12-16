@@ -32,7 +32,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     private List<Transform> driverIcons;
     private List<Transform> engineerIcons;
 
-    private TextMeshProUGUI text;
+    private TextMeshProUGUI debugMessage;
+    private TextMeshProUGUI playersCountText;
 
     //画像オブジェクト
     private GameObject checkmark;
@@ -52,8 +53,10 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     private void Awake()
     {
-        text = GameObject.Find("DebugMessage").GetComponent<TextMeshProUGUI>();
-        text.color = Color.black;
+        debugMessage = GameObject.Find("DebugMessage").GetComponent<TextMeshProUGUI>();
+        debugMessage.color = Color.black;
+        playersCountText = GameObject.Find("PlayerCountText").GetComponent<TextMeshProUGUI>();
+        playersCountText.color = Color.black;
         im = GameObject.Find("IconManager").GetComponent<IconManager>();
         driverIcons = im.GetDriverIconsList();
         engineerIcons = im.GetEngineerIconsList();
@@ -73,12 +76,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         //子のチェックマークの取得
         checkmark = transform.Find("i_checkmark").gameObject;
-        
+
         //チェックマーク　色の変更
         var image = checkmark.GetComponent<Image>();
-        if(image != null)
+        if (image != null)
         {
-            image.color = Color.green;  
+            image.color = Color.green;
         }
 
         //子の王冠マークの取得
@@ -86,8 +89,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         //ルームマスターならアクティブにする
         isRoomMaster = false;
-        
-        if(photonView.IsMine && PhotonNetwork.IsMasterClient)
+
+        if (photonView.IsMine && PhotonNetwork.IsMasterClient)
         {
             isRoomMaster = true;
             crown.SetActive(true);
@@ -137,25 +140,28 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         if (selectDriverNum == -1 && selectEngineerNum == -1)
         {
             transform.position = new Vector3(-100, -100, -100);
-            text.text = "NOW SELECT : NONE";
+            debugMessage.text = "NOW SELECT : NONE";
         }
         else
         {
             if (selectDriverNum != -1)
             {
                 transform.position = driverIcons[selectDriverNum].position + offset;
-                text.text = "NOW SELECT : DRIVER" + (selectDriverNum + 1);
+                debugMessage.text = "NOW SELECT : DRIVER" + (selectDriverNum + 1);
                 PlayerPrefs.SetInt("driverNum", selectDriverNum + 1);
                 PlayerPrefs.SetInt("engineerNum", -1);
             }
             else
             {
                 transform.position = engineerIcons[selectEngineerNum].position + offset;
-                text.text = "NOW SELECT : ENGINEER" + (selectEngineerNum + 1);
+                debugMessage.text = "NOW SELECT : ENGINEER" + (selectEngineerNum + 1);
                 PlayerPrefs.SetInt("driverNum", -1);
                 PlayerPrefs.SetInt("engineerNum", selectEngineerNum + 1);
             }
         }
+
+        //人数表示の更新
+        playersCountText.text = PhotonNetwork.PlayerList.Length.ToString();
     }
     public bool TryReserveSlot(string pendkey)
     {
@@ -201,14 +207,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         foreach (var kv in props)
         {
-            if(kv.Value is int n && n == actor)
+            if (kv.Value is int n && n == actor)
             {
                 propsToSet[kv.Key] = null;
             }
         }
 
         //プロパティに反映させる
-        if(propsToSet.Count > 0)
+        if (propsToSet.Count > 0)
         {
             PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet);
             Debug.Log("Release : " + propsToSet.Count);
@@ -217,7 +223,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     public void SetNum(int driver, int engineer)
     {
-        if(isReady)
+        if (isReady)
         {
             Debug.Log("準備完了しています");
             return;
@@ -232,7 +238,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         // 予約をリクエスト　ローカルの確定・更新はコールバックで行う
         pendingkey = (driver != -1) ? $"D_{driver + 1}" : $"B_{engineer + 1}";
-        
+
         // キーの予約リクエストの送信
         if (!TryReserveSlot(pendingkey))
         {
@@ -252,14 +258,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log("[Custom CallBack]");
 
         //シーン遷移
-        if(changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)
+        if (changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)
         {
             var sm = GameObject.Find("SceneManager").GetComponent<selectScene>();
             sm.PushStartButton();
         }
 
         //関係のないコールバックは無視
-        if(pendingkey == null || !changed.ContainsKey(pendingkey))
+        if (pendingkey == null || !changed.ContainsKey(pendingkey))
         {
             return;
         }
@@ -268,9 +274,9 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         bool isHit = false;
 
         var props = PhotonNetwork.CurrentRoom.CustomProperties;
-        foreach(var kv in props)
+        foreach (var kv in props)
         {
-            if(kv.Value is int n && n == PhotonNetwork.LocalPlayer.ActorNumber)
+            if (kv.Value is int n && n == PhotonNetwork.LocalPlayer.ActorNumber)
             {
                 //ローカル更新
                 if (pendingkey.StartsWith("D_"))
@@ -334,7 +340,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             bool isRM = (bool)stream.ReceiveNext();
 
             //変化があればSetActive
-            if(isRM != isRoomMaster)
+            if (isRM != isRoomMaster)
             {
                 crown.SetActive(isRM);
             }
@@ -361,7 +367,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     public void UpdateCheckmark()
     {
-        if(isReady != checkmark.activeSelf) checkmark.SetActive(isReady);
+        if (isReady != checkmark.activeSelf) checkmark.SetActive(isReady);
     }
 
     public bool IsReady()
@@ -405,7 +411,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //ルームマスターが変更された際のコールバック
     public override void OnMasterClientSwitched(Photon.Realtime.Player newMaster)
     {
-        if(photonView.IsMine && PhotonNetwork.IsMasterClient)
+        if (photonView.IsMine && PhotonNetwork.IsMasterClient)
         {
             isRoomMaster = true;
             crown.SetActive(true);
@@ -422,6 +428,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     {
         //キーの解放　重複の可能性も考えてすべてのプロパティを確認
         int otherNumber = other.ActorNumber;
-        if(PhotonNetwork.IsMasterClient) ReleaseSlotAll(otherNumber);
+        if (PhotonNetwork.IsMasterClient) ReleaseSlotAll(otherNumber);
     }
 }
