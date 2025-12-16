@@ -12,6 +12,11 @@ public class MudScale : MonoBehaviour
     [SerializeField] private bool playOnStart = true;
     [SerializeField] private float startDelay = 0f;
 
+    [Header("消滅設定")]
+    [SerializeField] private bool autoDestroy = true;
+    [SerializeField] private float lifetimeBeforeShrink = 2.0f; // 表示される時間
+    [SerializeField] private float shrinkDuration = 0.5f; // 縮小にかかる時間
+
     private void Start()
     {
         if (playOnStart)
@@ -51,11 +56,9 @@ public class MudScale : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / phase1Duration;
-
             // EaseOutBackで弾むような動き
             float scale = EaseOutBack(t) * overshootScale;
             transform.localScale = Vector3.one * scale;
-
             yield return null;
         }
 
@@ -65,16 +68,49 @@ public class MudScale : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / phase2Duration;
-
             // スムーズに元のサイズへ
             float scale = Mathf.Lerp(overshootScale, finalScale, t);
             transform.localScale = Vector3.one * scale;
-
             yield return null;
         }
 
         // 最終的に正確なサイズにセット
         transform.localScale = Vector3.one * finalScale;
+
+        // 自動消滅が有効な場合
+        if (autoDestroy)
+        {
+            yield return StartCoroutine(ShrinkAndDestroy());
+        }
+    }
+
+    /// <summary>
+    /// 縮小して消滅するコルーチン
+    /// </summary>
+    private IEnumerator ShrinkAndDestroy()
+    {
+        // 指定時間待機
+        yield return new WaitForSeconds(lifetimeBeforeShrink);
+
+        // 現在のスケールを取得
+        Vector3 startScale = transform.localScale;
+        float elapsed = 0f;
+
+        // 縮小アニメーション
+        while (elapsed < shrinkDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / shrinkDuration;
+
+            // EaseInBackで加速しながら縮む
+            float scale = Mathf.Lerp(1f, 0f, EaseInBack(t));
+            transform.localScale = startScale * scale;
+
+            yield return null;
+        }
+
+        // オブジェクトを破棄
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -86,5 +122,16 @@ public class MudScale : MonoBehaviour
         float c1 = 1.70158f;
         float c3 = c1 + 1f;
         return 1f + c3 * Mathf.Pow(t - 1f, 3f) + c1 * Mathf.Pow(t - 1f, 2f);
+    }
+
+    /// <summary>
+    /// EaseInBackイージング関数
+    /// 少し戻ってから加速する動き
+    /// </summary>
+    private float EaseInBack(float t)
+    {
+        float c1 = 1.70158f;
+        float c3 = c1 + 1f;
+        return c3 * t * t * t - c1 * t * t;
     }
 }
