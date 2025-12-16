@@ -121,9 +121,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             timer += Time.deltaTime;
             if (timer >= 1f)
             {
-                //座標確認
-                //Debug.Log(selectDriverNum + "," + selectBuilderNum);
-
                 //カスタムプロパティ確認
                 var props = PhotonNetwork.CurrentRoom.CustomProperties;
 
@@ -163,63 +160,42 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     public bool TryReserveSlot(string pendkey)
     {
         int actor = PhotonNetwork.LocalPlayer.ActorNumber;
-        
+
+        //獲得と解放を同時に行う　原子性
+        var propsToSet = new Hashtable();
+        var expected = new Hashtable();
+
         //自分を選択のときはCASの確認をせずにセット
-        if(pendingkey != null && key == pendkey)
+        if (pendingkey != null && key == pendkey)
         {
             Debug.Log("自分を選択");
-            var propsToSet = new Hashtable { { pendkey, null } };
-            bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet);
-            return success;
+            propsToSet[pendkey] = null;
+            expected[pendkey] = actor;
         }
         else
         {
             Debug.Log("自分以外を選択");
-            var propsToSet = new Hashtable { { pendkey, actor } };
-            var expected = new Hashtable { { pendkey, null } }; // キーが無ければ予約できる（原子的）
-            bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
-            return success;
-        }
-    }
+            propsToSet[pendkey] = actor;
+            expected[pendkey] = null;
 
-    public bool ReleaseSlot(string key)
-    {
-        if (key == null) return false;
-        if (!PhotonNetwork.IsConnected) return false;
-
-        int actor = PhotonNetwork.LocalPlayer.ActorNumber;
-        // 自分が占有しているか確認してから解除するのが安全
-        object cur;
-        if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(key, out cur))
-        {
-            if (cur is int owner && owner == actor)
+            //キーを取得していれば解放も行う
+            if (oldkey != null)
             {
-                ///*
-                var propsToSet = new Hashtable { { key, null } };
-                var expected = new Hashtable { { key, actor } }; // 自分が所有していれば解除
-                bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
-                Debug.Log("DELETE KEY");
-                return success;
-                //*/
-            }
-            else
-            {
-                return false;
+                propsToSet[oldkey] = null;
+                expected[oldkey] = actor;
             }
         }
-        else
-        {
-            return false;
-        }
+
+        bool success = PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet, expected);
+        return success;
     }
 
     //すべてのキーの解放　切断時に呼び出す
-    public void ReleaseSlotAll()
+    public void ReleaseSlotAll(int actor)
     {
         //接続確認
         if (!PhotonNetwork.IsConnected) return;
 
-        int actor = PhotonNetwork.LocalPlayer.ActorNumber;
         var props = PhotonNetwork.CurrentRoom.CustomProperties;
         var propsToSet = new Hashtable();
 
@@ -232,7 +208,11 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         //プロパティに反映させる
-        if(propsToSet.Count > 0) PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet);
+        if(propsToSet.Count > 0)
+        {
+            PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet);
+            Debug.Log("Release : " + propsToSet.Count);
+        }
     }
 
     public void SetNum(int driver, int engineer)
@@ -269,7 +249,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //カスタムプロパティのコールバック
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable changed)
     {
-        //Debug.Log("[Custom CallBack]");
+        Debug.Log("[Custom CallBack]");
 
         //シーン遷移
         if(changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)
@@ -278,69 +258,53 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             sm.PushStartButton();
         }
 
-        base.OnRoomPropertiesUpdate(changed);
-
-        // 希望値がない or 希望値が含まれていない　なら処理なし
-        if (pendingkey == null)
+        //関係のないコールバックは無視
+        if(pendingkey == null || !changed.ContainsKey(pendingkey))
         {
-            Debug.Log("予約なし");
             return;
         }
 
-        if(!changed.ContainsKey(pendingkey))
+        //カスタムプロパティをローカルに反映
+        bool isHit = false;
+
+        var props = PhotonNetwork.CurrentRoom.CustomProperties;
+        foreach(var kv in props)
         {
-            Debug.Log("希望値を含まない");
-            return;
+            if(kv.Value is int n && n == PhotonNetwork.LocalPlayer.ActorNumber)
+            {
+                //ローカル更新
+                if (pendingkey.StartsWith("D_"))
+                {
+                    selectDriverNum = int.Parse(pendingkey.Substring(2)) - 1;
+                    selectEngineerNum = -1;
+                }
+                else
+                {
+                    selectEngineerNum = int.Parse(pendingkey.Substring(2)) - 1;
+                    selectDriverNum = -1;
+                }
+
+                oldkey = pendingkey;
+                key = pendingkey;
+
+                isHit = true;
+            }
         }
 
-        //希望値がとれていればローカルを更新
-        object value = changed[pendingkey];
-
-        Debug.Log(value);
-        
-        if (value is int number && number == PhotonNetwork.LocalPlayer.ActorNumber)
+        //キーがなければ画面外に移動
+        if (!isHit)
         {
-            if (pendingkey.StartsWith("D_"))
-            {
-                selectDriverNum = int.Parse(pendingkey.Substring(2)) - 1;
-                selectEngineerNum = -1;
-            }
-            else
-            {
-                selectEngineerNum = int.Parse(pendingkey.Substring(2)) - 1;
-                selectDriverNum = -1;
-            }
-
-            //キーのリリース
-            if(oldkey != null)
-            {
-                ReleaseSlot(oldkey);
-            }
-
-            oldkey = pendingkey;
-            key = pendingkey;
-
-            Debug.Log("獲得成功");
-        }
-        else if(pendingkey == key)
-        {
-            if(key != null) ReleaseSlot(key);
-
             selectDriverNum = -1;
             selectEngineerNum = -1;
 
             oldkey = null;
             key = null;
-
-            Debug.Log("解除成功");
-        }
-        else
-        {
-            Debug.Log("獲得失敗");
         }
 
         //希望値をリセット
         pendingkey = null;
+
+        return;
     }
 
     public void GetNums(out int dn, out int bn)
@@ -397,7 +361,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     public void UpdateCheckmark()
     {
-        checkmark.SetActive(isReady);
+        if(isReady != checkmark.activeSelf) checkmark.SetActive(isReady);
     }
 
     public bool IsReady()
@@ -425,7 +389,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //ルームマスターに準備状態を送信
     void SendToMaster(bool readyStat)
     {
-        //テストでID201で固定
         int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClienViewID"];
         PhotonView target = PhotonView.Find(viewID);
 
@@ -451,11 +414,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     void OnDestroy()
     {
-        //if (key != null) ReleaseSlot(key);
-
-        //キーの解放　重複の可能性も考えてすべてのプロパティを確認
-        ReleaseSlotAll();
-
         Debug.Log($"selectSystem OnDestroy called on {gameObject.name} instID={this.GetInstanceID()}");
+    }
+
+    //ルームから誰か抜けた時に呼ばれるコールバック
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player other)
+    {
+        //キーの解放　重複の可能性も考えてすべてのプロパティを確認
+        int otherNumber = other.ActorNumber;
+        if(PhotonNetwork.IsMasterClient) ReleaseSlotAll(otherNumber);
     }
 }

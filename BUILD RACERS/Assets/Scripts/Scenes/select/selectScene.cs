@@ -35,6 +35,7 @@ public class selectScene : baseScene
         Hashtable hash = new Hashtable();
         hash["driverNum"] = PlayerPrefs.GetInt("driverNum");
         hash["engineerNum"] = PlayerPrefs.GetInt("engineerNum");
+
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
 
         //名前が一文字以上でシーン遷移
@@ -43,7 +44,7 @@ public class selectScene : baseScene
             SceneManager.LoadScene("gamePlay");
 
             //セレクターの削除
-            if(selector != null) PhotonNetwork.Destroy(selector);
+            //if(selector != null && selector.GetPhotonView().IsMine) PhotonNetwork.Destroy(selector);
         }
     }
 

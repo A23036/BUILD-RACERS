@@ -108,16 +108,16 @@ public class CarController : MonoBehaviourPunCallbacks
         foreach (var p in players)
         {
             // ドライバーはcontinue(エンジニアのみ探す)
-            if ((int)p.CustomProperties["engineerNum"] == -1) continue;
+            int e = p.CustomProperties["engineerNum"] is int en ? en:-1;
+            if (e == -1) continue;
             
             // 自身と同番号のエンジニアを探す
-            int e = (int)p.CustomProperties["engineerNum"];
             if (e == PlayerPrefs.GetInt("driverNum"))
             {
                 // PlayerViewID が設定済みならpairViewIDに保存
                 if (p.CustomProperties.ContainsKey("PlayerViewID"))
                 {
-                    pairViewID = (int)p.CustomProperties["PlayerViewID"];
+                    pairViewID = p.CustomProperties["PlayerViewID"] is int pairViewId ? pairViewId : -1;
                     pairPlayer = p;
                     Debug.Log("FOUND PAIR! pairID:" + pairViewID);
                 }
@@ -370,6 +370,11 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void SendItem(PartsID id)
     {
+        if(!photonView.IsMine)
+        {
+            return;
+        }
+
         PhotonView target = PhotonView.Find(pairViewID);
 
         if (target == null) Debug.Log("target is null");

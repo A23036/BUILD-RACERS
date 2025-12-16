@@ -33,18 +33,23 @@ public class Engineer : MonoBehaviourPunCallbacks
         foreach (var p in players)
         {
             // エンジニアはcontinue(ドライバーのみ探す)
-            if ((int)p.CustomProperties["driverNum"] == -1) continue;
+            int d = p.CustomProperties["driverNum"] is int dn ? dn:-1;
+            if (d == -1) continue;
 
             // 自身と同番号のドライバーを探す
-            int d = (int)p.CustomProperties["driverNum"];
             if (d == PlayerPrefs.GetInt("engineerNum"))
             {
                 // PlayerViewID が設定済みならpairViewIDに保存
                 if (p.CustomProperties.ContainsKey("PlayerViewID"))
                 {
-                    pairViewID = (int)p.CustomProperties["PlayerViewID"];
+                    pairViewID = p.CustomProperties["PlayerViewID"] is int pairViewId ? pairViewId : -1;
                     pairPlayer = p;
                     Debug.Log("FOUND PAIR! pairID:" + pairViewID);
+
+                    // ミニマップカメラに対象を指定
+                    PhotonView targetPV = PhotonView.Find(pairViewID);
+                    miniMapCamera = FindAnyObjectByType<MiniMapCamera>();
+                    miniMapCamera.SetTarget(targetPV.transform);
                 }
                 else
                 {
@@ -58,11 +63,6 @@ public class Engineer : MonoBehaviourPunCallbacks
         {
             Debug.Log("Pair is null");
         }
-
-        // ミニマップカメラに対象を指定
-        PhotonView targetPV = PhotonView.Find(pairViewID);
-        miniMapCamera = FindAnyObjectByType<MiniMapCamera>();
-        miniMapCamera.SetTarget(targetPV.transform);
     }
     
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
