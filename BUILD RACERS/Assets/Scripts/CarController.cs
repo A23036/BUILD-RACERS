@@ -386,8 +386,8 @@ public class CarController : MonoBehaviourPunCallbacks
         if (pairPlayer == null) Debug.Log("pair player is null");
         if (photonView == null) Debug.Log("photon view is null");
 
-        // ペアのエンジニア画面にアイテムを生成
-        target.RPC("RPC_SpawnItem", pairPlayer, id);
+        // ペアのエンジニア画面にアイテムパーツを生成
+        target.RPC("RPC_SpawnParts", pairPlayer, id);
     }
 
     //カメラの設定
