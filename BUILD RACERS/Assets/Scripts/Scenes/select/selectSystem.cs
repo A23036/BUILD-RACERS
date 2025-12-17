@@ -33,8 +33,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     private List<Transform> driverIcons;
     private List<Transform> engineerIcons;
 
-    private TextMeshProUGUI debugMessage;
-    private TextMeshProUGUI playersCountText;
     private TextMeshProUGUI nameBar;
 
     //画像オブジェクト
@@ -51,17 +49,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         //セレクトの初期化
         PlayerPrefs.SetInt("driverNum", 1);
         PlayerPrefs.SetInt("engineerNum", -1);
-    }
-
-    private void Awake()
-    {
-        debugMessage = GameObject.Find("DebugMessage").GetComponent<TextMeshProUGUI>();
-        debugMessage.color = Color.black;
-        playersCountText = GameObject.Find("PlayerCountText").GetComponent<TextMeshProUGUI>();
-        playersCountText.color = Color.black;
-        im = GameObject.Find("IconManager").GetComponent<IconManager>();
-        driverIcons = im.GetDriverIconsList();
-        engineerIcons = im.GetEngineerIconsList();
 
         //キャンバスの子供に設定
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
@@ -76,9 +63,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         }
         colorPalette = cols;
 
-        //子のチェックマークの取得
-        checkmark = transform.Find("i_checkmark").gameObject;
-
         //チェックマーク　色の変更
         var image = checkmark.GetComponent<Image>();
         if (image != null)
@@ -86,8 +70,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             image.color = Color.green;
         }
 
-        //子の王冠マークの取得
-        crown = transform.Find("crown").gameObject;
+        //シングルプレイなら以下処理は省略
+        if (!PhotonNetwork.IsConnected) return;
 
         //ルームマスターならアクティブにする
         isRoomMaster = false;
@@ -97,6 +81,20 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             isRoomMaster = true;
             crown.SetActive(true);
         }
+    }
+
+    private void Awake()
+    {
+        //ボタンの配列を取得
+        im = GameObject.Find("IconManager").GetComponent<IconManager>();
+        driverIcons = im.GetDriverIconsList();
+        engineerIcons = im.GetEngineerIconsList();
+
+        //子のチェックマークの取得
+        checkmark = transform.Find("i_checkmark").gameObject;
+
+        //子の王冠マークの取得
+        crown = transform.Find("crown").gameObject;
 
         //ネームバーの取得
         nameBar = transform.Find("NameBar").gameObject.GetComponent<TextMeshProUGUI>();
@@ -114,7 +112,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         //ネームバーの更新
         UpdateNameBar();
 
-        if (!photonView.IsMine) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
         //ゲーミングカラー
         if (gamingColor)
@@ -128,7 +126,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         //Debug numbers
-        if (true)
+        if (PhotonNetwork.IsConnected)
         {
             timer += Time.deltaTime;
             if (timer >= 1f)
@@ -149,28 +147,24 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         if (selectDriverNum == -1 && selectEngineerNum == -1)
         {
             transform.position = new Vector3(-100, -100, -100);
-            debugMessage.text = "NOW SELECT : NONE";
         }
         else
         {
             if (selectDriverNum != -1)
             {
                 transform.position = driverIcons[selectDriverNum].position + offset;
-                debugMessage.text = "NOW SELECT : DRIVER" + (selectDriverNum + 1);
                 PlayerPrefs.SetInt("driverNum", selectDriverNum + 1);
                 PlayerPrefs.SetInt("engineerNum", -1);
             }
             else
             {
                 transform.position = engineerIcons[selectEngineerNum].position + offset;
-                debugMessage.text = "NOW SELECT : ENGINEER" + (selectEngineerNum + 1);
                 PlayerPrefs.SetInt("driverNum", -1);
                 PlayerPrefs.SetInt("engineerNum", selectEngineerNum + 1);
             }
         }
 
-        //人数表示の更新
-        playersCountText.text = PhotonNetwork.PlayerList.Length.ToString();
+        Debug.Log(selectDriverNum + " " + selectEngineerNum);
     }
     public bool TryReserveSlot(string pendkey)
     {
@@ -259,6 +253,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         {
             Debug.Log("予約成功");
         }
+    }
+
+    public void SetNumOffline(int driver, int engineer)
+    {
+        selectDriverNum = driver;
+        selectEngineerNum = engineer;
     }
 
     //カスタムプロパティのコールバック
@@ -394,6 +394,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     public void UpdateNameBar()
     {
+        if(!PhotonNetwork.IsConnected)
+        {
+            nameBar.text = PlayerPrefs.GetString("PlayerName");
+            return;
+        }
+
         if (photonView.IsMine)
         {
             nameBar.text = PlayerPrefs.GetString("PlayerName");

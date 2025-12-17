@@ -1,18 +1,24 @@
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
-using ExitGames.Client.Photon;
-using TMPro;
+using static Fusion.Sockets.NetBitBuffer;
 
 public class selectScene : baseScene
 {
     [SerializeField] private GameObject readyButtonText;
 
+    //セレクター関係
     private GameObject selector;
     private selectSystem ss;
+
+    //UIテキスト
+    private TextMeshProUGUI debugMessage;
+    private TextMeshProUGUI playersCountText;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -22,11 +28,42 @@ public class selectScene : baseScene
         GameObject inputField = GameObject.Find("InputFieldLegacy");
         InputField input = inputField.GetComponent<InputField>();
         input.text = PlayerPrefs.GetString("PlayerName");
+
+        debugMessage = GameObject.Find("DebugMessage").GetComponent<TextMeshProUGUI>();
+        debugMessage.color = Color.black;
+
+        playersCountText = GameObject.Find("PlayerCountText").GetComponent<TextMeshProUGUI>();
+        playersCountText.color = Color.black;
     }
 
-    // Update is called once per frame
-    void FixUpdate()
+    private void Update()
     {
+        //デバッグメッセージの更新処理
+        if (ss == null)
+        {
+            Debug.Log("セレクターが見つかりません");
+            return;
+        }
+        ss.GetNums(out int dn, out int bn);
+        int selectDriverNum = dn, selectEngineerNum = bn;
+        if (selectDriverNum == -1 && selectEngineerNum == -1)
+        {
+            debugMessage.text = "NOW SELECT : NONE";
+        }
+        else
+        {
+            if (selectDriverNum != -1)
+            {
+                debugMessage.text = "NOW SELECT : DRIVER" + (selectDriverNum + 1);
+            }
+            else
+            {
+                debugMessage.text = "NOW SELECT : ENGINEER" + (selectEngineerNum + 1);
+            }
+        }
+
+        //人数表示の更新
+        playersCountText.text = PhotonNetwork.PlayerList.Length.ToString();
     }
 
     public void PushStartButton()

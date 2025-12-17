@@ -13,6 +13,8 @@ public class iconButton : MonoBehaviour
 
     void Start()
     {
+        //オフライン時はここで取得
+        if(!PhotonNetwork.IsConnected) ss = FindObjectOfType<selectSystem>();
     }
 
     private void Awake()
@@ -23,7 +25,20 @@ public class iconButton : MonoBehaviour
     
     public void PushIcon()
     {
-        if(ss == null)
+        //オフラインプレイ時の処理
+        if (!PhotonNetwork.IsConnected)
+        {
+            if(ss == null)
+            {
+                ss = FindObjectOfType<selectSystem>();
+            }
+
+            ss.SetNumOffline(driverNum, builderNum);
+            return;
+        }
+
+        //オンラインプレイ時の処理
+        if (ss == null)
         {
             //自分のセレクターを検索する
             PhotonView[] allss = FindObjectsOfType<PhotonView>();
