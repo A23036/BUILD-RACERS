@@ -106,7 +106,7 @@ public class ItemBoxController : MonoBehaviour
 
             // --- アイテムボックスが破壊されるときの処理 ---
             // 1. アイテムを渡す処理をここに記述（あれば）
-            carController.SendItem(itemManager.GetRandomItem(partsType));
+            carController.SendParts(itemManager.GetRandomItem(partsType));
             //itemManager.Enqueue(itemManager.GetRandomItem(partsType));
 
             // 2. 破壊エフェクトを生成する

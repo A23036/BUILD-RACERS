@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using System.Runtime.Serialization.Formatters;
 
 public class PanelManager : MonoBehaviour
 {
@@ -26,6 +27,20 @@ public class PanelManager : MonoBehaviour
 
     private int previewOriginX = -1;
     private int previewOriginY = -1;
+
+    private Engineer engineer;
+
+    public void SetEngineer(Engineer en)
+    {
+        engineer = en;
+    }
+
+    void Awake()
+    {
+        Initialize();
+
+        RegisterAllGrids();
+    }
 
     // 全てのPanelGridを登録
     private void RegisterAllGrids()
@@ -145,7 +160,11 @@ public class PanelManager : MonoBehaviour
         // 配置したパーツを記録
         placedParts[parts] = occupiedCells;
 
+        // 配置したパーツ情報を送信
+        engineer.SendItem(parts.GetPartsID());
+
         Debug.Log($"パーツを配置しました: 原点({originX},{originY})");
+        Debug.Log($"配置パーツID:" + parts.GetPartsID());
         PrintState();
 
         return true;
@@ -338,13 +357,6 @@ public class PanelManager : MonoBehaviour
     }
 
     public bool GetGridState(int x, int y) => panelState[x, y];
-
-    void Awake()
-    {
-        Initialize();
-
-        RegisterAllGrids();
-    }
 
     // セットされているパーツの数を取得
     public Dictionary<PartsID, int> CountPlacedPartsByID()

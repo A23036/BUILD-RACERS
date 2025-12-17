@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using Photon.Pun;
 using TMPro;
 using Photon.Realtime;
+using UnityEngine.Rendering;
 
 public class CarController : MonoBehaviourPunCallbacks
 {
@@ -58,6 +59,8 @@ public class CarController : MonoBehaviourPunCallbacks
     private Player pairPlayer = null;
     private int pairViewID = -1;
 
+    private ItemManager itemManager;
+
     private void Awake()
     {
         Debug.Log("AWAKE");
@@ -95,6 +98,8 @@ public class CarController : MonoBehaviourPunCallbacks
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        itemManager = GetComponent<ItemManager>();
     }
 
     private void TryPairPlayers()
@@ -368,7 +373,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
     }
 
-    public void SendItem(PartsID id)
+    public void SendParts(PartsID id)
     {
         if(!photonView.IsMine)
         {
@@ -398,6 +403,15 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         Debug.Log("CALL BACK");
         TryPairPlayers();
+    }
+
+    // 通信用関数
+    [PunRPC]
+    public void RPC_EnqueueItem(PartsID id)
+    {
+        Debug.Log("Enqueue Item Request");
+
+        itemManager.Enqueue((int)id);
     }
 
 }

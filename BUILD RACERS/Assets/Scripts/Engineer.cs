@@ -6,14 +6,20 @@ using Photon.Pun;
 public class Engineer : MonoBehaviourPunCallbacks
 {
     private PartsManager partsManager;
+    private PanelManager panelManager;
 
     private Player pairPlayer = null;
     private int pairViewID = -1;
 
     void Awake()
     {
+        if (!photonView.IsMine) return;
+
         partsManager = GetComponentInChildren<PartsManager>();
-        
+
+        panelManager = GameObject.Find("PanelManager").GetComponent<PanelManager>();
+        panelManager.SetEngineer(this);
+
         PhotonView pv = GetComponent<PhotonView>();
 
         if (photonView.IsMine && PlayerPrefs.GetInt("engineerNum") != -1) PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
@@ -70,6 +76,21 @@ public class Engineer : MonoBehaviourPunCallbacks
             cameraController.SetTarget(PhotonView.Find(pairViewID).transform);
     }
 
+    public void SendItem(PartsID id)
+    {
+        //ドライバーにアイテム送信
+        Debug.Log("ドライバーに送信するパーツID:" + id);
+
+        PhotonView target = PhotonView.Find(pairViewID);
+
+        if (target == null) Debug.Log("target is null");
+        if (pairPlayer == null) Debug.Log("pair player is null");
+        if (photonView == null) Debug.Log("photon view is null");
+
+        // ペアのエンジニア画面にアイテムを生成
+        target.RPC("RPC_EnqueueItem", pairPlayer, id);
+    }
+
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
         Debug.Log("CALL BACK");
@@ -78,7 +99,7 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     // 通信用関数
     [PunRPC]
-    public void RPC_SpawnItem(PartsID id)
+    public void RPC_SpawnParts(PartsID id)
     {
         Debug.Log("Spawn Item Request");
         if (partsManager == null)
