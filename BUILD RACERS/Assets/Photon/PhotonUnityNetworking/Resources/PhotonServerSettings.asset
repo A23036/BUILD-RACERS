@@ -45,6 +45,7 @@ MonoBehaviour:
   - RPC_OnSelectorChanged
   - RPC_SpawnParts
   - RPC_EnqueueItem
+  - RPC_RemoveItem
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

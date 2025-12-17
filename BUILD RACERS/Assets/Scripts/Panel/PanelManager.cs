@@ -187,6 +187,9 @@ public class PanelManager : MonoBehaviour
 
         placedParts.Remove(parts);
 
+        // 取り外したパーツ情報を送信
+        engineer.RemoveItem(parts.GetPartsID());
+
         Debug.Log("パーツを取り外しました");
         PrintState();
 

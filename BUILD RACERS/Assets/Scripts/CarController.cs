@@ -414,4 +414,12 @@ public class CarController : MonoBehaviourPunCallbacks
         itemManager.Enqueue((int)id);
     }
 
+    [PunRPC]
+    public void RPC_RemoveItem(PartsID id)
+    {
+        Debug.Log("Remove Item Request");
+
+        itemManager.Remove((int)id);
+    }
+
 }

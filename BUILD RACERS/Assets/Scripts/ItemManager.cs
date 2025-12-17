@@ -61,7 +61,7 @@ public class ItemManager : MonoBehaviour
                 nodeMap.Remove(itemId);
         }
 
-        //PrintQueue();
+        PrintQueue();
         return true;
     }
 

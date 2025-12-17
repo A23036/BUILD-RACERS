@@ -22,7 +22,7 @@ public class Engineer : MonoBehaviourPunCallbacks
 
         PhotonView pv = GetComponent<PhotonView>();
 
-        if (photonView.IsMine && PlayerPrefs.GetInt("engineerNum") != -1) PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
+        if (PlayerPrefs.GetInt("engineerNum") != -1) PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
 
         Debug.Log("My ViewID: " + pv.ViewID);
     }
@@ -89,6 +89,20 @@ public class Engineer : MonoBehaviourPunCallbacks
 
         // ペアのドライバーのアイテムキューにアイテムを追加
         target.RPC("RPC_EnqueueItem", pairPlayer, id);
+    }
+
+    public void RemoveItem(PartsID id)
+    {
+        Debug.Log("削除するパーツID:" + id);
+
+        PhotonView target = PhotonView.Find(pairViewID);
+
+        if (target == null) Debug.Log("target is null");
+        if (pairPlayer == null) Debug.Log("pair player is null");
+        if (photonView == null) Debug.Log("photon view is null");
+
+        // ペアのドライバーのアイテムキューからアイテムを削除
+        target.RPC("RPC_RemoveItem", pairPlayer, id);
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
