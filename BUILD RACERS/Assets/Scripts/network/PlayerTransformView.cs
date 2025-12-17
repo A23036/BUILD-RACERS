@@ -55,6 +55,9 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
     // Update is called once per frame
     void Update()
     {
+        //オフライン時には処理なし
+        if (!PhotonNetwork.IsConnected) return;
+
         //自分でなければ補間
         if (!photonView.IsMine)
         {
@@ -88,6 +91,9 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
     //同期フレーム毎に呼ばれる
     void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
+        //オフライン時には処理なし
+        if (!PhotonNetwork.IsConnected) return;
+
         if (photonView.IsMine)
         {
             //自分なら座標を送信
