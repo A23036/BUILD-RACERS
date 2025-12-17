@@ -378,6 +378,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //READY‰Ÿ‚µ‚½‚çƒtƒ‰ƒO”½“]
     public void PushedReady()
     {
+        //–¼‘O‚ª–¢“ü—Í‚È‚çˆ—‚È‚µ
+        if(PlayerPrefs.GetString("PlayerName") == "")
+        {
+            return;
+        }
+
         isReady = !isReady;
         checkmark.SetActive(isReady);
 

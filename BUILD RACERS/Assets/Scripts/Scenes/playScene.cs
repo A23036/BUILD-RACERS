@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -86,12 +87,14 @@ public class playScene : baseScene
         }
         else if(PlayerPrefs.GetInt("engineerNum") != -1)
         {
-            //エンジニア生成
-            PhotonNetwork.Instantiate("Engineer", new Vector3(0,0,0), Quaternion.identity);
-
             //UIの表示・非表示
             DriverUI.SetActive(false);
             EngineerUI.SetActive(true);
+
+            //エンジニア生成
+            var player = PhotonNetwork.Instantiate("Engineer", new Vector3(0,0,0), Quaternion.identity);
+            var playerCc = player.GetComponent<Engineer>();
+            playerCc.SetCamera();
         }
         else
         {

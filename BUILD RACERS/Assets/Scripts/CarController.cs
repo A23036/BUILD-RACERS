@@ -66,7 +66,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         PhotonView pv = GetComponent<PhotonView>();
 
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
+        if(photonView.IsMine && PlayerPrefs.GetInt("driverNum") != -1) PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
 
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");

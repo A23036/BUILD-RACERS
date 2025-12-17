@@ -6,7 +6,6 @@ using Photon.Pun;
 public class Engineer : MonoBehaviourPunCallbacks
 {
     private PartsManager partsManager;
-    MiniMapCamera miniMapCamera;
 
     private Player pairPlayer = null;
     private int pairViewID = -1;
@@ -17,7 +16,7 @@ public class Engineer : MonoBehaviourPunCallbacks
         
         PhotonView pv = GetComponent<PhotonView>();
 
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
+        if (photonView.IsMine && PlayerPrefs.GetInt("engineerNum") != -1) PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
 
         Debug.Log("My ViewID: " + pv.ViewID);
     }
@@ -25,7 +24,7 @@ public class Engineer : MonoBehaviourPunCallbacks
     private void TryPairPlayers()
     {
         // ペアを発見済みの場合、処理を行わない
-        if (pairViewID != -1) return;
+        if (pairViewID != -1 || !photonView.IsMine) return;
 
         Player[] players = PhotonNetwork.PlayerList;
 
@@ -45,11 +44,6 @@ public class Engineer : MonoBehaviourPunCallbacks
                     pairViewID = p.CustomProperties["PlayerViewID"] is int pairViewId ? pairViewId : -1;
                     pairPlayer = p;
                     Debug.Log("FOUND PAIR! pairID:" + pairViewID);
-
-                    // ミニマップカメラに対象を指定
-                    PhotonView targetPV = PhotonView.Find(pairViewID);
-                    miniMapCamera = FindAnyObjectByType<MiniMapCamera>();
-                    miniMapCamera.SetTarget(targetPV.transform);
                 }
                 else
                 {
@@ -64,7 +58,15 @@ public class Engineer : MonoBehaviourPunCallbacks
             Debug.Log("Pair is null");
         }
     }
-    
+
+    //カメラの設定
+    public void SetCamera()
+    {
+        var cameraController = Camera.main.GetComponent<MiniMapCamera>();
+        if (cameraController != null)
+            cameraController.SetTarget(transform);
+    }
+
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
         Debug.Log("CALL BACK");
