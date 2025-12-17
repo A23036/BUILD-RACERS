@@ -87,7 +87,7 @@ public class Engineer : MonoBehaviourPunCallbacks
         if (pairPlayer == null) Debug.Log("pair player is null");
         if (photonView == null) Debug.Log("photon view is null");
 
-        // ペアのエンジニア画面にアイテムを生成
+        // ペアのドライバーのアイテムキューにアイテムを追加
         target.RPC("RPC_EnqueueItem", pairPlayer, id);
     }
 
