@@ -179,7 +179,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
-        if (!photonView.IsMine) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
         UpdateGroundType();
 
@@ -313,7 +313,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 coinScript.isCnt = true;
 
                 //自分以外ならテキストの更新はしない
-                if (!photonView.IsMine || driver != null) return;
+                if (PhotonNetwork.IsConnected && !photonView.IsMine || driver != null) return;
                 coinText.text = $"{coinCnt:D4}";
             }
         }
