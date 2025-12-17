@@ -13,6 +13,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     private int colorNumber;
     private bool isReady;
     private bool isRoomMaster;
+    private string playerName;
 
     //カラーパレット
     Color[] colorPalette;
@@ -34,6 +35,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     private TextMeshProUGUI debugMessage;
     private TextMeshProUGUI playersCountText;
+    private TextMeshProUGUI nameBar;
 
     //画像オブジェクト
     private GameObject checkmark;
@@ -95,6 +97,10 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             isRoomMaster = true;
             crown.SetActive(true);
         }
+
+        //ネームバーの取得
+        nameBar = transform.Find("NameBar").gameObject.GetComponent<TextMeshProUGUI>();
+        playerName = PlayerPrefs.GetString("PlayerName");
     }
 
     void Update()
@@ -104,6 +110,9 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         //チェックマークのアクティブを更新
         UpdateCheckmark();
+
+        //ネームバーの更新
+        UpdateNameBar();
 
         if (!photonView.IsMine) return;
 
@@ -329,6 +338,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(colorNumber);
             stream.SendNext(isReady);
             stream.SendNext(isRoomMaster);
+            stream.SendNext(playerName);
         }
         else
         {
@@ -345,6 +355,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
                 crown.SetActive(isRM);
             }
             isRoomMaster = isRM;
+
+            //変化があればネームバーの更新
+            string name = (string)stream.ReceiveNext();
+            if(name != playerName)
+            {
+                UpdateNameBar();
+                playerName = name;
+            }
         }
     }
 
@@ -362,12 +380,26 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         //未設定なら処理なし
         if (colorNumber == -1) return;
 
+        //セレクターの色更新
         GetComponent<Image>().color = colorPalette[colorNumber % playersCount];
+
+        //ネームバーの色更新
+        nameBar.color = colorPalette[colorNumber % playersCount];
     }
 
     public void UpdateCheckmark()
     {
         if (isReady != checkmark.activeSelf) checkmark.SetActive(isReady);
+    }
+
+    public void UpdateNameBar()
+    {
+        if (photonView.IsMine)
+        {
+            nameBar.text = PlayerPrefs.GetString("PlayerName");
+            playerName = PlayerPrefs.GetString("PlayerName");
+        }
+        else nameBar.text = playerName;
     }
 
     public bool IsReady()

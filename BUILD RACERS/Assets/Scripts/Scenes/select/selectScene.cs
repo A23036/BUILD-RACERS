@@ -74,6 +74,9 @@ public class selectScene : baseScene
         GameObject inputField = GameObject.Find("InputFieldLegacy");
         InputField input = inputField.GetComponent<InputField>();
 
+        //ネームバーの文字数制限
+        if(input.text.Length > 8) input.text = input.text.Substring(0, 8);
+
         //ゲーミングカラー
         if(input.text == "rainbow")
         {
@@ -87,6 +90,8 @@ public class selectScene : baseScene
 
         //プレイヤーの名前を保存
         PlayerPrefs.SetString("PlayerName", input.text);
+
+        ss.UpdateNameBar();
     }
 
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
