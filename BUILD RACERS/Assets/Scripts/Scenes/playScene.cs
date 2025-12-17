@@ -94,7 +94,6 @@ public class playScene : baseScene
             //エンジニア生成
             var player = PhotonNetwork.Instantiate("Engineer", new Vector3(0,0,0), Quaternion.identity);
             var playerCc = player.GetComponent<Engineer>();
-            playerCc.SetCamera();
         }
         else
         {

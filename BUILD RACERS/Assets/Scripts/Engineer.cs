@@ -44,6 +44,9 @@ public class Engineer : MonoBehaviourPunCallbacks
                     pairViewID = p.CustomProperties["PlayerViewID"] is int pairViewId ? pairViewId : -1;
                     pairPlayer = p;
                     Debug.Log("FOUND PAIR! pairID:" + pairViewID);
+
+                    //ÉJÉÅÉâÇÃí«è]
+                    SetCamera();
                 }
                 else
                 {
@@ -62,9 +65,9 @@ public class Engineer : MonoBehaviourPunCallbacks
     //ÉJÉÅÉâÇÃê›íË
     public void SetCamera()
     {
-        var cameraController = Camera.main.GetComponent<MiniMapCamera>();
+        var cameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
         if (cameraController != null)
-            cameraController.SetTarget(transform);
+            cameraController.SetTarget(PhotonView.Find(pairViewID).transform);
     }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
