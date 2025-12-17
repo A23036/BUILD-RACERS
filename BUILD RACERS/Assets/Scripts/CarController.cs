@@ -46,6 +46,9 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
     [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
 
+    [Header("保持なアイテムの数")]
+    [SerializeField] private int MAXITEMNUM = 5;
+
     private Rigidbody rb;
     private InputAction throttleAction;
     private InputAction brakeAction;
@@ -60,6 +63,18 @@ public class CarController : MonoBehaviourPunCallbacks
     private int pairViewID = -1;
 
     private ItemManager itemManager;
+
+    private int partsNum = 0;
+
+    public void AddPartsNum()
+    {
+        partsNum++; 
+    }
+
+    public void SubstractPartsNum()
+    {
+        partsNum--;
+    }
 
     private void Awake()
     {
@@ -375,10 +390,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void SendParts(PartsID id)
     {
-        if(!photonView.IsMine)
-        {
-            return;
-        }
+        if(!photonView.IsMine) return;
 
         PhotonView target = PhotonView.Find(pairViewID);
 
@@ -388,6 +400,19 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // ペアのエンジニア画面にアイテムパーツを生成
         target.RPC("RPC_SpawnParts", pairPlayer, id);
+    }
+
+    // アイテムを獲得可能か検証
+    public bool CanGetItem()
+    {
+        if (partsNum >= MAXITEMNUM)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     //カメラの設定
@@ -405,7 +430,9 @@ public class CarController : MonoBehaviourPunCallbacks
         TryPairPlayers();
     }
 
-    // 通信用関数
+    // ----- 通信用関数 -----
+
+    // アイテムをキューに追加
     [PunRPC]
     public void RPC_EnqueueItem(PartsID id)
     {
@@ -414,6 +441,7 @@ public class CarController : MonoBehaviourPunCallbacks
         itemManager.Enqueue((int)id);
     }
 
+    // アイテムをキューから削除
     [PunRPC]
     public void RPC_RemoveItem(PartsID id)
     {
@@ -422,4 +450,12 @@ public class CarController : MonoBehaviourPunCallbacks
         itemManager.Remove((int)id);
     }
 
+    // 未設置パーツ数を減らす
+    [PunRPC]
+    public void RPC_RemovePartsNum(PartsID id)
+    {
+        Debug.Log("Substract PartsNum Request");
+
+        SubstractPartsNum();
+    }
 }

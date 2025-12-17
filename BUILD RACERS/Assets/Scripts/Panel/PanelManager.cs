@@ -163,6 +163,9 @@ public class PanelManager : MonoBehaviour
         // 配置したパーツ情報を送信
         engineer.SendItem(parts.GetPartsID());
 
+        // 未設置パーツ数を減らす
+        engineer.SubstractPartsNum();
+
         Debug.Log($"パーツを配置しました: 原点({originX},{originY})");
         Debug.Log($"配置パーツID:" + parts.GetPartsID());
         PrintState();

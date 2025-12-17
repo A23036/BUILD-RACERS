@@ -105,6 +105,18 @@ public class Engineer : MonoBehaviourPunCallbacks
         target.RPC("RPC_RemoveItem", pairPlayer, id);
     }
 
+    public void SubstractPartsNum()
+    {
+        PhotonView target = PhotonView.Find(pairViewID);
+
+        if (target == null) Debug.Log("target is null");
+        if (pairPlayer == null) Debug.Log("pair player is null");
+        if (photonView == null) Debug.Log("photon view is null");
+
+        // ペアのドライバーのアイテムキューからアイテムを削除
+        target.RPC("RPC_RemovePartsNum", pairPlayer);
+    }
+
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
         Debug.Log("CALL BACK");

@@ -82,7 +82,16 @@ public class ItemManager : MonoBehaviour
                 return Random.Range(0, 3);
             */
             case PartsType.Item:
-                return PartsID.Energy;
+                int r = Random.Range(0, 1);
+                Debug.Log("RandomItem:" + r);
+                if (r == 0)
+                {
+                    return PartsID.Energy;
+                }
+                else
+                {
+                    return PartsID.Rocket;
+                }
             default:
                 return 0;
         }
