@@ -63,6 +63,7 @@ public class PartsManager : MonoBehaviour
         Parts newParts = Instantiate(prefab, parent);
 
         // ƒ[ƒJƒ‹ˆÊ’u‚ğ spawnPos ‚Éİ’è
+        spawnPos.x = 300.0f;
         newParts.transform.localPosition = spawnPos;
 
         Debug.Log($"[PartsManager] {id} ‚ğ¶¬‚µ‚Ü‚µ‚½");
