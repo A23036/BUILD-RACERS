@@ -49,7 +49,7 @@ public class MiniMapCamera : MonoBehaviour
                 ((t0.position - t0.deltaPosition) - (t1.position - t1.deltaPosition)).magnitude;
 
             float delta = curDist - prevDist;
-            miniMapCamera.orthographicSize -= delta * 0.02f;
+            miniMapCamera.orthographicSize -= delta * 0.1f;
         }
 
         //---------------------------------
