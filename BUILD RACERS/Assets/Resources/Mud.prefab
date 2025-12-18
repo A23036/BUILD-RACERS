@@ -51,6 +51,9 @@ MonoBehaviour:
   finalScale: 3
   playOnStart: 1
   startDelay: 0
+  autoDestroy: 1
+  lifetimeBeforeShrink: 2
+  shrinkDuration: 0.5
 --- !u!114 &2445939655226531987
 MonoBehaviour:
   m_ObjectHideFlags: 0

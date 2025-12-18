@@ -70,7 +70,7 @@ public class SelectorManager : MonoBehaviourPunCallbacks
         //ルームマスター以外は処理なし
         if(!PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("ROOM MASTER");
+            Debug.Log("NOT ROOM MASTER");
             return;
         }
 
@@ -80,18 +80,21 @@ public class SelectorManager : MonoBehaviourPunCallbacks
 
         Debug.Log("準備状態の配列数：" + selectorsStat.Count);
 
+        /*
         //全員分の状態が登録されていなければ準備まだ判定
         if (PhotonNetwork.PlayerList.Length != selectorsStat.Count)
         {
             isEveryoneReady = false;
             return;
         }
+        */
 
         //全員が準備完了か判定
         foreach(var vk in selectorsStat)
         {
             if(!vk.Value)
             {
+                Debug.Log(vk.Key + " is not ready");
                 isEveryoneReady = false;
                 break;
             }

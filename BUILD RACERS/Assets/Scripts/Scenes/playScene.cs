@@ -1,8 +1,6 @@
 using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
 
 public class playScene : baseScene
 {
@@ -11,6 +9,7 @@ public class playScene : baseScene
 
     [SerializeField] private GameObject DriverUI;
     [SerializeField] private GameObject EngineerUI;
+    [SerializeField] private GameObject MonitorUI;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -84,16 +83,31 @@ public class playScene : baseScene
             //UIの表示・非表示
             DriverUI.SetActive(true);
             EngineerUI.SetActive(false);
+            MonitorUI.SetActive(false);
         }
         else if(PlayerPrefs.GetInt("engineerNum") != -1)
         {
             //UIの表示・非表示
             DriverUI.SetActive(false);
             EngineerUI.SetActive(true);
+            MonitorUI.SetActive(false);
 
             //エンジニア生成
             var player = PhotonNetwork.Instantiate("Engineer", new Vector3(0,0,0), Quaternion.identity);
             var playerCc = player.GetComponent<Engineer>();
+        }
+        else if(PlayerPrefs.GetInt("isMonitor") == 1)
+        {
+            //UIの表示・非表示
+            DriverUI.SetActive(false);
+            EngineerUI.SetActive(false);
+            MonitorUI.SetActive(true);
+
+            //カメラの初期設定
+            Transform carTf = FindAnyObjectByType<CarController>()?.transform;
+            var cameraController = Camera.main.GetComponent<CameraController>();
+            if (cameraController != null)
+                cameraController.SetTarget(carTf);
         }
         else
         {
