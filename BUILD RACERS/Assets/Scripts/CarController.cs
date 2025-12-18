@@ -452,7 +452,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     // 未設置パーツ数を減らす
     [PunRPC]
-    public void RPC_RemovePartsNum(PartsID id)
+    public void RPC_RemovePartsNum()
     {
         Debug.Log("Substract PartsNum Request");
 
