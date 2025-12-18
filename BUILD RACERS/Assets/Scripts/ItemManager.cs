@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Photon.Pun;
+using UnityEngine.UIElements;
 
 public class ItemManager : MonoBehaviour
 {
@@ -94,6 +96,26 @@ public class ItemManager : MonoBehaviour
                 }
             default:
                 return 0;
+        }
+    }
+
+    public void SpawnItem(PartsID id)
+    {
+        if(id == PartsID.Rocket)
+        {
+            float forwardOffset = 5.0f;   // 前方距離
+            float heightOffset = 1.5f;   // 少し浮かせる（地面埋まり防止）
+
+            Vector3 spawnPos =
+                transform.position +
+                transform.forward * forwardOffset +
+                Vector3.up * heightOffset;
+
+            PhotonNetwork.Instantiate(
+                "PetBottle_Rocket_Green",
+                spawnPos,
+                transform.rotation   // 向きも自身に合わせる
+            );
         }
     }
 }

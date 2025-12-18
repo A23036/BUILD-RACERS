@@ -287,18 +287,12 @@ public class CarController : MonoBehaviourPunCallbacks
             rb.MoveRotation(rb.rotation * deltaRotation);
         }
 
-        //test スペースキーでエンジニア画面にアイテム生成
+        //test スペースキーでロケット生成
         if (Keyboard.current.spaceKey.wasPressedThisFrame && driver == null)
         {
             Debug.Log("space is pressed");
-            PhotonView target = PhotonView.Find(pairViewID);
 
-            if (target == null) Debug.Log("target is null");
-            if (pairPlayer == null) Debug.Log("pair player is null");
-            if(photonView == null) Debug.Log("photon view is null");
-
-            // ペアのエンジニア画面にアイテムを生成
-            target.RPC("RPC_SpawnItem", pairPlayer, PartsID.Energy);
+            itemManager.SpawnItem(PartsID.Rocket);
         }
     }
 
