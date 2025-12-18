@@ -82,7 +82,7 @@ public class ItemManager : MonoBehaviour
                 return Random.Range(0, 3);
             */
             case PartsType.Item:
-                int r = Random.Range(0, 1);
+                int r = Random.Range(0, 2);
                 Debug.Log("RandomItem:" + r);
                 if (r == 0)
                 {
