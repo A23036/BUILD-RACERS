@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class CameraController : MonoBehaviour
 {
@@ -7,11 +9,43 @@ public class CameraController : MonoBehaviour
 
     private Transform target;  // カートのTransform
 
+    // --- 観戦者関係 ---
+    [SerializeField] private float mouseSensitivity = 3f;
+    [SerializeField] private float monitorDistance = 6f;
+
+    private float yaw;   // 水平方向
+    private float pitch; // 垂直方向
+
+    private int watchIndex = 0;
+    Player[] cachedPlayers;
+    // --- 観戦者関係 ---
+
     public void SetTarget(Transform newTarget) => target = newTarget;
+
+    void Start()
+    {
+        if (PlayerPrefs.GetInt("isMonitor") == 1)
+        {
+            cachedPlayers = PhotonNetwork.PlayerList;
+            SetNextTarget(0);
+        }
+    }
 
     private void LateUpdate()
     {
-        if (target == null) return;
+        if (target == null)
+        {
+            //観戦者なら最初にランダムなカート1台をターゲットに設定
+            if (PlayerPrefs.GetInt("isMonitor") == 1)
+            {
+                //カメラの初期設定
+                Transform carTf = FindAnyObjectByType<CarController>()?.transform;
+                var cameraController = Camera.main.GetComponent<CameraController>();
+                if (cameraController != null)
+                    cameraController.SetTarget(carTf);
+            }
+            return;
+        }
 
         // --- 回転は水平方向だけ追従 ---
         // target の forward から XZ 平面上の方向だけ取り出す
@@ -40,5 +74,61 @@ public class CameraController : MonoBehaviour
 
         // --- カメラをプレイヤーの方向に向ける ---
         transform.LookAt(target.position + Vector3.up * 1.5f); // 1.5fで少し上を見させる
+
+        //観戦者の処理
+        if(PlayerPrefs.GetInt("isMonitor") == 1)
+        {
+            //カメラ操作
+            yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
+            pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+            pitch = Mathf.Clamp(pitch, -30f, 60f);
+
+            Quaternion rot = Quaternion.Euler(pitch, yaw, 0);
+            Vector3 dir = rot * Vector3.back;
+
+            transform.position = target.position + dir * monitorDistance;
+            transform.LookAt(target.position + Vector3.up * 1.5f);
+
+            //追従対象の切り替え
+            if (Input.GetMouseButtonDown(0))
+            {
+                SetNextTarget(1);
+            }
+        }
     }
+
+    void SetNextTarget(int step)
+    {
+        Player[] currentList = PhotonNetwork.PlayerList;
+
+        // キャッシュが古ければ更新
+        if (cachedPlayers == null ||
+            cachedPlayers.Length != currentList.Length)
+        {
+            cachedPlayers = currentList;
+            watchIndex = Mathf.Clamp(watchIndex, 0, cachedPlayers.Length - 1);
+        }
+
+        if (cachedPlayers == null || cachedPlayers.Length == 0) return;
+
+        watchIndex = (watchIndex + step) % cachedPlayers.Length;
+
+        Player p = cachedPlayers[watchIndex];
+
+        foreach (var car in FindObjectsByType<CarController>(FindObjectsSortMode.None))
+        {
+            PhotonView pv = car.GetComponent<PhotonView>();
+            if (pv != null && pv.Owner == p)
+            {
+                target = car.transform;
+
+                // カメラ角度をリセット（酔い防止）
+                yaw = transform.eulerAngles.y;
+                pitch = 10f;
+
+                return;
+            }
+        }
+    }
+
 }

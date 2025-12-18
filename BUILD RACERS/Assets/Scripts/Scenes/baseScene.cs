@@ -79,4 +79,9 @@ public class baseScene : MonoBehaviourPunCallbacks
         // "Room"という名前のルームに参加する（ルームが存在しなければ作成して参加する）
         PhotonNetwork.JoinOrCreateRoom("Room", new RoomOptions(), TypedLobby.Default);
     }
+
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("接続成功");
+    }
 }

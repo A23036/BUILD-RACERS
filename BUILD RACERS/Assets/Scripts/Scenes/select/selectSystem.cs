@@ -47,8 +47,11 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         timer = 0f;
 
         //セレクトの初期化
-        PlayerPrefs.SetInt("driverNum", 1);
-        PlayerPrefs.SetInt("engineerNum", -1);
+        if(PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            PlayerPrefs.SetInt("driverNum", 1);
+            PlayerPrefs.SetInt("engineerNum", -1);
+        }
 
         //キャンバスの子供に設定
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
@@ -163,8 +166,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
                 PlayerPrefs.SetInt("engineerNum", selectEngineerNum + 1);
             }
         }
-
-        Debug.Log(selectDriverNum + " " + selectEngineerNum);
     }
     public bool TryReserveSlot(string pendkey)
     {
@@ -408,6 +409,10 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         else nameBar.text = playerName;
     }
 
+    public void SetReady(bool b)
+    {
+        isReady = b;
+    }
     public bool IsReady()
     {
         return isReady;
@@ -426,7 +431,6 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         checkmark.SetActive(isReady);
 
         //ルームマスターに送信
-        //if(!PhotonNetwork.IsMasterClient) SendToMaster(isReady);
         SendToMaster(isReady);
     }
 
