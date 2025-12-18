@@ -15,7 +15,7 @@ public class MiniMapCamera : MonoBehaviour
         target = t;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (miniMapCamera == null) return;
 
