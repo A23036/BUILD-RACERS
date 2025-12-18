@@ -12,7 +12,18 @@ public class NameDisp : MonoBehaviourPunCallbacks
 
         var player = photonView.Owner;
 
-        if(nameLabel.text != "CPU") nameLabel.text = PlayerPrefs.GetString("PlayerName");
+        if(nameLabel.text != "CPU")
+        {
+            //シングルプレイと処理を分岐
+            if(PhotonNetwork.IsConnected)
+            {
+                nameLabel.text = photonView.Owner.NickName;
+            }
+            else
+            {
+                nameLabel.text = PlayerPrefs.GetString("PlayerName");
+            }
+        }
     }
 
     private void Update()
