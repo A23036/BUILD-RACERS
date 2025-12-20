@@ -627,10 +627,13 @@ MonoBehaviour:
   - leftWheel: {fileID: 6732744077107088689}
     rightWheel: {fileID: 1840887540325371348}
     steering: 1
-  motorForce: 10
-  steerAngle: 60
-  turnSensitivity: 2
-  maxSpeed: 10
+  MotorForce: 10
+  SteerAngle: 60
+  TurnSensitivity: 2
+  MaxSpeed: 10
+  LightStanTime: 1
+  MidiumStanTime: 2
+  HeavyStanTime: 3
   raycastLength: 5
   groundMask:
     serializedVersion: 2
@@ -643,6 +646,40 @@ MonoBehaviour:
   speedText: {fileID: 0}
   coinText: {fileID: 0}
   MAXITEMNUM: 5
+  stanSpinAngle: 360
+  stanEaseCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.8788589
+      value: 1.050591
+      inSlope: 0.19779778
+      outSlope: 0.19779778
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &2777997212412123024
 MonoBehaviour:
   m_ObjectHideFlags: 0

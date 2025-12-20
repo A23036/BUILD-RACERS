@@ -4,7 +4,20 @@ using UnityEngine.InputSystem;
 using Photon.Pun;
 using TMPro;
 using Photon.Realtime;
-using UnityEngine.Rendering;
+
+public enum State // カートの状態
+{
+    Drive,  // 通常走行
+    Stan,   // 気絶中
+    Auto,   // 自動走行（未実装）
+}
+
+public enum StanType // スタンの重さ
+{
+    Light,
+    Midium,
+    Heavy,
+}
 
 public class CarController : MonoBehaviourPunCallbacks
 {
@@ -25,10 +38,14 @@ public class CarController : MonoBehaviourPunCallbacks
     public List<WheelVisual> wheelVisuals;
 
     [Header("基本パラメータ")]
-    [SerializeField] private float motorForce = 10f;
-    [SerializeField] private float steerAngle = 60f;
-    [SerializeField] private float turnSensitivity = 2f;
-    [SerializeField] private float maxSpeed = 20f;
+    [SerializeField] private float MotorForce = 10f;
+    [SerializeField] private float SteerAngle = 60f;
+    [SerializeField] private float TurnSensitivity = 2f;
+    [SerializeField] private float MaxSpeed = 20f;
+    [SerializeField] private float LightStanTime = 0.5f;
+    [SerializeField] private float MidiumStanTime = 1.0f;
+    [SerializeField] private float HeavyStanTime = 2.0f;
+
 
     [Header("地面関連")]
     [SerializeField] private float raycastLength = 1.2f;  // 地面判定距離
@@ -49,6 +66,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [Header("保持なアイテムの数")]
     [SerializeField] private int MAXITEMNUM = 5;
 
+    private CameraController cameraController;
     private Rigidbody rb;
     private InputAction throttleAction;
     private InputAction brakeAction;
@@ -66,6 +84,16 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private int partsNum = 0;
 
+    private State state;
+    private float stanTime = 0;
+
+    private float stanElapsed = 0f;
+    private Quaternion stanStartRotation;
+
+    [Header("回転演出用パラメータ")]
+    [SerializeField] private float stanSpinAngle = 720f; // 回転量
+    [SerializeField] private AnimationCurve stanEaseCurve;
+
     public void AddPartsNum()
     {
         partsNum++; 
@@ -76,6 +104,36 @@ public class CarController : MonoBehaviourPunCallbacks
         partsNum--;
     }
 
+    public void SetStan(StanType type)
+    {
+        if(state == State.Stan) return;
+
+        // スタン状態をセット
+        state = State.Stan;
+
+        // スタンの強さに応じてスタン時間をセット
+        switch(type) {
+            case StanType.Light:
+                stanTime = LightStanTime;
+                break;
+            case StanType.Midium:
+                stanTime = MidiumStanTime;
+                break;
+            case StanType.Heavy:
+                stanTime = HeavyStanTime;
+                break;
+            default:
+                break;
+        }
+
+        // ----- 回転初期化 -----
+        stanElapsed = 0f;
+        stanStartRotation = transform.rotation;
+
+        // スタン中はカメラが回転しないように追従を外す
+        cameraController.SetIsFollow(false);
+    }
+    　
     private void Awake()
     {
         Debug.Log("AWAKE");
@@ -196,6 +254,12 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
+        if (state == State.Stan)
+        {
+            UpdateStan();
+            return;
+        }
+
         UpdateGroundType();
 
         float motorInput = 0f;
@@ -223,7 +287,7 @@ public class CarController : MonoBehaviourPunCallbacks
         // combine motor & brake: motorInput 0..1, brakeInput 0..1 -> netMotor (-1..1) or separate
         float netMotor = motorInput - brakeInput; // keep existing behavior if you like
 
-        currentSteer = steerInput * steerAngle;
+        currentSteer = steerInput * SteerAngle;
 
         // 見た目タイヤ回転
         foreach (var w in wheelVisuals)
@@ -259,13 +323,13 @@ public class CarController : MonoBehaviourPunCallbacks
             speedMultiplier *= boostSpeedMultiplier;
             boostTimer -= Time.fixedDeltaTime;
         }
-        float maxAllowedSpeed = maxSpeed * speedMultiplier;
+        float maxAllowedSpeed = MaxSpeed * speedMultiplier;
 
         if (rb.linearVelocity.magnitude < maxAllowedSpeed)
         {
             Quaternion steerRotation = Quaternion.Euler(0f, currentSteer, 0f);
             Vector3 forwardDir = steerRotation * transform.forward;
-            float motorPower = (netMotor < 0 ? motorForce * 0.6f : motorForce) * accelMultiplier;
+            float motorPower = (netMotor < 0 ? MotorForce * 0.6f : MotorForce) * accelMultiplier;
             rb.AddForce(forwardDir * netMotor * motorPower, ForceMode.Acceleration);
         }
 
@@ -282,7 +346,7 @@ public class CarController : MonoBehaviourPunCallbacks
         if (rb.linearVelocity.magnitude > 0.1f)
         {
             float rotationSign = netMotor < 0 ? -1f : 1f;
-            float turnAmount = steerInput * turnSensitivity * rotationSign;
+            float turnAmount = steerInput * TurnSensitivity * rotationSign;
             Quaternion deltaRotation = Quaternion.Euler(0f, turnAmount, 0f);
             rb.MoveRotation(rb.rotation * deltaRotation);
         }
@@ -307,6 +371,35 @@ public class CarController : MonoBehaviourPunCallbacks
         else
         {
             currentGroundTag = "Default";
+        }
+    }
+
+    private void UpdateStan()
+    {
+        // プレイヤーを回転させる処理
+        stanElapsed += Time.deltaTime;
+
+        float t = Mathf.Clamp01(stanElapsed / stanTime);
+
+        // イージング取得（0 → 1 → 0）
+        float ease = stanEaseCurve.Evaluate(t);
+
+        // Y軸回転（必要なら Z でもOK）
+        float angle = ease * stanSpinAngle;
+
+        transform.rotation = stanStartRotation * Quaternion.Euler(0f, angle, 0f);
+        
+        // StanTimeを進める
+        stanTime -= Time.deltaTime;
+
+        if (stanTime <= 0f)
+        {
+            // 終了時に元の回転に完全に戻す
+            transform.rotation = stanStartRotation;
+            // カメラの追従を戻す
+            cameraController.SetIsFollow(true);
+
+            state = State.Drive;
         }
     }
 
@@ -412,7 +505,7 @@ public class CarController : MonoBehaviourPunCallbacks
     //カメラの設定
     public void SetCamera()
     {
-        var cameraController = Camera.main.GetComponent<CameraController>();
+        cameraController = Camera.main.GetComponent<CameraController>();
         if (cameraController != null)
             cameraController.SetTarget(transform);
     }

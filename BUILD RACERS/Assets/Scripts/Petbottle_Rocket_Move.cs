@@ -117,7 +117,18 @@ public class RocketMove : MonoBehaviour
         }
         else
         {
-            // ★ Wall以外のオブジェクトに当たったら ★
+            // ヒットしたのがPlayerだった時
+            if (collision.gameObject.CompareTag("Player"))
+            {
+                var car = collision.gameObject.GetComponentInParent<CarController>();
+
+                if (car != null)
+                {
+                    // ヒットしたPlayerに中程度のスタン状態を設定
+                    car.SetStan(StanType.Light);
+                }
+            }
+
             // エフェクトを再生
             PlayDestroyEffect();
             // ロケットを破壊
