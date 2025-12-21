@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using Photon.Pun;
+﻿using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
+using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagicCallback
 {
     [SerializeField] private Vector3 offset = new Vector3(0, 3, -6); // 追従オフセット
     [SerializeField] private float smoothSpeed = 5f;
@@ -19,6 +20,8 @@ public class CameraController : MonoBehaviour
 
     private int watchIndex = 0;
     Player[] cachedPlayers;
+
+    private TextMeshProUGUI targetName;
     // --- 観戦者関係 ---
 
     public void SetTarget(Transform newTarget) => target = newTarget;
@@ -34,6 +37,15 @@ public class CameraController : MonoBehaviour
         {
             cachedPlayers = PhotonNetwork.PlayerList;
             SetNextTarget(0);
+        }
+    }
+
+    void Awake()
+    {
+        var textObj = GameObject.Find("MonitorTargetName");
+        if (textObj != null)
+        {
+            targetName = textObj.GetComponent<TextMeshProUGUI>();
         }
     }
 
@@ -107,30 +119,18 @@ public class CameraController : MonoBehaviour
 
             transform.position = target.position + dir * monitorDistance;
             transform.LookAt(target.position + Vector3.up * 1.5f);
-
-            //追従対象の切り替え
-            if (Input.GetMouseButtonDown(0))
-            {
-                SetNextTarget(1);
-            }
         }
     }
 
-    void SetNextTarget(int step)
+    //追従対象の切り替え UIから呼び出す
+    public void SetNextTarget(int step)
     {
-        Player[] currentList = PhotonNetwork.PlayerList;
-
-        // キャッシュが古ければ更新
-        if (cachedPlayers == null ||
-            cachedPlayers.Length != currentList.Length)
-        {
-            cachedPlayers = currentList;
-            watchIndex = Mathf.Clamp(watchIndex, 0, cachedPlayers.Length - 1);
-        }
-
         if (cachedPlayers == null || cachedPlayers.Length == 0) return;
 
-        watchIndex = (watchIndex + step) % cachedPlayers.Length;
+        watchIndex += step;
+        //配列の範囲外参照を防ぐ
+        if(watchIndex < 0) watchIndex = cachedPlayers.Length - 1;
+        else if(cachedPlayers.Length <= watchIndex) watchIndex = 0;
 
         Player p = cachedPlayers[watchIndex];
 
@@ -140,14 +140,39 @@ public class CameraController : MonoBehaviour
             if (pv != null && pv.Owner == p)
             {
                 target = car.transform;
+                targetName.text = pv.Owner.NickName;
 
-                // カメラ角度をリセット（酔い防止）
+                // カメラ角度をリセット
                 yaw = transform.eulerAngles.y;
                 pitch = 10f;
 
                 return;
             }
         }
+
+        //ループ内で処理が終了しない＝ターゲットが見つからなければ再度実行
+        SetNextTarget(step);
     }
 
+    //PhotonNetwork.Instantiateのコールバック　インターフェースからの実装
+    public void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        //キャッシュの更新
+        UpdateCaches();
+    }
+
+    //ルームから誰か抜けたら呼ばれるコールバック
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        //キャッシュの更新
+        UpdateCaches();
+    }
+
+    public void UpdateCaches()
+    {
+        //キャッシュの更新
+        Player[] currentList = PhotonNetwork.PlayerList;
+        cachedPlayers = currentList;
+        watchIndex = Mathf.Clamp(watchIndex, 0, cachedPlayers.Length - 1);
+    }
 }

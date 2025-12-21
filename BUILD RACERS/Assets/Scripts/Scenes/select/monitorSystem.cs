@@ -1,9 +1,10 @@
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using ExitGames.Client.Photon;
 
 public class monitorSystem : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -169,10 +170,15 @@ public class monitorSystem : MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log("No." + actorNumber + " COLOR : " + colorNumber);
     }
 
-    //ルームマスターが変更された際のコールバック
-    public override void OnMasterClientSwitched(Photon.Realtime.Player newMaster)
+    ///カスタムプロパティのコールバック
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable changed)
     {
-        
+        //シーン遷移
+        if (changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)
+        {
+            var sm = GameObject.Find("SceneManager").GetComponent<selectScene>();
+            sm.PushStartButton();
+        }
     }
 
     void OnDestroy()
@@ -190,7 +196,7 @@ public class monitorSystem : MonoBehaviourPunCallbacks, IPunObservable
             selectScene sceneScript = sceneManager.GetComponent<selectScene>();
             if (sceneScript != null)
             {
-                sceneScript.OnJoinedRoom();
+                sceneScript.CheckAndSpawnSelector();
             }
         }
     }

@@ -1,12 +1,12 @@
 # ninja log v5
-49	364	7819450149307131	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	3da1d542d88aeb41
-366	525	7819450150777349	C:/Users/Amore/Documents/Unity/BuildRacers/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1w58a2n2/obj/arm64-v8a/libswappywrapper.so	a6e0cf2c39e33927
-23	1114	7819450156828868	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	6f558c45e44e94ec
-30	1118	7819450156828868	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	d37f261981a8e610
-7	1144	7819450157142918	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	152d694737ce32b5
-43	1153	7819450157226302	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	681aa2b397fe23a8
-13	1179	7819450157492820	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	8fa3485ad19758b3
-37	1345	7819450159095657	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	44293c4fa961aa00
-17	1354	7819450159228028	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	2c097c75ba389ae6
-1	1415	7819450159832730	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	fde3266172733ae3
-1415	1517	7819450160876561	C:/Users/Amore/Documents/Unity/BuildRacers/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1w58a2n2/obj/arm64-v8a/libgame.so	ab7f914c9bdf6df5
+43	338	7878428669481770	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	3da1d542d88aeb41
+339	466	7878428670735778	C:/Users/Amore/Documents/Unity/BuildRacers/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1w58a2n2/obj/arm64-v8a/libswappywrapper.so	a6e0cf2c39e33927
+20	1144	7878428677512674	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	6f558c45e44e94ec
+15	1148	7878428677563507	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	d37f261981a8e610
+1	1174	7878428677809632	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	152d694737ce32b5
+31	1175	7878428677829641	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	681aa2b397fe23a8
+10	1212	7878428678188895	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	8fa3485ad19758b3
+25	1336	7878428679397451	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	2c097c75ba389ae6
+37	1339	7878428679468905	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	44293c4fa961aa00
+6	1411	7878428680158346	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	fde3266172733ae3
+1411	1522	7878428681285389	C:/Users/Amore/Documents/Unity/BuildRacers/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1w58a2n2/obj/arm64-v8a/libgame.so	ab7f914c9bdf6df5

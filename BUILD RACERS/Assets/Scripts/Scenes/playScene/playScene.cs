@@ -20,6 +20,13 @@ public class playScene : baseScene
         //Debug.Log("THROUGH START");
     }
 
+    private void Awake()
+    {
+        base.Awake();
+
+        Debug.Log("=== PLAY SCENE AWAKE ===");
+    }
+
     // Update is called once per frame
     void Update()
     {

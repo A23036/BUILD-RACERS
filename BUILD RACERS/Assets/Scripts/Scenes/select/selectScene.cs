@@ -1,15 +1,20 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI.Table;
+
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class selectScene : baseScene
 {
     [SerializeField] private GameObject readyButtonText;
 
-    //セレクターの上限数　これ以上の接続は観戦者にまわす
+    //セレクターの上限数　これ以上の接続は観戦者にまわす　送信用　受信用　の2つ
     [SerializeField] private int limitPlayers;
 
     //セレクター関係
@@ -43,10 +48,19 @@ public class selectScene : baseScene
         monitorsCounter = GameObject.Find("monitorsCounter").transform.Find("Text").GetComponent<TextMeshProUGUI>();
     }
 
+    private void Awake()
+    {
+        base.Awake();
+
+        Debug.Log("=== SELECT SCENE AWAKE ===");
+    }
+
     private void Update()
     {
         //人数表示の更新
-        playersCountText.text = PhotonNetwork.PlayerList.Length.ToString();
+        string curPlayresNum = PhotonNetwork.PlayerList.Length.ToString();
+        string maxPlayresNum = limitPlayers.ToString();
+        playersCountText.text = curPlayresNum + " / " + maxPlayresNum;
 
         //観戦者数の更新　超過人数を観戦者としてカウント
         monitorsCounter.text = "×" + (Mathf.Max(PhotonNetwork.PlayerList.Length - limitPlayers,0)).ToString();
@@ -109,6 +123,21 @@ public class selectScene : baseScene
             Debug.Log(hash["driverNum"] + "," + hash["engineerNum"] + "," + PlayerPrefs.GetInt("isMonitor"));
 
             SceneManager.LoadScene("gamePlay");
+            //StartCoroutine(LoadGameScene());
+        }
+    }
+
+    IEnumerator LoadGameScene()
+    {
+        // 1フレーム返す
+        yield return null;
+
+        AsyncOperation op = SceneManager.LoadSceneAsync("gamePlay");
+        op.allowSceneActivation = true;
+
+        while (!op.isDone)
+        {
+            yield return null;
         }
     }
 
@@ -197,8 +226,21 @@ public class selectScene : baseScene
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
+        //マスターならプレイ人数を設定　そうでなければ受信
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "limitPlayers", limitPlayers } });
+        }
+        else
+        {
+            if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("limitPlayers", out var v))
+            {
+                limitPlayers = (int)v;
+            }
+        }
+
         //人数制限を設ける
-        if(PhotonNetwork.PlayerList.Length > limitPlayers)
+        if (PhotonNetwork.PlayerList.Length > limitPlayers)
         {
             //観戦者処理
             monitor = PhotonNetwork.Instantiate("Monitor", new Vector3(-1000, -1000, -1000), Quaternion.identity);
@@ -211,17 +253,35 @@ public class selectScene : baseScene
             selector = PhotonNetwork.Instantiate("Selector", new Vector3(-1000, -1000, -1000), Quaternion.identity);
             ss = selector.GetComponent<selectSystem>();
             ss.DecideColor();
-
-            //観戦からの切り替えなら観戦者を削除しておく
-            if(monitor != null)
-            {
-                PhotonNetwork.Destroy(monitor);
-                monitor = null;
-                ms = null;
-            }
         }
-        
+
         base.OnJoinedRoom();
+    }
+
+    //カスタムプロパティのコールバック
+    public override void OnRoomPropertiesUpdate(Hashtable changedProps)
+    {
+        if (changedProps.TryGetValue("limitPlayers", out var v))
+        {
+            limitPlayers = (int)v;
+        }
+    }
+
+    //空きがあればセレクターを生成
+    public void CheckAndSpawnSelector()
+    {
+        if (PhotonNetwork.PlayerList.Length > limitPlayers)
+        {
+            return;
+        }
+
+        //生成する空きがあれば観戦者を削除してセレクター生成
+        PhotonNetwork.Destroy(monitor);
+
+        //選択アイコンの生成　最初は画面外に生成
+        selector = PhotonNetwork.Instantiate("Selector", new Vector3(-1000, -1000, -1000), Quaternion.identity);
+        ss = selector.GetComponent<selectSystem>();
+        ss.DecideColor();
     }
 
     ~selectScene()

@@ -267,6 +267,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     {
         Debug.Log("[Custom CallBack]");
 
+        //€”õó‘Ô‚Ì‰Šú‰»
+        if(photonView.IsMine && changed.ContainsKey("MasterClienViewID"))
+        {
+            SendToMaster(isReady);
+        }
+
         //ƒV[ƒ“‘JˆÚ
         if (changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)
         {
