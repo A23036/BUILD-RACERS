@@ -76,14 +76,21 @@ public class baseScene : MonoBehaviourPunCallbacks
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnConnectedToMaster()
     {
-        //離脱したプレイヤーが生成したオブジェクトが自動削除される設定
+        //ルームのオプション設定
         RoomOptions options = new RoomOptions
         {
-            CleanupCacheOnLeave = true
+            //離脱したプレイヤーが生成したオブジェクトが自動削除される設定
+            CleanupCacheOnLeave = true,
+
+            //部屋のカスタムプロパティをロビーから確認できる設定
+            CustomRoomPropertiesForLobby = new string[]
+            {
+                "limitPlayers"
+            }
         };
 
-        // "Room"という名前のルームに参加する（ルームが存在しなければ作成して参加する）
-        PhotonNetwork.JoinOrCreateRoom("Room", options, TypedLobby.Default);
+        // "DevlopRoom"という名前のルームに参加する（ルームが存在しなければ作成して参加する）
+        PhotonNetwork.JoinOrCreateRoom("DevlopRoom", options, TypedLobby.Default);
     }
 
     public override void OnJoinedRoom()

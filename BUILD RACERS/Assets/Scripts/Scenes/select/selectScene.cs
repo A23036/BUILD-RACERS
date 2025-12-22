@@ -29,6 +29,7 @@ public class selectScene : baseScene
     private TextMeshProUGUI debugMessage = null;
     private TextMeshProUGUI playersCountText;
     private TextMeshProUGUI monitorsCounter;
+    private TextMeshProUGUI roomNameText;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -44,6 +45,9 @@ public class selectScene : baseScene
 
         playersCountText = GameObject.Find("PlayerCountText").GetComponent<TextMeshProUGUI>();
         playersCountText.color = Color.black;
+
+        roomNameText = GameObject.Find("RoomNameText").GetComponent<TextMeshProUGUI>();
+        roomNameText.color = Color.black;
 
         monitorsCounter = GameObject.Find("monitorsCounter").transform.Find("Text").GetComponent<TextMeshProUGUI>();
     }
@@ -226,6 +230,9 @@ public class selectScene : baseScene
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
+        //ルーム名の表示
+        roomNameText.text = $"RoomName:\n{PhotonNetwork.CurrentRoom.Name}";
+
         //マスターならプレイ人数を設定　そうでなければ受信
         if (PhotonNetwork.IsMasterClient)
         {
