@@ -14,6 +14,7 @@ public class robbyScene : baseScene
     private GameObject noRoomsText;
 
     private string createRoomName;
+    private string roomStat;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -30,6 +31,8 @@ public class robbyScene : baseScene
 
         //マスターサーバーへの接続
         PhotonNetwork.ConnectUsingSettings();
+
+        base.Awake();
     }
 
     // Update is called once per frame
@@ -60,10 +63,14 @@ public class robbyScene : baseScene
         {
             if (room.RemovedFromList) continue;
 
-            int maxPlayres = 0;
+            int maxPlayres = -99;
             if(room.CustomProperties.TryGetValue("limitPlayers", out var v) && v is int mp)
             {
                 maxPlayres = mp;
+            }
+            else
+            {
+                Debug.Log("limitPlayresが取得できません");
             }
 
             Debug.Log(
@@ -83,7 +90,7 @@ public class robbyScene : baseScene
                 button.transform.position += new Vector3(-100, 0, 0);
                 roomButtons[room.Name] = button;
                 scr = button.GetComponent<roomNameButton>();
-                scr.SetText(room.Name);
+                scr.SetRoomNameText(room.Name);
 
                 //プレハブなのでクリック時の関数を登録
                 Button btn = button.GetComponent<Button>();
@@ -97,6 +104,17 @@ public class robbyScene : baseScene
             //人数表示の更新
             scr.SetCounterText($"{ room.PlayerCount}/{ maxPlayres}");
 
+            //ルーム状態の更新
+            if (room.CustomProperties.TryGetValue("masterGameScene", out var s) && s is string stat)
+            {
+                if (stat == "gamePlay") stat = "In Game";
+                else if (stat == "select") stat = "Waiting";
+                roomStat = stat;
+            }
+            Debug.Log($"Update Room Stat : {roomStat}");
+            scr.SetRoomStatText(roomStat);
+
+            //生成フラグ
             geneFlag[room.Name] = true;
         }
 
@@ -147,7 +165,8 @@ public class robbyScene : baseScene
             //部屋のカスタムプロパティをロビーから確認できる設定
             CustomRoomPropertiesForLobby = new string[]
             {
-                "limitPlayers"
+            "limitPlayers",
+            "masterGameScene"
             }
         };
 

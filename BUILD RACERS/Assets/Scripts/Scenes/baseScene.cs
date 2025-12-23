@@ -45,6 +45,8 @@ public class baseScene : MonoBehaviourPunCallbacks
             var props = new Hashtable();
             props["masterGameScene"] = SceneManager.GetActiveScene().name;
             PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+
+            Debug.Log($"SetMasterScene : {SceneManager.GetActiveScene().name}");
         }
     }
 
@@ -85,7 +87,8 @@ public class baseScene : MonoBehaviourPunCallbacks
             //部屋のカスタムプロパティをロビーから確認できる設定
             CustomRoomPropertiesForLobby = new string[]
             {
-                "limitPlayers"
+                "limitPlayers",
+                "masterGameScene"
             }
         };
 
@@ -95,6 +98,16 @@ public class baseScene : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        //現在のマスターがいるシーンを更新・共有できるように
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var props = new Hashtable();
+            props["masterGameScene"] = SceneManager.GetActiveScene().name;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+
+            Debug.Log($"SetMasterScene : {SceneManager.GetActiveScene().name}");
+        }
+
         Debug.Log("接続成功");
     }
 }

@@ -14,7 +14,7 @@ public class selectScene : baseScene
 {
     [SerializeField] private GameObject readyButtonText;
 
-    //セレクターの上限数　これ以上の接続は観戦者にまわす　送信用　受信用　の2つ
+    //セレクターの上限数　これ以上の接続は観戦者にまわす
     [SerializeField] private int limitPlayers;
 
     //セレクター関係
@@ -230,6 +230,8 @@ public class selectScene : baseScene
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
+        base.OnJoinedRoom();
+
         //ルーム名の表示
         roomNameText.text = $"RoomName:\n{PhotonNetwork.CurrentRoom.Name}";
 
@@ -260,17 +262,41 @@ public class selectScene : baseScene
             selector = PhotonNetwork.Instantiate("Selector", new Vector3(-1000, -1000, -1000), Quaternion.identity);
             ss = selector.GetComponent<selectSystem>();
             ss.DecideColor();
-        }
 
-        base.OnJoinedRoom();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                //マスタークライアントのIDを登録
+                PhotonView pv = selector.GetComponent<PhotonView>();
+                PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MasterClienViewID", pv.ViewID } });
+            }
+
+            //マスターはSSのプロパティコールバックで行う　ここでやるとまだViewIDを参照できないため
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                //準備状態の初期化
+                ss.SendToMaster(false);
+                Debug.Log("準備状態の初期化");
+            }
+        }
     }
 
     //カスタムプロパティのコールバック
     public override void OnRoomPropertiesUpdate(Hashtable changedProps)
     {
-        if (changedProps.TryGetValue("limitPlayers", out var v))
+        if (!PhotonNetwork.IsMasterClient && changedProps.TryGetValue("limitPlayers", out var v))
         {
             limitPlayers = (int)v;
+        }
+    }
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        if (photonView == null) return;
+
+        if (photonView.IsMine && PhotonNetwork.IsMasterClient)
+        {
+            //ルームの上限数を更新
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "limitPlayers", limitPlayers } });
         }
     }
 
@@ -289,6 +315,13 @@ public class selectScene : baseScene
         selector = PhotonNetwork.Instantiate("Selector", new Vector3(-1000, -1000, -1000), Quaternion.identity);
         ss = selector.GetComponent<selectSystem>();
         ss.DecideColor();
+    }
+
+    public void PushBackButton()
+    {
+        ss.DeleteMyStat();
+
+        base.PushBackButton();
     }
 
     ~selectScene()

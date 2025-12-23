@@ -2,6 +2,7 @@
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagicCallback
 {
@@ -55,6 +56,7 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
                 var cameraController = Camera.main.GetComponent<CameraController>();
                 if (cameraController != null)
                     cameraController.SetTarget(carTf);
+                SetNextTarget(0);
             }
             return;
         }
@@ -104,6 +106,9 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
     //追従対象の切り替え UIから呼び出す
     public void SetNextTarget(int step)
     {
+        //キャッシュの更新
+        UpdateCaches();
+
         if (cachedPlayers == null || cachedPlayers.Length == 0) return;
 
         watchIndex += step;
@@ -121,6 +126,8 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
                 target = car.transform;
                 targetName.text = pv.Owner.NickName;
 
+                Debug.Log($"set name {pv.Owner.NickName}");
+
                 // カメラ角度をリセット
                 yaw = transform.eulerAngles.y;
                 pitch = 10f;
@@ -136,8 +143,7 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
     //PhotonNetwork.Instantiateのコールバック　インターフェースからの実装
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        //キャッシュの更新
-        UpdateCaches();
+        SetNextTarget(0);
     }
 
     //ルームから誰か抜けたら呼ばれるコールバック
@@ -149,6 +155,8 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
 
     public void UpdateCaches()
     {
+        if (cachedPlayers != null && cachedPlayers.Length == PhotonNetwork.PlayerList.Length) return;
+
         //キャッシュの更新
         Player[] currentList = PhotonNetwork.PlayerList;
         cachedPlayers = currentList;
