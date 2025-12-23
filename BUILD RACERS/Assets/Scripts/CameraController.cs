@@ -9,7 +9,6 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
     [SerializeField] private float smoothSpeed = 5f;
 
     private Transform target;  // カートのTransform
-    private bool isFollow = true;
 
     // --- 観戦者関係 ---
     [SerializeField] private float mouseSensitivity = 3f;
@@ -25,11 +24,6 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
     // --- 観戦者関係 ---
 
     public void SetTarget(Transform newTarget) => target = newTarget;
-
-    public void SetIsFollow(bool state)
-    {
-        isFollow = state;
-    }
 
     void Start()
     {
@@ -67,37 +61,22 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
 
         Vector3 desiredPosition;
 
-        // --------------------------------------------------
-        // isFollow によって回転追従を切り替える
-        // --------------------------------------------------
-        if (isFollow)
+        Vector3 forwardFlat = target.forward;
+        forwardFlat.y = 0;
+        forwardFlat.Normalize();
+
+        Quaternion flatRotation = Quaternion.LookRotation(forwardFlat);
+
+        if (Input.GetKey(KeyCode.B))
         {
-            // --- 回転追従あり（通常） ---
-            Vector3 forwardFlat = target.forward;
-            forwardFlat.y = 0;
-            forwardFlat.Normalize();
-
-            Quaternion flatRotation = Quaternion.LookRotation(forwardFlat);
-
-            if (Input.GetKey(KeyCode.B))
-            {
-                Vector3 backOffset = offset;
-                backOffset.z *= -1;
-                desiredPosition = target.position + flatRotation * backOffset;
-            }
-            else
-            {
-                desiredPosition = target.position + flatRotation * offset;
-            }
+            Vector3 backOffset = offset;
+            backOffset.z *= -1;
+            desiredPosition = target.position + flatRotation * backOffset;
         }
         else
         {
-            // --- 回転追従なし（スタン中） ---
-            desiredPosition = target.position + offset;
+            desiredPosition = target.position + flatRotation * offset;
         }
-        // --------------------------------------------------
-
-
 
         // --- スムーズに追従 --- 背面カメラの時はスムーズを適用しない
         if (Input.GetKeyDown("b") || Input.GetKeyUp("b")) transform.position = desiredPosition;

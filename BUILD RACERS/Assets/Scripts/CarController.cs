@@ -89,6 +89,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private float stanElapsed = 0f;
     private Quaternion stanStartRotation;
+    private GameObject bodyMesh;
 
     [Header("回転演出用パラメータ")]
     [SerializeField] private float stanSpinAngle = 720f; // 回転量
@@ -129,9 +130,6 @@ public class CarController : MonoBehaviourPunCallbacks
         // ----- 回転初期化 -----
         stanElapsed = 0f;
         stanStartRotation = transform.rotation;
-
-        // スタン中はカメラが回転しないように追従を外す
-        cameraController.SetIsFollow(false);
     }
     　
     private void Awake()
@@ -171,6 +169,8 @@ public class CarController : MonoBehaviourPunCallbacks
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        bodyMesh = GameObject.Find("BodyMesh");
 
         itemManager = GetComponent<ItemManager>();
     }
@@ -387,7 +387,7 @@ public class CarController : MonoBehaviourPunCallbacks
         // Y軸回転（必要なら Z でもOK）
         float angle = ease * stanSpinAngle;
 
-        transform.rotation = stanStartRotation * Quaternion.Euler(0f, angle, 0f);
+        bodyMesh.transform.rotation = stanStartRotation * Quaternion.Euler(0f, angle, 0f);
         
         // StanTimeを進める
         stanTime -= Time.deltaTime;
@@ -396,8 +396,6 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             // 終了時に元の回転に完全に戻す
             transform.rotation = stanStartRotation;
-            // カメラの追従を戻す
-            cameraController.SetIsFollow(true);
 
             state = State.Drive;
         }
