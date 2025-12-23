@@ -88,6 +88,13 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     private void Awake()
     {
+        // セレクトシーン以外では即終了
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "select")
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         //ボタンの配列を取得
         im = GameObject.Find("IconManager").GetComponent<IconManager>();
         driverIcons = im.GetDriverIconsList();
@@ -270,7 +277,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         //準備状態の初期化
         if(photonView.IsMine && changed.ContainsKey("MasterClienViewID"))
         {
-            SendToMaster(isReady);
+            SendToMaster(false);
+            Debug.Log("準備状態の初期化");
         }
 
         //シーン遷移
@@ -447,13 +455,39 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     //ルームマスターに準備状態を送信
-    void SendToMaster(bool readyStat)
+    public void SendToMaster(bool readyStat)
     {
         int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClienViewID"];
         PhotonView target = PhotonView.Find(viewID);
 
-        target.RPC("RPC_OnSelectorChanged", RpcTarget.MasterClient, readyStat, PhotonNetwork.LocalPlayer.ActorNumber);
-        Debug.Log("SendToMaster");
+        if (target != null)
+        {
+            target.RPC("RPC_OnSelectorChanged", RpcTarget.MasterClient, readyStat, PhotonNetwork.LocalPlayer.ActorNumber);
+            Debug.Log("SendToMaster");
+        }
+        else
+        {
+            Debug.Log($"not found : {viewID}'s MasterClienViewID");
+        }
+    }
+
+    //ルームマスターに削除命令を送信
+    public void DeleteMyStat()
+    {
+        return;
+
+        int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClienViewID"];
+        PhotonView target = PhotonView.Find(viewID);
+
+        if (target != null)
+        {
+            target.RPC("RPC_ReleaseSelectorStat", RpcTarget.MasterClient,PhotonNetwork.LocalPlayer.ActorNumber);
+            Debug.Log("SendToMaster");
+        }
+        else
+        {
+            Debug.Log($"not found : {viewID}'s MasterClienViewID");
+        }
     }
 
     public void PrintLog()
@@ -469,6 +503,10 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         {
             isRoomMaster = true;
             crown.SetActive(true);
+
+            //マスタークライアントのIDを登録
+            PhotonView pv = GetComponent<PhotonView>();
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MasterClienViewID", pv.ViewID } });
         }
     }
 
@@ -482,6 +520,11 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     {
         //キーの解放　重複の可能性も考えてすべてのプロパティを確認
         int otherNumber = other.ActorNumber;
-        if (PhotonNetwork.IsMasterClient) ReleaseSlotAll(otherNumber);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ReleaseSlotAll(otherNumber);
+
+            photonView.RPC("RPC_ReleaseSelectorStat", RpcTarget.MasterClient, otherNumber);
+        }
     }
 }

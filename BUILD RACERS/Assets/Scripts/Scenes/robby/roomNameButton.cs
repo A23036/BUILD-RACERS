@@ -20,7 +20,7 @@ public class roomNameButton : MonoBehaviour
         
     }
 
-    public void SetText(string text)
+    public void SetRoomNameText(string text)
     {
         TextMeshProUGUI Text = transform.Find("Text").GetComponent<TextMeshProUGUI>();
         Text.text = text;
@@ -33,11 +33,38 @@ public class roomNameButton : MonoBehaviour
         Text.text = text;
     }
 
+    public void SetRoomStatText(string text)
+    {
+        TextMeshProUGUI Text = transform.Find("backImage (1)").
+            gameObject.transform.Find("roomStatText").GetComponent<TextMeshProUGUI>();
+        Text.text = text;
+    }
+
     //ルームへ接続
     public void PushRoomNameButton()
     {
-        //シーン遷移
-        SceneManager.LoadScene("select");
+        //シーン遷移　ルームの状態によって処理分岐
+        TextMeshProUGUI statText = transform.Find("backImage (1)").
+            gameObject.transform.Find("roomStatText").GetComponent<TextMeshProUGUI>();
+        string roomStat = statText.text;
+        if (roomStat == "Starting")
+        {
+            //開始中は参加不可にする
+            return;
+        }
+        else if (roomStat == "Waiting")
+        {
+            //開始前ならセレクトシーンへ
+            SceneManager.LoadScene("select");
+        }
+        else
+        {
+            //途中参加は観戦扱い　ゲームプレイシーンへ
+            PlayerPrefs.SetInt("driverNum", -1);
+            PlayerPrefs.SetInt("engineerNum", -1);
+            PlayerPrefs.SetInt("isMonitor", 1);
+            SceneManager.LoadScene("gamePlay");
+        }
 
         //ルームのオプション設定
         RoomOptions options = new RoomOptions
@@ -48,7 +75,8 @@ public class roomNameButton : MonoBehaviour
             //部屋のカスタムプロパティをロビーから確認できる設定
             CustomRoomPropertiesForLobby = new string[]
             {
-                "limitPlayers"
+                "limitPlayers",
+                "masterGameScene"
             }
         };
 

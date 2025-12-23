@@ -45,6 +45,8 @@ public class playScene : baseScene
 
     public override void OnJoinedRoom()
     {
+        base.OnJoinedRoom();
+
         //ƒJ[ƒg‚Ì¶¬
         GenerateKarts();
 
