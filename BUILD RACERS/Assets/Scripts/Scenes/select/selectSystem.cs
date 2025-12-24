@@ -89,7 +89,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     private void Awake()
     {
         // セレクトシーン以外では即終了
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "select")
+        if (PhotonNetwork.IsConnected && UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "select")
         {
             gameObject.SetActive(false);
             return;
