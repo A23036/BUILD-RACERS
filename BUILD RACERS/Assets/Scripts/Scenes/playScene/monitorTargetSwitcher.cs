@@ -9,7 +9,7 @@ public class monitorTargetSwitcher : MonoBehaviour
     //UI
     
 
-    private CameraController cc;
+    private MonitorCameraController mcc;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -18,7 +18,7 @@ public class monitorTargetSwitcher : MonoBehaviour
 
     private void Awake()
     {
-        cc = monitorCamera.GetComponent<CameraController>();
+        mcc = monitorCamera.GetComponent<MonitorCameraController>();
     }
 
     // Update is called once per frame
@@ -30,14 +30,14 @@ public class monitorTargetSwitcher : MonoBehaviour
     //’Ç]‘ÎÛ‚ÌØ‚è‘Ö‚¦
     public void PushSwitcher()
     {
-        if(cc != null)
+        if(mcc != null)
         {
             //ŠÏí‘ÎÛ‚ÌØ‚è‘Ö‚¦
-            cc.SetNextTarget(addIdx);
+            mcc.SetNextTarget(addIdx);
         }
         else
         {
-            cc = monitorCamera.GetComponent<CameraController>();
+            mcc = monitorCamera.GetComponent<MonitorCameraController>();
         }
     }
 }

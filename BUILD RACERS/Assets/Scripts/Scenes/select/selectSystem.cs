@@ -1,9 +1,11 @@
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using System.Collections.Generic;
+using System.Threading;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using ExitGames.Client.Photon;
 
 public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -284,6 +286,9 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         //シーン遷移
         if (changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)
         {
+            //遷移中はメッセージ処理を停止
+            PhotonNetwork.IsMessageQueueRunning = false;
+
             var sm = GameObject.Find("SceneManager").GetComponent<selectScene>();
             sm.PushStartButton();
         }

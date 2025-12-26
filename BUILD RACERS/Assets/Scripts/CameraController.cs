@@ -48,16 +48,6 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
     {
         if (target == null)
         {
-            //観戦者なら最初にランダムなカート1台をターゲットに設定
-            if (PlayerPrefs.GetInt("isMonitor") == 1)
-            {
-                //カメラの初期設定
-                Transform carTf = FindAnyObjectByType<CarController>()?.transform;
-                var cameraController = Camera.main.GetComponent<CameraController>();
-                if (cameraController != null)
-                    cameraController.SetTarget(carTf);
-                SetNextTarget(0);
-            }
             return;
         }
 
@@ -136,8 +126,8 @@ public class CameraController : MonoBehaviourPunCallbacks , IPunInstantiateMagic
             }
         }
 
-        //ループ内で処理が終了しない＝ターゲットが見つからなければ再度実行
-        SetNextTarget(step);
+        //ループ内で処理が終了しない＝ターゲットが見つからなければ再度実行　増分０のときは初期化処理なので無限ループ防止のため実行しない
+        if (step != 0) SetNextTarget(step);
     }
 
     //PhotonNetwork.Instantiateのコールバック　インターフェースからの実装

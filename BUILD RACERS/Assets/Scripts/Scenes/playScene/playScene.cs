@@ -18,6 +18,9 @@ public class playScene : baseScene
 
         GenerateKarts();
         //Debug.Log("THROUGH START");
+
+        //ロード完了後にメッセージ処理を再開
+        PhotonNetwork.IsMessageQueueRunning = true;
     }
 
     private void Awake()
