@@ -8,6 +8,7 @@ public class Engineer : MonoBehaviourPunCallbacks
     private PartsManager partsManager;
     private PanelManager panelManager;
 
+    private CarController carController;
     private Player pairPlayer = null;
     private int pairViewID = -1;
 
@@ -25,10 +26,43 @@ public class Engineer : MonoBehaviourPunCallbacks
         if (PlayerPrefs.GetInt("engineerNum") != -1) PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
 
         Debug.Log("My ViewID: " + pv.ViewID);
+
+        carController = null;
+    }
+
+    private void Start()
+    {
+        carController = FindObjectOfType<CarController>();
+    }
+
+    private void Update()
+    {
+        TryPairPlayers();
     }
 
     private void TryPairPlayers()
     {
+        //シングルプレイの処理
+        if(!PhotonNetwork.IsConnected)
+        {
+            var cameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
+            var carController = FindObjectOfType<CarController>();
+            if (cameraController != null && carController != null)
+                cameraController.SetTarget(carController.transform);
+
+            if(cameraController == null)
+            {
+                Debug.Log("cameraController is null");
+            }
+
+            if(carController == null)
+            {
+                Debug.Log("kart is null");
+            }
+
+            return;
+        }
+
         // ペアを発見済みの場合、処理を行わない
         if (pairViewID != -1 || !photonView.IsMine) return;
 
@@ -74,6 +108,8 @@ public class Engineer : MonoBehaviourPunCallbacks
         var cameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
         if (cameraController != null)
             cameraController.SetTarget(PhotonView.Find(pairViewID).transform);
+        else
+            Debug.Log("cameraController is null");
     }
 
     public void SendItem(PartsID id)

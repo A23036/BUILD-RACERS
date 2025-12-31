@@ -35,7 +35,16 @@ public class CreateGimmic : MonoBehaviour, IPointerClickHandler
         if (Physics.Raycast(ray, out RaycastHit hit, 500f/*, LayerMask.GetMask("Ground")*/))
         {
             Debug.Log("設置位置" + hit.point);
-            PhotonNetwork.Instantiate("Mud", hit.point, Quaternion.identity);
+
+            //オンラインかそうでないかで処理を分ける
+            if(PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.Instantiate("Mud", hit.point, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(Resources.Load("Mud"),hit.point, Quaternion.identity);
+            }
         }
     }
 }

@@ -3582,6 +3582,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isConnect: 0
+  DriverUI: {fileID: 1684157463}
+  EngineerUI: {fileID: 638005463}
 --- !u!1 &458937789
 GameObject:
   m_ObjectHideFlags: 0
@@ -18141,8 +18143,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 3, z: -6}
   smoothSpeed: 5
-  mouseSensitivity: 3
-  monitorDistance: 6
 --- !u!114 &2016620362
 MonoBehaviour:
   m_ObjectHideFlags: 0
