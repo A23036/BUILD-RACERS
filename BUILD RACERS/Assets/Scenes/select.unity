@@ -6201,7 +6201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isConnect: 1
   readyButtonText: {fileID: 597547970}
-  limitPlayers: 1
+  limitPlayers: 2
 --- !u!4 &2054180459
 Transform:
   m_ObjectHideFlags: 0
