@@ -12,7 +12,7 @@ public enum State // カートの状態
     Auto,   // 自動走行（未実装）
 }
 
-public enum StanType // スタンの重さ
+public enum StunType // スタンの重さ
 {
     Light,
     Midium,
@@ -105,7 +105,7 @@ public class CarController : MonoBehaviourPunCallbacks
         partsNum--;
     }
 
-    public void SetStan(StanType type)
+    public void SetStun(StunType type)
     {
         if(state == State.Stan) return;
 
@@ -114,13 +114,13 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // スタンの強さに応じてスタン時間をセット
         switch(type) {
-            case StanType.Light:
+            case StunType.Light:
                 stanTime = LightStanTime;
                 break;
-            case StanType.Midium:
+            case StunType.Midium:
                 stanTime = MidiumStanTime;
                 break;
-            case StanType.Heavy:
+            case StunType.Heavy:
                 stanTime = HeavyStanTime;
                 break;
             default:

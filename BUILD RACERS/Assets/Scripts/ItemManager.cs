@@ -92,7 +92,7 @@ public class ItemManager : MonoBehaviour
                 }
                 else
                 {
-                    return PartsID.AntiStan;
+                    return PartsID.AntiStun;
                 }
 
             case PartsType.Item:
@@ -115,7 +115,7 @@ public class ItemManager : MonoBehaviour
                 }
                 else
                 {
-                    return PartsID.Mud;
+                    return PartsID.Balloon;
                 }
             default:
                 return 0;

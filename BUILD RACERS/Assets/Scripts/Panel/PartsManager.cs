@@ -15,7 +15,7 @@ public enum PartsID
     Flask,
     Acceleration,
     Speed,
-    AntiStan,
+    AntiStun,
     Mud,
     Balloon,
 }
