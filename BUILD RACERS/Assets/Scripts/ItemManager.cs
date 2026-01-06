@@ -106,6 +106,17 @@ public class ItemManager : MonoBehaviour
                 {
                     return PartsID.Rocket;
                 }
+            case PartsType.Gimmick:
+                int r3 = Random.Range(0, 2);
+                Debug.Log("RandomItem:" + r3);
+                if (r3 == 0)
+                {
+                    return PartsID.Mud;
+                }
+                else
+                {
+                    return PartsID.Mud;
+                }
             default:
                 return 0;
         }

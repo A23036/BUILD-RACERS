@@ -16,6 +16,8 @@ public enum PartsID
     Acceleration,
     Speed,
     AntiStan,
+    Mud,
+    Balloon,
 }
 
 public class PartsManager : MonoBehaviour
