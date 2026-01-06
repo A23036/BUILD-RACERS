@@ -124,6 +124,13 @@ public class ItemManager : MonoBehaviour
 
     public void SpawnItem(PartsID id)
     {
+        //シングルプレイ時のCPU処理
+        if(!PhotonNetwork.IsConnected)
+        {
+
+            return;
+        }
+
         if(id == PartsID.Rocket)
         {
             float forwardOffset = 5.0f;   // 前方距離
