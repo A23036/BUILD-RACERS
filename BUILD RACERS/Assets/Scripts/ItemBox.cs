@@ -110,7 +110,10 @@ public class ItemBoxController : MonoBehaviour
             if (carController.CanGetItem())
             {
                 carController.SendParts(itemManager.GetRandomItem(partsType));
-                carController.AddPartsNum(); // アイテム数を追加
+                if(partsType == PartsType.Passive || partsType == PartsType.Item)
+                {
+                    carController.AddPartsNum(); // アイテム数を追加
+                }
             }
 
             // 2. 破壊エフェクトを生成する

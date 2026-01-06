@@ -18,6 +18,10 @@ public class WaterBalloonExplosion : MonoBehaviour
     [SerializeField] private float explosionEffectScale = 1.5f; // エフェクトの大きさ
     [SerializeField] private float explosionEffectDuration = 3f; // エフェクトが消えるまでの時間
 
+    [Header("スタン判定")]
+    [SerializeField] private SphereCollider explosionCollider;
+    [SerializeField] private StunType stunType = StunType.Heavy;
+
     private Color originalColor;
     private Vector3 originalScale;
     private bool isExploding = false;
@@ -62,6 +66,11 @@ public class WaterBalloonExplosion : MonoBehaviour
         }
 
         originalScale = transform.localScale;
+
+        if (explosionCollider != null)
+        {
+            explosionCollider.enabled = false;
+        }
 
         Invoke("StartExplosion", 0.5f);
     }
@@ -145,6 +154,11 @@ public class WaterBalloonExplosion : MonoBehaviour
 
     private void Explode()
     {
+        if (explosionCollider != null)
+        {
+            explosionCollider.enabled = true;
+        }
+
         if (explosionEffect != null)
         {
             GameObject effect = Instantiate(explosionEffect, transform.position, Quaternion.identity);
@@ -156,8 +170,32 @@ public class WaterBalloonExplosion : MonoBehaviour
             Destroy(effect, explosionEffectDuration);
         }
 
-        Destroy(gameObject);
+        // 少し待ってから削除（Trigger判定のため）
+        Destroy(transform.parent.gameObject, 0.5f);
     }
+
+    // ----------------------------
+    // Player 判定
+    // ----------------------------
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!isExploding) return;
+
+        // ヒットしたのがPlayerだった時
+        if (other.gameObject.CompareTag("Player"))
+        {
+            var car = other.gameObject.GetComponentInParent<CarController>();
+
+            if (car != null)
+            {
+                // ヒットしたPlayerに中程度のスタン状態を設定
+                car.SetStun(stunType);
+
+                Debug.Log("[Balloon]:player stuned");
+            }
+        }
+    }
+
 
     void OnDestroy()
     {
