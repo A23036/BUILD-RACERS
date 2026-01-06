@@ -14,7 +14,10 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine)
+        {
+            return;
+        }
 
         partsManager = GetComponentInChildren<PartsManager>();
 
@@ -33,32 +36,24 @@ public class Engineer : MonoBehaviourPunCallbacks
     private void Start()
     {
         carController = FindObjectOfType<CarController>();
+
+        partsManager = GetComponentInChildren<PartsManager>();
+
+        panelManager = GameObject.Find("PanelManager").GetComponent<PanelManager>();
+        panelManager.SetEngineer(this);
+
+        TryPairPlayers();
     }
 
     private void Update()
     {
-        TryPairPlayers();
+        
     }
 
     private void TryPairPlayers()
     {
-        //シングルプレイの処理
-        if(!PhotonNetwork.IsConnected)
+        if (!PhotonNetwork.IsConnected)
         {
-            var cameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
-            var carController = FindObjectOfType<CarController>();
-            if (cameraController != null && carController != null)
-                cameraController.SetTarget(carController.transform);
-
-            if(cameraController == null)
-            {
-                Debug.Log("cameraController is null");
-            }
-
-            if(carController == null)
-            {
-                Debug.Log("kart is null");
-            }
 
             return;
         }
@@ -105,6 +100,18 @@ public class Engineer : MonoBehaviourPunCallbacks
     //カメラの設定
     public void SetCamera()
     {
+        //シングルプレイ時の処理
+        if (!photonView.IsMine)
+        {
+            var singleCameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
+
+            //シングルプレイ時の相方取得
+            carController = FindObjectOfType<CarController>();
+            if (singleCameraController != null)
+                singleCameraController.SetTarget(carController.transform);
+            return;
+        }
+
         var cameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
         if (cameraController != null)
             cameraController.SetTarget(PhotonView.Find(pairViewID).transform);
@@ -114,6 +121,14 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     public void SendItem(PartsID id)
     {
+        //シングルプレイの処理
+        if (!PhotonNetwork.IsConnected)
+        {
+            var carController = FindObjectOfType<CarController>();
+            carController.RPC_EnqueueItem(id);
+            return;
+        }
+
         //ドライバーにアイテム送信
         Debug.Log("ドライバーに送信するパーツID:" + id);
 
@@ -129,6 +144,14 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     public void RemoveItem(PartsID id)
     {
+        //シングルプレイの処理
+        if (!PhotonNetwork.IsConnected)
+        {
+            var carController = FindObjectOfType<CarController>();
+            carController.RPC_RemoveItem(id);
+            return;
+        }
+
         Debug.Log("削除するパーツID:" + id);
 
         PhotonView target = PhotonView.Find(pairViewID);
@@ -143,6 +166,14 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     public void SubstractPartsNum()
     {
+        //シングルプレイの処理
+        if(!PhotonNetwork.IsConnected)
+        {
+            var carController = FindObjectOfType<CarController>();
+            carController.RPC_RemovePartsNum();
+            return;
+        }
+
         PhotonView target = PhotonView.Find(pairViewID);
 
         if (target == null) Debug.Log("target is null");
