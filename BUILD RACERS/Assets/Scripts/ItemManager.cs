@@ -79,20 +79,43 @@ public class ItemManager : MonoBehaviour
     {
         switch (type)
         {
-            /* //パッシブもここに追加
             case PartsType.Passive:
-                return Random.Range(0, 3);
-            */
-            case PartsType.Item:
-                int r = Random.Range(0, 2);
+                int r = Random.Range(0, 3);
                 Debug.Log("RandomItem:" + r);
                 if (r == 0)
+                {
+                    return PartsID.Acceleration;
+                }
+                else if (r == 1)
+                {
+                    return PartsID.Speed;
+                }
+                else
+                {
+                    return PartsID.AntiStun;
+                }
+
+            case PartsType.Item:
+                int r2 = Random.Range(0, 2);
+                Debug.Log("RandomItem:" + r2);
+                if (r2 == 0)
                 {
                     return PartsID.Energy;
                 }
                 else
                 {
                     return PartsID.Rocket;
+                }
+            case PartsType.Gimmick:
+                int r3 = Random.Range(0, 2);
+                Debug.Log("RandomItem:" + r3);
+                if (r3 == 0)
+                {
+                    return PartsID.Mud;
+                }
+                else
+                {
+                    return PartsID.Balloon;
                 }
             default:
                 return 0;

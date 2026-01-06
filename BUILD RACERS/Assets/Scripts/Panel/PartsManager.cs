@@ -13,6 +13,11 @@ public enum PartsID
     Energy = 0,
     Rocket,
     Flask,
+    Acceleration,
+    Speed,
+    AntiStun,
+    Mud,
+    Balloon,
 }
 
 public class PartsManager : MonoBehaviour
