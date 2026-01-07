@@ -41,6 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7299616445208447438}
+  - component: {fileID: 5931536000474129916}
   m_Layer: 0
   m_Name: StartPos
   m_TagString: Untagged
@@ -71,6 +72,20 @@ Transform:
   - {fileID: 6680881434165900834}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5931536000474129916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501453198553564440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa31315716014c42b11006db4651fd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startPosList: []
+  untilStartTime: 3
 --- !u!1 &2809804809578289905
 GameObject:
   m_ObjectHideFlags: 0

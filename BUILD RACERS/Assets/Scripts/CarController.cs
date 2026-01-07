@@ -10,6 +10,7 @@ public enum State // カートの状態
     Drive,  // 通常走行
     Stan,   // 気絶中
     Auto,   // 自動走行（未実装）
+    Stop,   // 停止中
 }
 
 public enum StunType // スタンの重さ
@@ -137,6 +138,9 @@ public class CarController : MonoBehaviourPunCallbacks
     private void Awake()
     {
         Debug.Log("AWAKE");
+
+        //初期状態は停止状態
+        state = State.Stop;
 
         driverNum = PlayerPrefs.GetInt("driverNum");
 
@@ -277,6 +281,12 @@ public class CarController : MonoBehaviourPunCallbacks
             isSetStartPos = true;
         }
 
+        //停止状態なら処理しない
+        if (state == State.Stop)
+        {
+            return;
+        }
+
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
         if (state == State.Stan)
@@ -383,6 +393,18 @@ public class CarController : MonoBehaviourPunCallbacks
 
             itemManager.SpawnItem(PartsID.Rocket);
         }
+    }
+
+    [PunRPC]
+    public void RPC_StateToDrive()
+    {
+        StateToDrive();
+    }
+
+    //状態を運転に
+    public void StateToDrive()
+    {
+        state = State.Drive;
     }
 
     // 地面の種類をRaycastで検出
