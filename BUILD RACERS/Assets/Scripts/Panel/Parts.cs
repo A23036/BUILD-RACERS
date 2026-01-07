@@ -159,54 +159,98 @@ public class Parts : MonoBehaviour
 
         Debug.Log($"[Parts] ドラッグ終了");
 
-        // パネル上のグリッド座標を取得
-        if (panelManager.GetCurrentGridPos(out int gridX, out int gridY))
+        // パネルに設置するパーツの時
+        if (partsType == PartsType.Passive || partsType == PartsType.Item)
         {
-            Debug.Log($"[Parts] グリッド座標取得: ({gridX}, {gridY})");
-
-            if (partsData == null)
+            // パネル上のグリッド座標を取得
+            if (panelManager.GetCurrentGridPos(out int gridX, out int gridY))
             {
-                Debug.LogError("[Parts] partsData が null です！Inspector で PartsBase を設定してください。");
+                Debug.Log($"[Parts] グリッド座標取得: ({gridX}, {gridY})");
+
+                if (partsData == null)
+                {
+                    Debug.LogError("[Parts] partsData が null です！Inspector で PartsBase を設定してください。");
+                    ReturnToOriginalPosition();
+                    return;
+                }
+
+                // 右下を掴んでいるので、左上の原点座標を計算
+
+                int originX = gridX - (partsData.width - 1);
+                int originY = gridY - (partsData.height - 1);
+
+                // 配置可能かチェック
+                if (panelManager.CanPlaceParts(partsData, originX, originY))
+                {
+                    // 配置成功
+                    panelManager.PlaceParts(this, partsData, partsType, originX, originY);
+                    isPlaced = true;
+
+                    // パーツをグリッドにスナップ
+                    SnapToGrid(gridX, gridY);
+
+                    // 重力を無効化（配置済み）
+                    rb.gravityScale = 0f;
+                    rb.linearVelocity = Vector2.zero;
+                }
+                else
+                {
+                    // 配置失敗：元の位置に戻す or 落下
+                    Debug.Log("配置できません！");
+                    // デバッグテキスト
+                    panelManager.SetDebugText("Cant Set");
+                    ReturnToOriginalPosition();
+                }
+            }
+            else
+            {
+                // パネル外で離した：落下させる
+                rb.gravityScale = 2f;
+            }
+
+
+            // 配置後 Collider を物理衝突無効化
+            UpdateColliderState();
+        }
+        else // マップに設置するパーツの時
+        {
+            // CreateGimmickに自身のパーツIDと離した座標を送信
+            Vector2 screenPos;
+
+            if (Mouse.current != null)
+                screenPos = Mouse.current.position.ReadValue();
+            else if (Touchscreen.current != null)
+                screenPos = Touchscreen.current.primaryTouch.position.ReadValue();
+            else
+                return;
+
+            CreateGimmic createGimmick = FindAnyObjectByType<CreateGimmic>();
+
+            if (createGimmick == null)
+            {
+                Debug.LogError("CreateGimmic が見つかりません！");
                 ReturnToOriginalPosition();
                 return;
             }
 
-            // 右下を掴んでいるので、左上の原点座標を計算
-            
-            int originX = gridX - (partsData.width - 1);
-            int originY = gridY - (partsData.height - 1);
+            bool placed = createGimmick.TrySpawnAtScreenPosition(screenPos, partsId);
 
-            // 配置可能かチェック
-            if (panelManager.CanPlaceParts(partsData, originX, originY))
+            if (placed)
             {
-                // 配置成功
-                panelManager.PlaceParts(this, partsData, partsType, originX, originY);
-                isPlaced = true;
-
-                // パーツをグリッドにスナップ
-                SnapToGrid(gridX, gridY);
-
-                // 重力を無効化（配置済み）
-                rb.gravityScale = 0f;
-                rb.linearVelocity = Vector2.zero;
+                Debug.Log("[Parts] Gimmick placed");
+                Destroy(gameObject); // パーツを削除
             }
             else
             {
-                // 配置失敗：元の位置に戻す or 落下
-                Debug.Log("配置できません！");
-                // デバッグテキスト
-                panelManager.SetDebugText("Cant Set");
-                ReturnToOriginalPosition();
+                Debug.Log("[Parts] Gimmick placement failed");
+                
+                // 未設置アイテム分減らす
+                panelManager.itemUsed();
+
+                // ミニマップ外で離した：落下させる
+                rb.gravityScale = 2f;
             }
         }
-        else
-        {
-            // パネル外で離した：落下させる
-            rb.gravityScale = 2f;
-        }
-
-        // 配置後 Collider を物理衝突無効化
-        UpdateColliderState();
     }
 
     private void UpdateColliderState()

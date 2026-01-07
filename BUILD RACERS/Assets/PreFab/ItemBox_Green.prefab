@@ -105,6 +105,7 @@ MonoBehaviour:
   scaleSpeed: 0.3
   minScale: 0.95
   maxScale: 1.05
+  partsType: 2
 --- !u!65 &1105184209305991279
 BoxCollider:
   m_ObjectHideFlags: 0

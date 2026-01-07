@@ -15,7 +15,9 @@ public enum PartsID
     Flask,
     Acceleration,
     Speed,
-    AntiStan,
+    AntiStun,
+    Mud,
+    Balloon,
 }
 
 public class PartsManager : MonoBehaviour
@@ -28,12 +30,16 @@ public class PartsManager : MonoBehaviour
 
     // 生成位置
     private Vector3 spawnPos = new Vector3(0,0,0);
+    [SerializeField] private float spawnPosDistance;
+    private int spawnPosIndex;
 
     // ---------------------------------------------------------
     // 初期化
     // ---------------------------------------------------------
     void Awake()
     {
+        spawnPosIndex = 0;
+
         // プレハブを辞書化
         partsDictionary = new Dictionary<PartsID, Parts>();
 
@@ -66,10 +72,19 @@ public class PartsManager : MonoBehaviour
         Parts newParts = Instantiate(prefab, parent);
 
         // ローカル位置を spawnPos に設定
-        spawnPos.x = 300.0f;
+        spawnPos.x = 200.0f + (spawnPosIndex * spawnPosDistance);
         newParts.transform.localPosition = spawnPos;
 
         Debug.Log($"[PartsManager] {id} を生成しました");
+
+        // 次回スポーン位置をずらす
+        if (spawnPosIndex < 3)
+        {
+            spawnPosIndex++;
+        }
+        else {
+            spawnPosIndex = 0;
+        }
 
         return newParts;
     }

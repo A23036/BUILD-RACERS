@@ -92,7 +92,7 @@ public class ItemManager : MonoBehaviour
                 }
                 else
                 {
-                    return PartsID.AntiStan;
+                    return PartsID.AntiStun;
                 }
 
             case PartsType.Item:
@@ -106,6 +106,17 @@ public class ItemManager : MonoBehaviour
                 {
                     return PartsID.Rocket;
                 }
+            case PartsType.Gimmick:
+                int r3 = Random.Range(0, 2);
+                Debug.Log("RandomItem:" + r3);
+                if (r3 == 0)
+                {
+                    return PartsID.Mud;
+                }
+                else
+                {
+                    return PartsID.Balloon;
+                }
             default:
                 return 0;
         }
@@ -113,6 +124,13 @@ public class ItemManager : MonoBehaviour
 
     public void SpawnItem(PartsID id)
     {
+        //シングルプレイ時のCPU処理
+        if(!PhotonNetwork.IsConnected)
+        {
+
+            return;
+        }
+
         if(id == PartsID.Rocket)
         {
             float forwardOffset = 5.0f;   // 前方距離

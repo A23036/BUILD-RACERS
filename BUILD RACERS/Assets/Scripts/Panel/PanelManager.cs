@@ -35,6 +35,11 @@ public class PanelManager : MonoBehaviour
         engineer = en;
     }
 
+    public void itemUsed()
+    {
+        engineer.SubstractPartsNum();
+    }
+
     void Awake()
     {
         Initialize();
@@ -133,6 +138,12 @@ public class PanelManager : MonoBehaviour
     // パーツを配置
     public bool PlaceParts(Parts parts, PartsBase partsData, PartsType type, int originX, int originY)
     {
+        if(engineer == null) 
+        {
+            Debug.LogError("Engineerがセットされていません！");
+            return false;
+        }
+
         if (!CanPlaceParts(partsData, originX, originY))
         {
             return false;

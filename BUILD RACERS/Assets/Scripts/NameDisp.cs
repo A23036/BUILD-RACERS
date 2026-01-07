@@ -12,7 +12,7 @@ public class NameDisp : MonoBehaviourPunCallbacks
 
         var player = photonView.Owner;
 
-        if(nameLabel.text != "CPU")
+        if(nameLabel.text.Substring(0,3) != "CPU")
         {
             //シングルプレイと処理を分岐
             if(PhotonNetwork.IsConnected)

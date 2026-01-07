@@ -12,7 +12,7 @@ public enum State // カートの状態
     Auto,   // 自動走行（未実装）
 }
 
-public enum StanType // スタンの重さ
+public enum StunType // スタンの重さ
 {
     Light,
     Midium,
@@ -107,7 +107,7 @@ public class CarController : MonoBehaviourPunCallbacks
         partsNum--;
     }
 
-    public void SetStan(StanType type)
+    public void SetStun(StunType type)
     {
         if(state == State.Stan) return;
 
@@ -116,13 +116,13 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // スタンの強さに応じてスタン時間をセット
         switch(type) {
-            case StanType.Light:
+            case StunType.Light:
                 stanTime = LightStanTime;
                 break;
-            case StanType.Midium:
+            case StunType.Midium:
                 stanTime = MidiumStanTime;
                 break;
-            case StanType.Heavy:
+            case StunType.Heavy:
                 stanTime = HeavyStanTime;
                 break;
             default:
@@ -360,7 +360,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // 速度表示など残す（rb.linearVelocity -> rb.velocity）
         float speed = rb.linearVelocity.magnitude * 3.6f;
-        if (speedText != null && driver == null) speedText.text = $"{speed:F1} km/h";
+        if (speedText != null && driver == null) speedText.text = $"{speed:F1} km/h";   
 
         // 横滑り防止
         Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
@@ -467,40 +467,32 @@ public class CarController : MonoBehaviourPunCallbacks
                 else
                     Debug.LogWarning("[CarController] SetAI: WaypointContainer が見つかりません。実行時に経路をセットしてください。");
             }
-            /*
-            // waypointContainerが渡されていれば設定。渡されなければシーン内のものを拾う（安全策）
-            if (aiComp is AIDriver)
+        }
+    }
+
+    public void SetName(string s)
+    {
+        Transform labelTransform = transform.Find("NameLabel");
+        if (labelTransform != null)
+        {
+            TextMeshPro nameLabel = labelTransform.GetComponent<TextMeshPro>();
+            if (nameLabel != null)
             {
-                if (waypointContainer != null)
-                {
-                    aiComp.SetWaypointContainer(waypointContainer);
-                }
-                else
-                {
-                    var wc = FindObjectOfType<WaypointContainer>();
-                    if (wc != null)
-                        aiComp.SetWaypointContainer(wc);
-                    else
-                        Debug.LogWarning("[CarController] SetAI: WaypointContainer が見つかりません。実行時に経路をセットしてください。");
-                }
-            }
-            */
-            //名前をCPUに変更
-            Transform labelTransform = transform.Find("NameLabel");
-            if (labelTransform != null)
-            {
-                TextMeshPro nameLabel = labelTransform.GetComponent<TextMeshPro>();
-                if (nameLabel != null)
-                {
-                    nameLabel.text = "CPU";
-                }
+                nameLabel.text = s;
             }
         }
     }
 
     public void SendParts(PartsID id)
     {
-        if(!photonView.IsMine) return;
+        //シングルプレイ時の操作
+        if (!PhotonNetwork.IsConnected)
+        {
+            itemManager.SpawnItem(id);
+            return;
+        }
+
+        if (!photonView.IsMine) return;
 
         PhotonView target = PhotonView.Find(pairViewID);
 
