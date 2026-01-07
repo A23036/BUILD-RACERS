@@ -4102,7 +4102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90ba41d7b85f5e04a81c77b429abe28b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneName: title
+  sceneName: tittle
   visual: {fileID: 1736619969}
   spriteRenderer: {fileID: 1736619971}
   animator: {fileID: 1736619970}
