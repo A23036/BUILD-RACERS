@@ -32,6 +32,9 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //ドライバーを初期位置にセット
+        Invoke(nameof(SetStartPosDrivers), 0.2f);
+
         //N秒後にドライバー開始
         Invoke(nameof(DriverStart), untilStartTime);
     }
@@ -61,14 +64,45 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         return startPosList[idx];
     }
 
+    public void SetStartPosDrivers()
+    {
+        int idx = 0;
+        if (!PhotonNetwork.IsConnected)
+        {
+            //全カートを初期位置へ
+            var karts = FindObjectsOfType<CarController>();
+            foreach (var kart in karts)
+            {
+                //初期位置へセット
+                kart.SetStartPos(startPosList[idx++ % startPosList.Length].position);
+            }
+        }
+        else if (PhotonNetwork.IsMasterClient)
+        {
+            //マスタークライアントのみ実行
+            var karts = FindObjectsOfType<CarController>();
+            foreach (var kart in karts)
+            {
+                // PhotonViewを取得してRPCを呼ぶ
+                PhotonView photonView = kart.GetComponent<PhotonView>();
+                if (photonView != null)
+                {
+                    //初期位置へセット
+                    photonView.RPC("RPC_SetStartPos", RpcTarget.All, startPosList[idx++ % startPosList.Length].position);
+                }
+            }
+        }
+    }
+
     public void DriverStart()
     {
         if(!PhotonNetwork.IsConnected)
         {
             //全カートの状態を運転へ
             var karts = FindObjectsOfType<CarController>();
-            foreach(var kart in karts)
+            foreach (var kart in karts)
             {
+                //状態を運転へ
                 kart.StateToDrive();
             }
         }
@@ -82,6 +116,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 PhotonView photonView = kart.GetComponent<PhotonView>();
                 if (photonView != null)
                 {
+                    //状態を運転へ
                     //photonView.RPC("RPC_StateToDrive", RpcTarget.AllBuffered);
                     photonView.RPC("RPC_StateToDrive", RpcTarget.All);
                 }
@@ -103,7 +138,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         float height = 400;
         Rect rect = new Rect(
             (Screen.width - width) / 2,
-            (Screen.height - height) / 2,
+            (Screen.height - height) / 2 - Screen.height/4,
             width,
             height
         );

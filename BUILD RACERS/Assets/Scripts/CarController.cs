@@ -263,6 +263,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
+        /*
         if(isSetStartPos == false)
         {
             //スタート地点に座標をセット
@@ -280,6 +281,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
             isSetStartPos = true;
         }
+        */
 
         //停止状態なら処理しない
         if (state == State.Stop)
@@ -405,6 +407,18 @@ public class CarController : MonoBehaviourPunCallbacks
     public void StateToDrive()
     {
         state = State.Drive;
+    }
+
+    [PunRPC]
+    public void RPC_SetStartPos(Vector3 pos)
+    {
+        SetStartPos(pos);
+    }
+
+    //状態を運転に
+    public void SetStartPos(Vector3 pos)
+    {
+        transform.position = pos;
     }
 
     // 地面の種類をRaycastで検出
