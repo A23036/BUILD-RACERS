@@ -95,6 +95,8 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private float stanSpinAngle = 720f; // 回転量
     [SerializeField] private AnimationCurve stanEaseCurve;
 
+    private bool isSetStartPos = false;
+
     public void AddPartsNum()
     {
         partsNum++; 
@@ -175,6 +177,11 @@ public class CarController : MonoBehaviourPunCallbacks
         itemManager = GetComponent<ItemManager>();
     }
 
+    private void Start()
+    {
+        
+    }
+
     private void TryPairPlayers()
     {
         // ペアを発見済みの場合、処理を行わない
@@ -252,6 +259,24 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
+        if(isSetStartPos == false)
+        {
+            //スタート地点に座標をセット
+            var startPosSetter = FindObjectOfType<StartPosSetter>();
+            if (startPosSetter != null)
+            {
+                transform.position = startPosSetter.GetStartPos().position;
+
+                Debug.Log("SET START POS" + transform.position);
+            }
+            else
+            {
+                Debug.LogWarning("StartPosSetter is not found.");
+            }
+
+            isSetStartPos = true;
+        }
+
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
         if (state == State.Stan)

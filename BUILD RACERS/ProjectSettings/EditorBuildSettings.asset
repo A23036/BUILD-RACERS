@@ -6,11 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/robby.unity
-    guid: 79b3ab02d03e70949a399fc25348c637
-  - enabled: 1
     path: Assets/Scenes/tittle.unity
     guid: 5a8fd4836eee49f4383fc2769e3e309a
+  - enabled: 1
+    path: Assets/Scenes/robby.unity
+    guid: 79b3ab02d03e70949a399fc25348c637
   - enabled: 1
     path: Assets/Scenes/menu.unity
     guid: 92265b164823721449958ba9db39d06f

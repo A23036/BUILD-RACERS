@@ -22,3 +22,5 @@
 118	5070	7877770765800000	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	30ae49abb90441f9
 37	5146	7877770764900000	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	a3fa325472beed15
 5146	5518	7877770818800000	D:/Git/BuildRacer/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/156d5q45/obj/arm64-v8a/libgame.so	6b91ffc4e442dab0
+11	252	7894506565700000	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	ef0650f447b2743c
+253	618	7894506571200000	D:/Git/BuildRacer/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/156d5q45/obj/arm64-v8a/libswappywrapper.so	7277980eda5f1311
