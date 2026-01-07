@@ -28,6 +28,9 @@ public class Coin : MonoBehaviour
     private Collider coinCollider;
     private AudioSource audioSource;
 
+    // 全コインで共有するY回転角（度）
+    private static float s_sharedY = 0f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -46,14 +49,20 @@ public class Coin : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
         }
+
+        // 起動時に共有Y角を反映
+        var e = initialRotation.eulerAngles;
+        transform.rotation = Quaternion.Euler(e.x, s_sharedY, e.z);
     }
 
     void Update()
     {
         if (get == true)
         {
-            // ゲット時の回転とアニメーション
-            transform.Rotate(0, getRotateSpeed * Time.deltaTime, 0);
+            // ゲット時の回転とアニメーション（共有角度には影響を与えない）
+            float delta = getRotateSpeed * Time.deltaTime;
+            transform.Rotate(0f, delta, 0f);
+
             gettime += Time.deltaTime;
 
             if (gettime > 0f && rb.isKinematic == false)
@@ -68,6 +77,10 @@ public class Coin : MonoBehaviour
 
             if (gettime > 0.5f)
             {
+                // 非表示に切り替える直前に共有角度に同期させる（アニメーション中は切り離し）
+                var e = initialRotation.eulerAngles;
+                transform.rotation = Quaternion.Euler(e.x, s_sharedY, e.z);
+
                 // 見えなくする＆当たり判定をオフ
                 meshRenderer.enabled = false;
                 coinCollider.enabled = false;
@@ -84,12 +97,20 @@ public class Coin : MonoBehaviour
         }
         else if (meshRenderer.enabled) // 通常時（見えている状態）
         {
-            // 復活後の拡大アニメーションと通常回転
+            // 復活後の拡大アニメーションと通常回転（共有角を使用して全コイン同期）
             if (transform.localScale.magnitude < originalScale.magnitude)
             {
                 transform.localScale = Vector3.Lerp(transform.localScale, originalScale, Time.deltaTime * scaleUpSpeed);
             }
-            transform.Rotate(0, rotateSpeed * Time.deltaTime, 0);
+
+            // 共有角を増加させる
+            float delta = rotateSpeed * Time.deltaTime;
+            s_sharedY += delta;
+            s_sharedY = Mathf.Repeat(s_sharedY, 360f);
+
+            // 各コインのX/Zは初期値を保持しつつYは共有角で合わせる
+            var e = initialRotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(e.x, s_sharedY, e.z);
         }
     }
 
@@ -144,7 +165,11 @@ public class Coin : MonoBehaviour
         // 初期化
         transform.localScale = Vector3.zero;
         transform.position = initialPosition;
-        transform.rotation = initialRotation;
+
+        // 初期のX/Z回転は保持しつつ、Yは共有角で復元する
+        var e = initialRotation.eulerAngles;
+        transform.rotation = Quaternion.Euler(e.x, s_sharedY, e.z);
+
         rb.isKinematic = true;
 
         // 見える状態に戻す
