@@ -136,10 +136,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16a60417d7e952c40a57c54c22a7e8e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flashDuration: 2
+  flashDuration: 1
   flashSpeed: 0.1
   expandScale: 1.3
-  expandDuration: 0.3
+  expandDuration: 0.2
   balloonRenderer: {fileID: 2228989218165093877}
   explosionEffect: {fileID: 3323387954473017891, guid: 0b912e9003fba894faa88cf964a6fb8a, type: 3}
   flashMaterial: {fileID: 2100000, guid: e5c07be2f895b954d810ffce03dad2ea, type: 2}

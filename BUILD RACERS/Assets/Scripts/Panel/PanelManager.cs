@@ -172,7 +172,8 @@ public class PanelManager : MonoBehaviour
         placedParts[parts] = occupiedCells;
 
         // 配置したパーツ情報を送信
-        engineer.SendItem(parts.GetPartsID());
+        // アイテム
+        if(parts.GetPartsType() == PartsType.Item)  engineer.SendItem(parts.GetPartsID());
 
         // 未設置パーツ数を減らす
         engineer.SubstractPartsNum();
