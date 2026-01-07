@@ -171,7 +171,7 @@ public class WaterBalloonExplosion : MonoBehaviour
         }
 
         // ­‚µ‘Ò‚Á‚Ä‚©‚çíœiTrigger”»’è‚Ì‚½‚ßj
-        Destroy(transform.parent.gameObject, 0.5f);
+        Destroy(transform.parent.gameObject, 0.2f);
     }
 
     // ----------------------------

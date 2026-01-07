@@ -318,6 +318,11 @@ public class Parts : MonoBehaviour
         return partsId;
     }
 
+    public PartsType GetPartsType()
+    {
+        return partsType;
+    }
+
     // プレビューを更新
     private void UpdatePreview()
     {
