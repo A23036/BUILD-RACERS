@@ -35,6 +35,11 @@ public class PanelManager : MonoBehaviour
         engineer = en;
     }
 
+    public void itemUsed()
+    {
+        engineer.SubstractPartsNum();
+    }
+
     void Awake()
     {
         Initialize();
