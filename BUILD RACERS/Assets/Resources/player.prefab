@@ -633,6 +633,8 @@ MonoBehaviour:
   LightStanTime: 1
   MidiumStanTime: 2
   HeavyStanTime: 3
+  ShortBoostTime: 0.5
+  LongBoostTime: 1
   raycastLength: 5
   groundMask:
     serializedVersion: 2

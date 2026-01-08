@@ -20,6 +20,12 @@ public enum StunType // スタンの重さ
     Heavy,
 }
 
+public enum BoostType // スタンの重さ
+{
+    Short,
+    Long,
+}
+
 public class CarController : MonoBehaviourPunCallbacks
 {
     //ジョイスティック
@@ -46,7 +52,8 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private float LightStanTime = 0.5f;
     [SerializeField] private float MidiumStanTime = 1.0f;
     [SerializeField] private float HeavyStanTime = 2.0f;
-
+    [SerializeField] private float ShortBoostTime = 0.5f;
+    [SerializeField] private float LongBoostTime = 1.0f;
 
     [Header("地面関連")]
     [SerializeField] private float raycastLength = 1.2f;  // 地面判定距離
@@ -106,6 +113,21 @@ public class CarController : MonoBehaviourPunCallbacks
     public void SubstractPartsNum()
     {
         partsNum--;
+    }
+    
+    public void SetBoost(BoostType boostType)
+    {
+        // スタンの強さに応じてスタン時間をセット
+        switch(boostType) {
+            case BoostType.Short:
+                boostTimer = ShortBoostTime;
+                break;
+            case BoostType.Long:
+                boostTimer = LongBoostTime;
+                break;
+            default:
+                break;
+        }
     }
 
     public void SetStun(StunType type)

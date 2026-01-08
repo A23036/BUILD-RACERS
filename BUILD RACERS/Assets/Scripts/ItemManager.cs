@@ -10,7 +10,14 @@ public class ItemManager : MonoBehaviour
     // 同じIDのノードをリストで管理
     private Dictionary<int, List<LinkedListNode<int>>> nodeMap = new Dictionary<int, List<LinkedListNode<int>>>();
 
+    CarController carController;
+
     public int GetItemNum() => itemQueue.Count;
+
+    private void Start()
+    {
+        carController = GetComponent<CarController>();
+    }
 
     // アイテム追加（同じIDも追加可能）
     public void Enqueue(int itemId)
@@ -29,15 +36,10 @@ public class ItemManager : MonoBehaviour
     {
         if (itemQueue.Count == 0)
             return null;
-
         var firstNode = itemQueue.First;
-        itemQueue.RemoveFirst();
 
         int id = firstNode.Value;
-        nodeMap[id].Remove(firstNode);
-        if (nodeMap[id].Count == 0)
-            nodeMap.Remove(id);
-
+        
         PrintItemQueue();
         SpawnItem((PartsID)id);
         return id;
@@ -131,6 +133,12 @@ public class ItemManager : MonoBehaviour
             return;
         }
 
+        if(id == PartsID.Energy)
+        {
+            // 加速状態を付与
+            carController.SetBoost(BoostType.Short);
+        }
+
         if(id == PartsID.Rocket)
         {
             float forwardOffset = 5.0f;   // 前方距離
@@ -146,6 +154,7 @@ public class ItemManager : MonoBehaviour
                 spawnPos,
                 transform.rotation   // 向きも自身に合わせる
             );
+            return;
         }
     }
 }
