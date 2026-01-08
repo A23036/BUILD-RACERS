@@ -131,20 +131,6 @@ public class selectScene : baseScene
         }
     }
 
-    IEnumerator LoadGameScene()
-    {
-        // 1フレーム返す
-        yield return null;
-
-        AsyncOperation op = SceneManager.LoadSceneAsync("gamePlay");
-        op.allowSceneActivation = true;
-
-        while (!op.isDone)
-        {
-            yield return null;
-        }
-    }
-
     public void PushReadyButton()
     {
         //観戦者は処理なし
@@ -267,7 +253,7 @@ public class selectScene : baseScene
             {
                 //マスタークライアントのIDを登録
                 PhotonView pv = selector.GetComponent<PhotonView>();
-                PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MasterClienViewID", pv.ViewID } });
+                PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MasterClientViewID", pv.ViewID } });
             }
 
             //マスターはSSのプロパティコールバックで行う　ここでやるとまだViewIDを参照できないため

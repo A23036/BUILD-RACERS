@@ -277,7 +277,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log("[Custom CallBack]");
 
         //準備状態の初期化
-        if(photonView.IsMine && changed.ContainsKey("MasterClienViewID"))
+        if(photonView.IsMine && changed.ContainsKey("MasterClientViewID"))
         {
             SendToMaster(false);
             Debug.Log("準備状態の初期化");
@@ -451,6 +451,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         //ルームマスターに送信
         SendToMaster(isReady);
+
+        // ネットワークオブジェクトにdriverNumとengineerNumを登録
+        Hashtable hash = new Hashtable();
+        hash["driverNum"] = PlayerPrefs.GetInt("driverNum");
+        hash["engineerNum"] = PlayerPrefs.GetInt("engineerNum");
+        hash["isMonitor"] = PlayerPrefs.GetInt("isMonitor");
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
     }
 
     //ゲーミングカラーのアクティブ変更
@@ -462,7 +470,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //ルームマスターに準備状態を送信
     public void SendToMaster(bool readyStat)
     {
-        int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClienViewID"];
+        int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClientViewID"];
         PhotonView target = PhotonView.Find(viewID);
 
         if (target != null)
@@ -472,7 +480,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         }
         else
         {
-            Debug.Log($"not found : {viewID}'s MasterClienViewID");
+            Debug.Log($"not found : {viewID}'s MasterClientViewID");
         }
     }
 
@@ -481,7 +489,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     {
         return;
 
-        int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClienViewID"];
+        int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClientViewID"];
         PhotonView target = PhotonView.Find(viewID);
 
         if (target != null)
@@ -491,7 +499,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         }
         else
         {
-            Debug.Log($"not found : {viewID}'s MasterClienViewID");
+            Debug.Log($"not found : {viewID}'s MasterClientViewID");
         }
     }
 
@@ -511,7 +519,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
             //マスタークライアントのIDを登録
             PhotonView pv = GetComponent<PhotonView>();
-            PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MasterClienViewID", pv.ViewID } });
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MasterClientViewID", pv.ViewID } });
         }
     }
 

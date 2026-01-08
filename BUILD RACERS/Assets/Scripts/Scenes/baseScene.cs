@@ -40,7 +40,7 @@ public class baseScene : MonoBehaviourPunCallbacks
         }
 
         //現在のマスターがいるシーンを更新・共有できるように
-        if (PhotonNetwork.IsMasterClient)
+        if (isConnect && PhotonNetwork.IsMasterClient)
         {
             var props = new Hashtable();
             props["masterGameScene"] = SceneManager.GetActiveScene().name;

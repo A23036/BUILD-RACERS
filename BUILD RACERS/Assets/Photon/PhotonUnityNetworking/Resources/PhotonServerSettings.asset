@@ -53,6 +53,9 @@ MonoBehaviour:
   - RPC_RemoveParts
   - RPC_RemovePlacedItem
   - RPC_SetItemText
+  - RPC_SetStartPosDrivers
+  - RPC_NotifyDriverConnected
+  - RPC_UpdateDebugText
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

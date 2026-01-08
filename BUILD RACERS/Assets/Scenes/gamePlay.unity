@@ -21006,6 +21006,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: StartPos
       objectReference: {fileID: 0}
+    - target: {fileID: 521369616737925876, guid: 1a80052090f14c7489b8ba86c43ec67b, type: 3}
+      propertyPath: sceneViewId
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 531347926640942163, guid: 1a80052090f14c7489b8ba86c43ec67b, type: 3}
       propertyPath: m_Enabled
       value: 1

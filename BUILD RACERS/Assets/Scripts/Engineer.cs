@@ -35,6 +35,11 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
         carController = FindObjectOfType<CarController>();
 
         partsManager = GetComponentInChildren<PartsManager>();
@@ -54,7 +59,6 @@ public class Engineer : MonoBehaviourPunCallbacks
     {
         if (!PhotonNetwork.IsConnected)
         {
-
             return;
         }
 
@@ -101,7 +105,7 @@ public class Engineer : MonoBehaviourPunCallbacks
     public void SetCamera()
     {
         //シングルプレイ時の処理
-        if (!photonView.IsMine)
+        if (!PhotonNetwork.IsConnected)
         {
             var singleCameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
 

@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,13 +12,16 @@ public class playScene : baseScene
     [SerializeField] private GameObject EngineerUI;
     [SerializeField] private GameObject MonitorUI;
 
+    private bool isNotifyDriverConnected = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Debug.Log("=== PLAY SCENE START ===");
+        
         preSceneName = "select";
 
         GenerateKarts();
-        //Debug.Log("THROUGH START");
 
         //ロード完了後にメッセージ処理を再開
         PhotonNetwork.IsMessageQueueRunning = true;
@@ -64,7 +68,7 @@ public class playScene : baseScene
         if(PlayerPrefs.GetInt("driverNum") != -1)
         {
             // プレイヤー生成（自分）
-            var position = new Vector3(Random.Range(-3f, 3f), 3, Random.Range(-3f, 3f));
+            var position = new Vector3(Random.Range(-3f, 3f), 0f , PhotonNetwork.LocalPlayer.ActorNumber * 5);
             var player = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
             var playerCc = player.GetComponent<CarController>();
             playerCc.SetCamera();
@@ -124,6 +128,17 @@ public class playScene : baseScene
         else
         {
             Debug.Log("セレクトされていません");
+        }
+    }
+
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        if(!isNotifyDriverConnected && PlayerPrefs.GetInt("driverNum") != -1 && photonView != null)
+        {
+            //マスタークライアントへカートの生成を通知する
+            photonView.RPC("RPC_NotifyDriverConnected", RpcTarget.All);
+
+            isNotifyDriverConnected = true;
         }
     }
 }

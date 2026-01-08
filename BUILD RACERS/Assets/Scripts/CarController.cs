@@ -296,8 +296,8 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
-        /*
-        if(isSetStartPos == false)
+        ///*
+        if(!PhotonNetwork.IsConnected && isSetStartPos == false)
         {
             //スタート地点に座標をセット
             var startPosSetter = FindObjectOfType<StartPosSetter>();
@@ -314,7 +314,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
             isSetStartPos = true;
         }
-        */
+        //*/
 
         //停止状態なら処理しない
         if (state == State.Stop)

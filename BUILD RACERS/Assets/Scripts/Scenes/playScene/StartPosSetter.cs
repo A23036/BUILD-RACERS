@@ -1,12 +1,18 @@
 using UnityEngine;
 using Photon.Pun;
+using Fusion;
+using ExitGames.Client.Photon;
 
 public class StartPosSetter : MonoBehaviourPunCallbacks
 {
     public Transform[] startPosList;
     private bool[] isSet;
 
-    private string debugText = "READY";
+    private int driversSum = 0;
+    private int nowConnectDrivers = 0;
+    private bool isSetDrivers = false;
+
+    private string debugText = "waiting for members...";
 
     //スタートまでの時間を設定
     [SerializeField] private int untilStartTime;
@@ -32,18 +38,37 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //ドライバーを初期位置にセット
-        Invoke(nameof(SetStartPosDrivers), 0.2f);
+        if(!PhotonNetwork.IsConnected)
+        {
+            debugText = "READY";
 
-        //N秒後にドライバー開始
-        Invoke(nameof(DriverStart), untilStartTime);
+            //ドライバーを初期位置にセット
+            Invoke(nameof(SetStartPosDrivers), 0.2f);
+
+            //N秒後にドライバー開始
+            Invoke(nameof(DriverStart), untilStartTime);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(!isSetDrivers && driversSum <= nowConnectDrivers)
+        {
+            //全ドライバーが接続されたら初期位置へセット
+            Invoke(nameof(SetStartPosDrivers), 1f);
+            isSetDrivers = true;
+
+            //N秒後にドライバー開始
+            Invoke(nameof(DriverStart), untilStartTime);
+        }
+        else
+        {
+            Debug.Log(" === WAIT MENBERS === ");
+        }
+
         //2秒後に消す
-        if(debugText == "GO!")
+        if (debugText == "GO!")
         {
             Invoke(nameof(ResetDebugText), 2f);
         }
@@ -62,6 +87,21 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
 
         Debug.Log("START POS" + startPosList[idx].position);
         return startPosList[idx];
+    }
+
+    [PunRPC]
+    public void RPC_NotifyDriverConnected()
+    {
+        //if(PhotonNetwork.IsMasterClient) nowConnectDrivers++;
+
+        //マスターより先に呼ばれる可能性があるため、OnRoomPropertiesUpdateで処理する
+        PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "newnowConnectDrivers", nowConnectDrivers + 1 } });
+    }
+
+    [PunRPC]
+    public void RPC_SetStartPosDrivers()
+    {
+        SetStartPosDrivers();
     }
 
     public void SetStartPosDrivers()
@@ -88,10 +128,13 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 if (photonView != null)
                 {
                     //初期位置へセット
-                    photonView.RPC("RPC_SetStartPos", RpcTarget.All, startPosList[idx++ % startPosList.Length].position);
+                    photonView.RPC("RPC_SetStartPos", RpcTarget.AllBuffered, startPosList[idx++ % startPosList.Length].position);
                 }
             }
         }
+
+        debugText = "READY";
+        photonView.RPC("RPC_UpdateDebugText", RpcTarget.AllBuffered, debugText);
     }
 
     public void DriverStart()
@@ -117,13 +160,14 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 if (photonView != null)
                 {
                     //状態を運転へ
-                    //photonView.RPC("RPC_StateToDrive", RpcTarget.AllBuffered);
-                    photonView.RPC("RPC_StateToDrive", RpcTarget.All);
+                    //photonView.RPC("RPC_StateToDrive", RpcTarget.AllBufferedBuffered);
+                    photonView.RPC("RPC_StateToDrive", RpcTarget.AllBuffered);
                 }
             }
         }
 
         debugText = "GO!";
+        photonView.RPC("RPC_UpdateDebugText", RpcTarget.AllBuffered, debugText);
     }
 
     private void OnGUI()
@@ -149,5 +193,29 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     void ResetDebugText()
     {
         debugText = "";
+    }
+
+    [PunRPC]
+    public void RPC_UpdateDebugText(string text)
+    {
+        debugText = text;
+    }
+
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        /*
+        //総ドライバー数を取得
+        driversSum = (int)PhotonNetwork.CurrentRoom.CustomProperties["DriversCount"];
+
+        //接続済みドライバー数を取得
+        if (propertiesThatChanged.TryGetValue("newnowConnectDrivers", out var v) && v is int ncd)
+        {
+            nowConnectDrivers = ncd;
+        }
+        */
+
+        //別方法で接続済みドライバー数を取得
+        var drivers = FindObjectsOfType<CarController>();
+        nowConnectDrivers = drivers.Length;
     }
 }

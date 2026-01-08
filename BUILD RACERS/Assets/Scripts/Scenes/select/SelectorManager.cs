@@ -149,28 +149,6 @@ public class SelectorManager : MonoBehaviourPunCallbacks
             }
         }
 
-        /*
-        //全員が準備完了か判定
-        foreach (var vk in selectorsStat)
-        {
-            if(!vk.Value)
-            {
-                Debug.Log(vk.Key + " is not ready");
-                isEveryoneReady = false;
-
-                //ルームの状態をWaitingに変更
-                var propsw = new Hashtable();
-                propsw["masterGameScene"] = "Waiting";
-                PhotonNetwork.CurrentRoom.SetCustomProperties(propsw);
-
-                Debug.Log($"Set {propsw["masterGameScene"]}");
-
-                break;
-            }
-            isEveryoneReady = true;
-        }
-        */
-
         if (isEveryoneReady)
         {
             //ルームの状態をStartingに変更
@@ -179,6 +157,31 @@ public class SelectorManager : MonoBehaviourPunCallbacks
             PhotonNetwork.CurrentRoom.SetCustomProperties(props);
 
             Debug.Log($"Set {props["masterGameScene"]}");
+
+            //ドライバー　エンジニア　観戦者の人数を記録
+            int drivers = 0;
+            int engineers = 0;
+            int monitors = 0;
+
+            foreach (var p in PhotonNetwork.PlayerList)
+            {
+                if (p.CustomProperties.TryGetValue("driverNum", out var d) && (int)d != -1) drivers++;
+                if (p.CustomProperties.TryGetValue("engineerNum", out var e) && (int)e != -1) engineers++;
+                if (p.CustomProperties.TryGetValue("isMonitor", out var m) && (int)m == 1) monitors++;
+            }
+
+            Debug.Log("人数カウント完了");
+            Debug.Log($"Drivers:{drivers} , Engineers:{engineers} , Monitors:{monitors}");
+
+            //ルームプロパティに保存
+            Hashtable hash = new Hashtable
+            {
+                {"DriversCount",drivers },
+                {"EngineersCount",engineers },
+                {"MonitorsCount",monitors }
+            };
+
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
         }
     }
 
