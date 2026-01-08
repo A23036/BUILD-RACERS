@@ -39,6 +39,7 @@ public class ItemManager : MonoBehaviour
             nodeMap.Remove(id);
 
         PrintItemQueue();
+        SpawnItem((PartsID)id);
         return id;
     }
 
@@ -127,7 +128,6 @@ public class ItemManager : MonoBehaviour
         //シングルプレイ時のCPU処理
         if(!PhotonNetwork.IsConnected)
         {
-
             return;
         }
 

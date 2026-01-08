@@ -398,4 +398,39 @@ public class PanelManager : MonoBehaviour
 
         return countDict;
     }
+
+
+    // PartsID を指定して設置済みパーツを削除
+    public bool RemovePlacedPartsByID(PartsID targetId)
+    {
+        Parts targetParts = null;
+
+        // 設置済みパーツを探索
+        foreach (var kvp in placedParts)
+        {
+            Parts parts = kvp.Key;
+            if (parts != null && parts.GetPartsID() == targetId)
+            {
+                targetParts = parts;
+                break;
+            }
+        }
+
+        if (targetParts == null)
+        {
+            Debug.LogWarning($"[PanelManager] PartsID {targetId} は設置されていません");
+            return false;
+        }
+
+        // グリッド解放 + 辞書削除
+        RemoveParts(targetParts);
+
+        // ----------------------------
+        // オブジェクト削除
+        // ----------------------------
+        Destroy(targetParts.gameObject);
+
+        Debug.Log($"[PanelManager] PartsID {targetId} を削除しました");
+        return true;
+    }
 }

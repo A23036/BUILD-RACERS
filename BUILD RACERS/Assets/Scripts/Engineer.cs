@@ -204,4 +204,20 @@ public class Engineer : MonoBehaviourPunCallbacks
         GameObject canvas = GameObject.Find("EngineerCanvas");
         partsManager.SpawnParts(id, canvas.transform);
     }
+
+    [PunRPC]
+    // ƒp[ƒc‚ğíœ
+    public void RPC_RemovePlacedItem(PartsID id)
+    {
+        PanelManager panelManager = FindAnyObjectByType<PanelManager>();
+
+        if (panelManager == null)
+        {
+            Debug.LogError("PanelManager not found");
+            return;
+        }
+
+        panelManager.RemovePlacedPartsByID(id);
+    }
+
 }

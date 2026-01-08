@@ -8,7 +8,7 @@ using Photon.Realtime;
 public enum State // カートの状態
 {
     Drive,  // 通常走行
-    Stan,   // 気絶中
+    Stun,   // 気絶中
     Auto,   // 自動走行（未実装）
     Stop,   // 停止中
 }
@@ -110,10 +110,10 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void SetStun(StunType type)
     {
-        if(state == State.Stan) return;
+        if(state == State.Stun) return;
 
         // スタン状態をセット
-        state = State.Stan;
+        state = State.Stun;
 
         // スタンの強さに応じてスタン時間をセット
         switch(type) {
@@ -291,7 +291,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
-        if (state == State.Stan)
+        if (state == State.Stun)
         {
             UpdateStan();
             return;
@@ -388,12 +388,15 @@ public class CarController : MonoBehaviourPunCallbacks
             rb.MoveRotation(rb.rotation * deltaRotation);
         }
 
-        //test スペースキーでロケット生成
+        //test スペースキーでアイテム使用
         if (Keyboard.current.spaceKey.wasPressedThisFrame && driver == null)
         {
             Debug.Log("space is pressed");
-
-            itemManager.SpawnItem(PartsID.Rocket);
+            if (itemManager.GetItemNum() > 0) // アイテムを所持しているとき
+            {
+                // キューの最初のアイテムを取り出して使用する
+                RemovePlacedItem();
+            }
         }
     }
 
@@ -538,6 +541,31 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // ペアのエンジニア画面にアイテムパーツを生成
         target.RPC("RPC_SpawnParts", pairPlayer, id);
+    }
+
+    // 使用するアイテムを検索、キューから削除
+    public void RemovePlacedItem()
+    {
+        //シングルプレイ時の操作
+        if (!PhotonNetwork.IsConnected)
+        {
+            return;
+        }
+
+        // 使用するアイテムIDを取り出す
+        PartsID usedId = (PartsID)itemManager.Dequeue();
+
+        // ----------------------------
+        // エンジニア側に設置パーツ削除を通知
+        // ----------------------------
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            PhotonView target = PhotonView.Find(pairViewID);
+            if (target != null)
+            {
+                target.RPC("RPC_RemovePlacedItem", pairPlayer, usedId);
+            }
+        }
     }
 
     // アイテムを獲得可能か検証

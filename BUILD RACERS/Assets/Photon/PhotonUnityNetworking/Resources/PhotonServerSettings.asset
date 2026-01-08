@@ -50,6 +50,8 @@ MonoBehaviour:
   - RPC_ReleaseSelectorStat
   - RPC_StateToDrive
   - RPC_SetStartPos
+  - RPC_RemoveParts
+  - RPC_RemovePlacedItem
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
