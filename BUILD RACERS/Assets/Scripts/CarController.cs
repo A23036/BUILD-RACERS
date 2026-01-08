@@ -70,6 +70,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
     [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
+    [SerializeField] private TextMeshProUGUI itemText;  // アイテム表示テキスト
 
     [Header("保持なアイテムの数")]
     [SerializeField] private int MAXITEMNUM = 5;
@@ -192,6 +193,16 @@ public class CarController : MonoBehaviourPunCallbacks
                 coinText = text.GetComponent<TextMeshProUGUI>();
             else
                 coinText = FindObjectOfType<TextMeshProUGUI>();
+        }
+
+        // アイテム表示テキストの設定
+        if (itemText == null)
+        {
+            var text = GameObject.FindWithTag("ItemText");
+            if (text != null)
+                itemText = text.GetComponent<TextMeshProUGUI>();
+            else
+                itemText = FindObjectOfType<TextMeshProUGUI>();
         }
 
         rb = GetComponent<Rigidbody>();
@@ -627,6 +638,19 @@ public class CarController : MonoBehaviourPunCallbacks
         Debug.Log("Enqueue Item Request");
 
         itemManager.Enqueue((int)id);
+
+        // アイテム表示更新
+        if (itemText.text != "Item : NULL") return;
+
+        switch ((int)id)
+        {
+            case (int)PartsID.Energy:
+                itemText.text = "Item : ENERGY";
+                break;
+            case (int)PartsID.Rocket:
+                itemText.text = "Item : ROCKET";
+                break;
+        }
     }
 
     // アイテムをキューから削除
@@ -636,6 +660,21 @@ public class CarController : MonoBehaviourPunCallbacks
         Debug.Log("Remove Item Request");
 
         itemManager.Remove((int)id);
+
+        int? nextItem = itemManager.Dequeue();
+        // アイテム表示更新
+        switch (nextItem)
+        {
+            case (int)PartsID.Energy:
+                itemText.text = "Item : ENERGY";
+                break;
+            case (int)PartsID.Rocket:
+                itemText.text = "Item : ROCKET";
+                break;
+            case null:
+                itemText.text = "Item : NULL";
+                break;
+        }
     }
 
     // 未設置パーツ数を減らす

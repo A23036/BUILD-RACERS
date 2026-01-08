@@ -646,6 +646,7 @@ MonoBehaviour:
   boostDuration: 0.05
   speedText: {fileID: 0}
   coinText: {fileID: 0}
+  itemText: {fileID: 0}
   MAXITEMNUM: 5
   stanSpinAngle: 360
   stanEaseCurve:

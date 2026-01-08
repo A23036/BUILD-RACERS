@@ -12,6 +12,7 @@ TagManager:
   - Road
   - branch
   - Wall
+  - ItemText
   layers:
   - Default
   - TransparentFX

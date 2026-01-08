@@ -52,6 +52,7 @@ MonoBehaviour:
   - RPC_SetStartPos
   - RPC_RemoveParts
   - RPC_RemovePlacedItem
+  - RPC_SetItemText
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
