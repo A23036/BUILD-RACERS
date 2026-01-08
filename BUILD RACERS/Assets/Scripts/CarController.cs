@@ -411,7 +411,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //test スペースキーでアイテム使用
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && driver == null)
+        if (Input.GetKeyDown(KeyCode.Space) && driver == null)
         {
             Debug.Log("space is pressed");
             if (itemManager.GetItemNum() > 0) // アイテムを所持しているとき
