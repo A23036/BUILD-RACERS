@@ -1,6 +1,7 @@
 using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -73,7 +74,8 @@ public class singlePlayScene : baseScene
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.R))
+        //Rキーでリザルトへ
+        if (Keyboard.current.rKey.isPressed)
         {
             ToResult();
         }
