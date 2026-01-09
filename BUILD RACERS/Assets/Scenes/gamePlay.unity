@@ -13164,7 +13164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniMapCamera: {fileID: 1448708586}
-  zoomSpeed: 50
+  zoomSpeed: 500
   minSize: 10
   maxSize: 80
   offset: {x: 0, y: 50, z: 0}
