@@ -626,10 +626,10 @@ MonoBehaviour:
   - leftWheel: {fileID: 6732744077107088689}
     rightWheel: {fileID: 1840887540325371348}
     steering: 1
-  MotorForce: 10
+  MotorForce: 30
   SteerAngle: 60
   TurnSensitivity: 2
-  MaxSpeed: 10
+  MaxSpeed: 30
   LightStanTime: 1
   MidiumStanTime: 2
   HeavyStanTime: 3
@@ -647,6 +647,7 @@ MonoBehaviour:
   speedText: {fileID: 0}
   coinText: {fileID: 0}
   itemText: {fileID: 0}
+  lapText: {fileID: 0}
   MAXITEMNUM: 5
   stanSpinAngle: 360
   stanEaseCurve:

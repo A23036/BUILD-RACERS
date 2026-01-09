@@ -92,8 +92,6 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_NotifyDriverConnected()
     {
-        //if(PhotonNetwork.IsMasterClient) nowConnectDrivers++;
-
         //マスターより先に呼ばれる可能性があるため、OnRoomPropertiesUpdateで処理する
         PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "newnowConnectDrivers", nowConnectDrivers + 1 } });
     }
@@ -134,7 +132,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         }
 
         debugText = "READY";
-        photonView.RPC("RPC_UpdateDebugText", RpcTarget.AllBuffered, debugText);
+        if (PhotonNetwork.IsConnected) photonView.RPC("RPC_UpdateDebugText", RpcTarget.AllBuffered, debugText);
     }
 
     public void DriverStart()
@@ -167,7 +165,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         }
 
         debugText = "GO!";
-        photonView.RPC("RPC_UpdateDebugText", RpcTarget.AllBuffered, debugText);
+        if(PhotonNetwork.IsConnected) photonView.RPC("RPC_UpdateDebugText", RpcTarget.AllBuffered, debugText);
     }
 
     private void OnGUI()

@@ -13,6 +13,7 @@ TagManager:
   - branch
   - Wall
   - ItemText
+  - LapText
   layers:
   - Default
   - TransparentFX

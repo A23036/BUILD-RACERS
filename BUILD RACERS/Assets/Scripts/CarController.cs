@@ -71,6 +71,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
     [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
     [SerializeField] private TextMeshProUGUI itemText;  // アイテム表示テキスト
+    [SerializeField] private TextMeshProUGUI lapText;  // アイテム表示テキスト
 
     [Header("保持なアイテムの数")]
     [SerializeField] private int MAXITEMNUM = 5;
@@ -105,6 +106,11 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private AnimationCurve stanEaseCurve;
 
     private bool isSetStartPos = false;
+
+    //周回判定用
+    private LapManager lapManager;
+    private int lapCount = 0;
+    private float nowAngle = 0f;
 
     public void AddPartsNum()
     {
@@ -205,6 +211,18 @@ public class CarController : MonoBehaviourPunCallbacks
                 itemText = FindObjectOfType<TextMeshProUGUI>();
         }
 
+        //ラップ表示のテキスト設定
+        if (lapText == null)
+        {
+            var text = GameObject.FindWithTag("LapText");
+            if (text != null)
+            {
+                lapText = text.GetComponent<TextMeshProUGUI>();
+            }
+            else
+                lapText = FindObjectOfType<TextMeshProUGUI>();
+        }
+
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -212,6 +230,8 @@ public class CarController : MonoBehaviourPunCallbacks
         bodyMesh = GameObject.Find("BodyMesh");
 
         itemManager = GetComponent<ItemManager>();
+
+        lapManager = GameObject.Find("LapManager").GetComponent<LapManager>();
     }
 
     private void Start()
@@ -296,33 +316,13 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
-        ///*
-        if(!PhotonNetwork.IsConnected && isSetStartPos == false)
-        {
-            //スタート地点に座標をセット
-            var startPosSetter = FindObjectOfType<StartPosSetter>();
-            if (startPosSetter != null)
-            {
-                transform.position = startPosSetter.GetStartPos().position;
-
-                Debug.Log("SET START POS" + transform.position);
-            }
-            else
-            {
-                Debug.LogWarning("StartPosSetter is not found.");
-            }
-
-            isSetStartPos = true;
-        }
-        //*/
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
         //停止状態なら処理しない
         if (state == State.Stop)
         {
             return;
         }
-
-        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
         if (state == State.Stun)
         {
@@ -352,6 +352,22 @@ public class CarController : MonoBehaviourPunCallbacks
             if (Input.GetMouseButton(0)) motorInput = 1;
             if (variableJoystick != null && variableJoystick.Direction != Vector2.zero)
                 steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
+
+            //現在の周回角度を取得
+            int cur = (int)lapManager.NowAngle(transform.position , out bool isLapClear);
+            if(Mathf.Abs(cur - nowAngle) <= 10f && nowAngle < cur)
+            {
+                nowAngle = cur;
+            }
+            nowAngle = Mathf.RoundToInt(nowAngle);
+            //周回判定
+            if(isLapClear)
+            {
+                lapCount++;
+                nowAngle = 0f;
+            }
+            //UIに反映
+            lapText.text = $"Angle : {nowAngle} , Lap : {lapCount}";
         }
 
         // combine motor & brake: motorInput 0..1, brakeInput 0..1 -> netMotor (-1..1) or separate
