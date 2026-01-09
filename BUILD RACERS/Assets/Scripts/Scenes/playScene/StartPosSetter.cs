@@ -127,6 +127,9 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 {
                     //初期位置へセット
                     photonView.RPC("RPC_SetStartPos", RpcTarget.AllBuffered, startPosList[idx++ % startPosList.Length].position);
+
+                    //順位を更新
+                    photonView.RPC("RPC_UpdateRank", RpcTarget.AllBuffered);
                 }
             }
         }

@@ -79,7 +79,8 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
     [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
     [SerializeField] private TextMeshProUGUI itemText;  // アイテム表示テキスト
-    [SerializeField] private TextMeshProUGUI lapText;  // アイテム表示テキスト
+    [SerializeField] private TextMeshProUGUI lapText;  // 周回数表示テキスト
+    [SerializeField] private TextMeshProUGUI rankText;  // 順位表示テキスト
 
     [Header("保持なアイテムの数")]
     [SerializeField] private int MAXITEMNUM = 5;
@@ -120,6 +121,11 @@ public class CarController : MonoBehaviourPunCallbacks
     private LapManager lapManager;
     private int lapCount = 0;
     private float nowAngle = 0f;
+    private bool[] flags;
+    private bool isLapClear = false;
+
+    //現在の順位
+    private int currentRank = 1;
 
     public void AddPartsNum()
     {
@@ -238,6 +244,18 @@ public class CarController : MonoBehaviourPunCallbacks
                 lapText = FindObjectOfType<TextMeshProUGUI>();
         }
 
+        //順位表示のテキスト設定
+        if (rankText == null)
+        {
+            var text = GameObject.FindWithTag("RankText");
+            if (text != null)
+            {
+                rankText = text.GetComponent<TextMeshProUGUI>();
+            }
+            else
+                rankText = FindObjectOfType<TextMeshProUGUI>();
+        }
+
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -247,6 +265,9 @@ public class CarController : MonoBehaviourPunCallbacks
         itemManager = GetComponent<ItemManager>();
 
         lapManager = GameObject.Find("LapManager").GetComponent<LapManager>();
+
+        //仮想的なチェックポイント
+        flags = new bool[3];
     }
 
     private void Start()
@@ -384,6 +405,17 @@ public class CarController : MonoBehaviourPunCallbacks
 
         UpdateGroundType();
 
+        //周回角度更新
+        UpdateAngle();
+
+        //周回判定
+        if (isLapClear)
+        {
+            lapCount++;
+            nowAngle = 0f;
+        }
+
+        // 入力取得
         float motorInput = 0f;
         float brakeInput = 0f;
         float steerInput = 0f;
@@ -405,26 +437,15 @@ public class CarController : MonoBehaviourPunCallbacks
             if (variableJoystick != null && variableJoystick.Direction != Vector2.zero)
                 steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
 
-            //現在の周回角度を取得
-            int cur = (int)lapManager.NowAngle(transform.position , out bool isLapClear);
-            if(Mathf.Abs(cur - nowAngle) <= 10f && nowAngle < cur)
-            {
-                nowAngle = cur;
-            }
-            nowAngle = Mathf.RoundToInt(nowAngle);
-            //周回判定
-            if(isLapClear)
-            {
-                lapCount++;
-                nowAngle = 0f;
-            }
-            //UIに反映
+            //周回数をUIに反映
             lapText.text = $"Angle : {nowAngle} , Lap : {lapCount}";
 
             //　プレイヤー入力:Update()で取得した入力を使用
             motorInput = inputMotor;
             steerInput = inputSteer;
 
+            //順位更新
+            UpdateRank();
         }
 
         // combine motor & brake: motorInput 0..1, brakeInput 0..1 -> netMotor (-1..1) or separate
@@ -516,6 +537,51 @@ public class CarController : MonoBehaviourPunCallbacks
         rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
     }
 
+    //中心点からの角度計算　ラップ判定
+    public void UpdateAngle()
+    {
+        //現在の周回角度を取得
+        int cur = (int)lapManager.NowAngle(transform.position);
+        if (Mathf.Abs(cur - nowAngle) <= 10f && nowAngle < cur)
+        {
+            nowAngle = cur;
+        }
+
+        //ラップ判定 100度ごとにチェックポイントを通過したか
+        int sector = Mathf.FloorToInt(nowAngle / 100f);
+        if(sector > 0)
+        {
+            for(int i = 0;i < sector;i++)
+            {
+                if (flags[i] == false)
+                {
+                    if (i == sector - 1) flags[i] = true;
+                    else break;
+                }
+            }
+        }
+
+        int throughFlags = 0;
+        foreach(var f in flags)
+        {
+            if (f) throughFlags++;
+        }
+
+        if(throughFlags == flags.Length && cur == 0)
+        {
+            isLapClear = true;
+            //フラグリセット
+            for (int i = 0; i < flags.Length; i++)
+            {
+                flags[i] = false;
+            }
+        }
+        else
+        {
+            isLapClear = false;
+        }
+    }
+
     [PunRPC]
     public void RPC_StateToDrive()
     {
@@ -538,6 +604,50 @@ public class CarController : MonoBehaviourPunCallbacks
     public void SetStartPos(Vector3 pos)
     {
         transform.position = pos;
+    }
+
+    [PunRPC]
+    public void RPC_UpdateRank()
+    {
+        UpdateRank();
+    }
+
+    //順位更新
+    public void UpdateRank()
+    {
+        //全カートの角度とラップ数を取得　比較して順位を決定
+        CarController[] cars = FindObjectsOfType<CarController>();
+        currentRank = 1;
+        Debug.Log($" === {cars.Length}台のカートで順位計算 === ");
+        foreach (var car in cars)
+        {
+            if (car == this) continue;
+
+            //ラップ数が多いほうが上位
+            if (car.GetLapCount() > lapCount)
+            {
+                currentRank++;
+            }
+            //ラップ数が同じなら角度が大きいほうが上位
+            else if (car.GetLapCount() == lapCount)
+            {
+                if (lapManager.NowAngle(car.transform.position) > lapManager.NowAngle(transform.position))
+                {
+                    currentRank++;
+                }
+            }
+        }
+
+        //UIに反映
+        if (currentRank == 1) rankText.text = "1st";
+        else if (currentRank == 2) rankText.text = "2nd";
+        else if (currentRank == 3) rankText.text = "3rd";
+        else rankText.text = currentRank + "th";
+    }
+
+    public int GetLapCount()
+    {
+        return lapCount;
     }
 
     // 地面の種類をRaycastで検出

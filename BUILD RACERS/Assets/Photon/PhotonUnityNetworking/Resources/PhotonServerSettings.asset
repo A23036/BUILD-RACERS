@@ -56,6 +56,7 @@ MonoBehaviour:
   - RPC_SetStartPosDrivers
   - RPC_NotifyDriverConnected
   - RPC_UpdateDebugText
+  - RPC_UpdateRank
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
