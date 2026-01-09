@@ -179,3 +179,5 @@ MonoBehaviour:
   partsType: 2
   partsId: 7
   partsResourceName: Parts_Balloon
+  cooldownDuration: 1
+  cooldownGauge: {fileID: 0}
