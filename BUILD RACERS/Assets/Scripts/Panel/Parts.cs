@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
@@ -27,8 +28,11 @@ public class Parts : MonoBehaviour
     private bool isPlaced = false; // 配置済みフラグ
     private Vector3 originalPosition; // ドラッグ開始時の位置
 
-    private Canvas canvas;
-    private RectTransform rectTransform;
+    [SerializeField] private float cooldownDuration = 1f; // クールタイム時間（秒）
+    [SerializeField] private Image cooldownGauge; // 子オブジェクトの円形ゲージ
+    private float cooldownTimer = 0f; // 再配置クールタイム
+
+    private SpriteRenderer spriteRenderer;
 
     void Awake()
     {
@@ -38,11 +42,14 @@ public class Parts : MonoBehaviour
 
         panelManager = FindAnyObjectByType<PanelManager>();
 
-        canvas = GetComponentInParent<Canvas>();
-        rectTransform = GetComponent<RectTransform>();
-
         if (panelManager == null)
             Debug.LogError("PanelManager が見つかりません！");
+
+        if(partsType != PartsType.Gimmick)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            cooldownGauge.enabled = false;
+        }
 
         // Resourcesからロードして partsData が null を回避
         if (partsData == null && !string.IsNullOrEmpty(partsResourceName))
@@ -141,6 +148,9 @@ public class Parts : MonoBehaviour
             panelManager.itemUsed();
             Destroy(gameObject);
         }
+
+        // クールダウンタイマー
+        if(partsType != PartsType.Gimmick) CooldownTimer();
     }
 
     // 画面外判定
@@ -157,9 +167,38 @@ public class Parts : MonoBehaviour
         }
     }
 
+    private void CooldownTimer()
+    {
+        if (cooldownTimer > 0f)
+        {
+            if(!cooldownGauge.enabled) cooldownGauge.enabled = true;
+
+            cooldownTimer -= Time.deltaTime;
+
+            // ゲージを回転させる（0～1で正規化）
+            if (cooldownGauge != null)
+            {
+                cooldownGauge.fillAmount = 1f - (cooldownTimer / cooldownDuration);
+            }
+            Color color = spriteRenderer.color;
+            color.a = 0.5f;
+            spriteRenderer.color = color;
+        }
+        else
+        {
+            if (cooldownGauge.enabled) cooldownGauge.enabled = false;
+            cooldownTimer = 0f;
+            Color color = spriteRenderer.color;
+            color.a = 1.0f;
+            spriteRenderer.color = color;
+        }
+    }
+
     // ドラッグ開始処理
     private void StartDragging(Vector3 pointerPos)
     {
+        if (cooldownTimer > 0f) return; // クールタイム中は掴めない
+
         isDragging = true;
         originalPosition = transform.position;
         offset = transform.position - pointerPos;
@@ -219,6 +258,9 @@ public class Parts : MonoBehaviour
                     // 重力を無効化（配置済み）
                     rb.gravityScale = 0f;
                     rb.linearVelocity = Vector2.zero;
+
+                    // 再配置クールタイム開始
+                    cooldownTimer = cooldownDuration;
                 }
                 else
                 {
