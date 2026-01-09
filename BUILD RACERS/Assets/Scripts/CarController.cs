@@ -417,11 +417,11 @@ public class CarController : MonoBehaviourPunCallbacks
             }
             //UIに反映
             lapText.text = $"Angle : {nowAngle} , Lap : {lapCount}";
-=======
+
             //　プレイヤー入力:Update()で取得した入力を使用
             motorInput = inputMotor;
             steerInput = inputSteer;
->>>>>>> harakawa
+
         }
 
         // combine motor & brake: motorInput 0..1, brakeInput 0..1 -> netMotor (-1..1) or separate
