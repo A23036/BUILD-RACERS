@@ -3,6 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {
@@ -26,7 +27,10 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
 
     private bool hasCustomOrbit = false;
 
-    Vector3 velocity = Vector3.zero;
+    // New Input System
+    private InputAction clickAction;
+    private InputAction pointerDeltaAction;
+    private InputAction backViewAction;
 
     void Awake()
     {
@@ -55,42 +59,61 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
             Debug.Log("Monitor Target is null");
         }
     }
+
+    void OnEnable()
+    {
+        // 左クリック / タップ
+        clickAction = new InputAction(type: InputActionType.Button);
+        clickAction.AddBinding("<Mouse>/leftButton");
+        clickAction.AddBinding("<Touchscreen>/primaryTouch/press");
+        clickAction.Enable();
+
+        // マウス移動 / タッチ移動
+        pointerDeltaAction = new InputAction(type: InputActionType.Value);
+        pointerDeltaAction.AddBinding("<Mouse>/delta");
+        pointerDeltaAction.AddBinding("<Touchscreen>/primaryTouch/delta");
+        pointerDeltaAction.Enable();
+
+        // 背面切り替え（Bキー）
+        backViewAction = new InputAction(type: InputActionType.Button);
+        backViewAction.AddBinding("<Keyboard>/b");
+        backViewAction.Enable();
+        base.OnEnable();
+    }
+
+    void OnDisable()
+    {
+        clickAction?.Disable();
+        pointerDeltaAction?.Disable();
+        backViewAction?.Disable();
+        base.OnDisable();
+    }
+
     void LateUpdate()
     {
-        if (target == null && FindAnyObjectByType<CarController>() != null)
-        {
-            Transform carTf = FindAnyObjectByType<CarController>()?.transform;
-            var cameraController = Camera.main.GetComponent<CameraController>();
-            if (cameraController != null)
-                cameraController.SetTarget(carTf);
-            SetNextTarget(0);
-            return;
-        }
-
         if (target == null) return;
 
         Vector3 desired;
 
-        // --- クリック開始：最初の一回だけ角度を取得 ---
-        if (Input.GetMouseButtonDown(0))
+        // --- 押した瞬間 ---
+        if (clickAction.WasPressedThisFrame())
         {
             if (!hasCustomOrbit)
             {
                 hasCustomOrbit = true;
 
                 Vector3 dir = (transform.position - target.position).normalized;
-
-                //初期角度を計算
-                yaw = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg * 180;
+                yaw = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
                 pitch = Mathf.Asin(dir.y) * Mathf.Rad2Deg;
             }
         }
 
-        // --- クリック中：差分で回転 ---
-        if (Input.GetMouseButton(0))
+        // --- 押し続けている間 ---
+        if (clickAction.IsPressed())
         {
-            yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
-            pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+            Vector2 delta = pointerDeltaAction.ReadValue<Vector2>();
+            yaw += delta.x * mouseSensitivity * 0.1f;
+            pitch -= delta.y * mouseSensitivity * 0.1f;
             pitch = Mathf.Clamp(pitch, -30f, 60f);
         }
 
@@ -103,7 +126,7 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
         }
         else
         {
-            Vector3 baseOffset = Input.GetKey(KeyCode.B)
+            Vector3 baseOffset = backViewAction.IsPressed()
                 ? new Vector3(offset.x, offset.y, -offset.z)
                 : offset;
 
@@ -113,6 +136,7 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
         transform.position = desired;
         transform.LookAt(target.position + Vector3.up * 1.5f);
     }
+
 
 
     public void SetNextTarget(int step)
