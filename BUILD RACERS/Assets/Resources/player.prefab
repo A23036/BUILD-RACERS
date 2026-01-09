@@ -593,7 +593,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 1500
   m_Drag: 0
-  m_AngularDrag: 15
+  m_AngularDrag: 5
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -635,6 +635,7 @@ MonoBehaviour:
   HeavyStanTime: 3
   ShortBoostTime: 0.5
   LongBoostTime: 1
+  extraGravity: 10
   raycastLength: 5
   groundMask:
     serializedVersion: 2

@@ -60,6 +60,9 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private float ShortBoostTime = 0.5f;
     [SerializeField] private float LongBoostTime = 1.0f;
 
+    [Header("重力補正")]
+    [SerializeField] private float extraGravity = 20f;
+
     [Header("地面関連")]
     [SerializeField] private float raycastLength = 1.2f;  // 地面判定距離
     [SerializeField] private LayerMask groundMask;        // 地面レイヤー
@@ -472,8 +475,16 @@ public class CarController : MonoBehaviourPunCallbacks
         if (rb.linearVelocity.magnitude < maxAllowedSpeed)
         {
             Quaternion steerRotation = Quaternion.Euler(0f, currentSteer, 0f);
-            Vector3 forwardDir = steerRotation * transform.forward;
-            float motorPower = (netMotor < 0 ? MotorForce * 0.6f : MotorForce) * accelMultiplier;
+
+            Vector3 forwardFlat = transform.forward;
+            forwardFlat.y = 0f;
+            forwardFlat.Normalize();
+
+            Vector3 forwardDir = steerRotation * forwardFlat;
+
+            float motorPower =
+                (netMotor < 0 ? MotorForce * 0.6f : MotorForce) * accelMultiplier;
+
             rb.AddForce(forwardDir * netMotor * motorPower, ForceMode.Acceleration);
         }
 
@@ -495,18 +506,6 @@ public class CarController : MonoBehaviourPunCallbacks
             rb.MoveRotation(rb.rotation * deltaRotation);
         }
 
-        //test スペースキーでアイテム使用
-        /*
-        if (Input.GetKeyDown(KeyCode.Space) && driver == null)
-        {
-            Debug.Log("space is pressed");
-            if (itemManager.GetItemNum() > 0) // アイテムを所持しているとき
-            {
-                // キューの最初のアイテムを取り出して使用する
-                RemovePlacedItem();
-            }
-        }*/
-
         if (inputUseItem)
         {
             inputUseItem = false;
@@ -516,6 +515,9 @@ public class CarController : MonoBehaviourPunCallbacks
                 RemovePlacedItem();
             }
         }
+
+        // 重力補正
+        rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
     }
 
     [PunRPC]
