@@ -2,6 +2,7 @@
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
 public class CameraController : MonoBehaviourPunCallbacks
@@ -11,14 +12,31 @@ public class CameraController : MonoBehaviourPunCallbacks
 
     private Transform target;  // カートのTransform
 
-    public void SetTarget(Transform newTarget) => target = newTarget;
+    // ------------ 新InputSystem用 ------------
+    private InputAction backCameraAction;
+    // ----------------------------------------
 
-    void Start()
-    {
-    }
+    public void SetTarget(Transform newTarget) => target = newTarget;
 
     void Awake()
     {
+        // ------------ InputAction 初期化（PC専用） ------------
+        backCameraAction = new InputAction(
+            name: "BackCamera",
+            type: InputActionType.Button
+        );
+        backCameraAction.AddBinding("<Keyboard>/b");
+        // -----------------------------------------------
+    }
+
+    void OnEnable()
+    {
+        backCameraAction.Enable();
+    }
+
+    void OnDisable()
+    {
+        backCameraAction.Disable();
     }
 
     private void LateUpdate()
@@ -36,7 +54,12 @@ public class CameraController : MonoBehaviourPunCallbacks
 
         Quaternion flatRotation = Quaternion.LookRotation(forwardFlat);
 
-        if (Input.GetKey(KeyCode.B))
+        // ------------ スマホでは背面カメラ無効 ------------
+        bool isMobile = Touchscreen.current != null;
+        bool isBackCamera = !isMobile && backCameraAction.IsPressed();
+        // -----------------------------------------------
+
+        if (isBackCamera)
         {
             Vector3 backOffset = offset;
             backOffset.z *= -1;
@@ -47,11 +70,20 @@ public class CameraController : MonoBehaviourPunCallbacks
             desiredPosition = target.position + flatRotation * offset;
         }
 
-        // --- スムーズに追従 --- 背面カメラの時はスムーズを適用しない
-        if (Input.GetKeyDown("b") || Input.GetKeyUp("b")) transform.position = desiredPosition;
-        else transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+        // ------------ PCのみ即時切り替え判定 ------------
+        if (!isMobile &&
+            (backCameraAction.WasPressedThisFrame() ||
+             backCameraAction.WasReleasedThisFrame()))
+        {
+            transform.position = desiredPosition;
+        }
+        else
+        {
+            transform.position =
+                Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+        }
+        // -----------------------------------------------
 
-        // --- カメラをプレイヤーの方向に向ける ---
-        transform.LookAt(target.position + Vector3.up * 1.5f); // 1.5fで少し上を見させる
+        transform.LookAt(target.position + Vector3.up * 1.5f);
     }
 }

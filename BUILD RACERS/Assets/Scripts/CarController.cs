@@ -28,6 +28,11 @@ public enum BoostType // スタンの重さ
 
 public class CarController : MonoBehaviourPunCallbacks
 {
+    // 新InputSystem用
+    private float inputMotor;
+    private float inputSteer;
+    private bool inputUseItem;
+
     //ジョイスティック
     private Joystick variableJoystick;
 
@@ -81,6 +86,7 @@ public class CarController : MonoBehaviourPunCallbacks
     private InputAction throttleAction;
     private InputAction brakeAction;
     private InputAction steerAction;
+    private InputAction useItemAction;
 
     private float currentSteer = 0f;
     private int coinCnt = 0;
@@ -280,16 +286,15 @@ public class CarController : MonoBehaviourPunCallbacks
     // 入力設定
     private void OnEnable()
     {
-        throttleAction = new InputAction(type: InputActionType.Button);
+        throttleAction = new InputAction(type: InputActionType.Value);
         throttleAction.AddBinding("<Keyboard>/w");
         throttleAction.AddBinding("<Keyboard>/upArrow");
-        throttleAction.AddBinding("<Gamepad>/buttonEast");
+        throttleAction.AddBinding("<Touchscreen>/primaryTouch/press");
         throttleAction.Enable();
 
         brakeAction = new InputAction(type: InputActionType.Button);
         brakeAction.AddBinding("<Keyboard>/s");
         brakeAction.AddBinding("<Keyboard>/downArrow");
-        brakeAction.AddBinding("<Gamepad>/buttonSouth");
         brakeAction.Enable();
 
         steerAction = new InputAction(type: InputActionType.Value);
@@ -299,20 +304,63 @@ public class CarController : MonoBehaviourPunCallbacks
         steerAction.AddCompositeBinding("1DAxis")
             .With("Negative", "<Keyboard>/leftArrow")
             .With("Positive", "<Keyboard>/rightArrow");
-        steerAction.AddBinding("<Gamepad>/leftStick/x");
         steerAction.Enable();
+
+        useItemAction = new InputAction(type: InputActionType.Button);
+        useItemAction.AddBinding("<Keyboard>/space");
+        useItemAction.AddBinding("<Mouse>/leftButton");
+        useItemAction.AddBinding("<Touchscreen>/primaryTouch/tap");
+        useItemAction.Enable();
 
         base.OnEnable();
     }
 
     private void OnDisable()
     {
-        if(throttleAction != null) throttleAction.Disable();
-        if(brakeAction != null) brakeAction.Disable();
-        if(steerAction != null) steerAction.Disable();
+        throttleAction?.Disable();
+        brakeAction?.Disable();
+        steerAction?.Disable();
+        useItemAction?.Disable();
 
         base.OnDisable();
     }
+
+    private void Update()
+    {
+        // 操作できない状態は入力を取らない
+        if (state != State.Drive) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+
+        // AI操作中は入力不要
+        if (driver != null) return;
+
+        // --- New Input System ---
+        float throttle = throttleAction.ReadValue<float>();
+        float brake = brakeAction.ReadValue<float>();
+        inputMotor = throttle - brake;
+
+        inputSteer = steerAction.ReadValue<float>();
+
+        // ジョイスティック（スマホ）
+        if (variableJoystick != null && variableJoystick.Direction != Vector2.zero)
+        {
+            inputSteer = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1f, 1f);
+        }
+
+        // アイテム使用
+        if (useItemAction.WasPressedThisFrame())
+        {
+            inputUseItem = true;
+            Debug.Log("[INPUT] Use Item");
+        }
+
+        // デバッグログ
+        if (inputMotor != 0f || inputSteer != 0f)
+        {
+            Debug.Log($"[INPUT] motor={inputMotor}, steer={inputSteer}");
+        }
+    }
+
 
     private void FixedUpdate()
     {
@@ -346,6 +394,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
         else
         {
+<<<<<<< HEAD
             //　プレイヤー入力
             motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
             steerInput = steerAction.ReadValue<float>();
@@ -368,6 +417,11 @@ public class CarController : MonoBehaviourPunCallbacks
             }
             //UIに反映
             lapText.text = $"Angle : {nowAngle} , Lap : {lapCount}";
+=======
+            //　プレイヤー入力:Update()で取得した入力を使用
+            motorInput = inputMotor;
+            steerInput = inputSteer;
+>>>>>>> harakawa
         }
 
         // combine motor & brake: motorInput 0..1, brakeInput 0..1 -> netMotor (-1..1) or separate
@@ -438,12 +492,23 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //test スペースキーでアイテム使用
+        /*
         if (Input.GetKeyDown(KeyCode.Space) && driver == null)
         {
             Debug.Log("space is pressed");
             if (itemManager.GetItemNum() > 0) // アイテムを所持しているとき
             {
                 // キューの最初のアイテムを取り出して使用する
+                RemovePlacedItem();
+            }
+        }*/
+
+        if (inputUseItem)
+        {
+            inputUseItem = false;
+
+            if (itemManager.GetItemNum() > 0)
+            {
                 RemovePlacedItem();
             }
         }
@@ -584,7 +649,11 @@ public class CarController : MonoBehaviourPunCallbacks
 
         PhotonView target = PhotonView.Find(pairViewID);
 
-        if (target == null) Debug.Log("target is null");
+        if (target == null)
+        {
+            Debug.Log("target is null");
+            TryPairPlayers();
+        }
         if (pairPlayer == null) Debug.Log("pair player is null");
         if (photonView == null) Debug.Log("photon view is null");
 

@@ -2,6 +2,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class playScene : baseScene
 {
@@ -13,6 +14,7 @@ public class playScene : baseScene
     [SerializeField] private GameObject MonitorUI;
 
     private bool isNotifyDriverConnected = false;
+    private InputAction resultAction;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,13 +39,25 @@ public class playScene : baseScene
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.R))
+        if (resultAction.WasPressedThisFrame())
         {
             ToResult();
         }
 
         base.Update();
     }
+    private void OnEnable()
+    {
+        resultAction = new InputAction(type: InputActionType.Button);
+        resultAction.AddBinding("<Keyboard>/r");
+        resultAction.Enable();
+    }
+
+    private void OnDisable()
+    {
+        resultAction?.Disable();
+    }
+
 
     public void ToResult()
     {

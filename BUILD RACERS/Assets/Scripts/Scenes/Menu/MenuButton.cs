@@ -1,106 +1,66 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
-public class MenuButton : MonoBehaviour
+public class MenuButton : MonoBehaviour,
+    IPointerDownHandler,
+    IPointerUpHandler,
+    IPointerEnterHandler,
+    IPointerExitHandler
 {
     [Header("遷移先シーン名")]
     [SerializeField] private string sceneName;
 
-    [Header("Visual (子オブジェクト)")]
+    [Header("Visual")]
     [SerializeField] private Transform visual;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Animator animator;
 
     Vector3 defaultScale;
-    bool isHover;
+    bool isPressed;
 
     void Awake()
     {
         defaultScale = visual.localScale;
     }
 
-    // ===== マウス用 =====
-    void OnMouseEnter()
+    // マウス・タッチ共通
+    public void OnPointerEnter(PointerEventData eventData)
     {
         PlayHover();
     }
 
-    void OnMouseExit()
+    public void OnPointerExit(PointerEventData eventData)
     {
         StopHover();
     }
 
-    void OnMouseDown()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        // Hover 中のみクリック有効
-        if (isHover)
-        {
-            LoadScene();
-        }
+        isPressed = true;
+        PlayHover();
     }
 
-    // ===== タッチ用 =====
-    void Update()
+    public void OnPointerUp(PointerEventData eventData)
     {
-        if (Input.touchCount == 0) return;
-
-        Touch touch = Input.GetTouch(0);
-
-        Vector2 worldPos =
-            Camera.main.ScreenToWorldPoint(touch.position);
-
-        RaycastHit2D hit =
-            Physics2D.Raycast(worldPos, Vector2.zero);
-
-        bool isTouchingThis =
-            hit.collider != null &&
-            hit.collider.gameObject == gameObject;
-
-        if (!isTouchingThis)
-        {
-            StopHover();
-            return;
-        }
-
-        // ホールド中
-        if (touch.phase == TouchPhase.Began ||
-            touch.phase == TouchPhase.Moved ||
-            touch.phase == TouchPhase.Stationary)
-        {
-            PlayHover();
-        }
-
-        // 離した瞬間に決定
-        if (touch.phase == TouchPhase.Ended)
+        if (isPressed)
         {
             LoadScene();
-            StopHover();
         }
-
-        if (touch.phase == TouchPhase.Canceled)
-        {
-            StopHover();
-        }
+        isPressed = false;
+        StopHover();
     }
 
     void PlayHover()
     {
-        if (isHover) return;
-
-        animator.Play("Hover");
-        isHover = true;
-
-        spriteRenderer.color = Color.white * 0.95f;
+        animator.Play("Hover", 0, 0f);
+        spriteRenderer.color = new Color(0.95f, 0.95f, 0.95f, 1f);
         visual.localScale = defaultScale * 0.95f;
     }
 
     void StopHover()
     {
-        if (!isHover) return;
-
-        animator.Play("Idle");
-        isHover = false;
-
+        animator.Play("Idle", 0, 0f);
         spriteRenderer.color = Color.white;
         visual.localScale = defaultScale;
     }
@@ -108,7 +68,6 @@ public class MenuButton : MonoBehaviour
     void LoadScene()
     {
         if (string.IsNullOrEmpty(sceneName)) return;
-
         SceneManager.LoadScene(sceneName);
     }
 }
