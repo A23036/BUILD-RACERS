@@ -143,7 +143,7 @@ MonoBehaviour:
   balloonRenderer: {fileID: 2228989218165093877}
   explosionEffect: {fileID: 3323387954473017891, guid: 0b912e9003fba894faa88cf964a6fb8a, type: 3}
   flashMaterial: {fileID: 2100000, guid: e5c07be2f895b954d810ffce03dad2ea, type: 2}
-  explosionEffectScale: 5
+  explosionEffectScale: 12
   explosionEffectDuration: 3
   explosionCollider: {fileID: 5010440073271129158}
   stunType: 2
@@ -166,7 +166,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1
+  m_Radius: 1.2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1160340035736951532
 MonoBehaviour:

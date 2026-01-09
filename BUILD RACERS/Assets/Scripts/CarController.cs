@@ -362,11 +362,7 @@ public class CarController : MonoBehaviourPunCallbacks
             Debug.Log("[INPUT] Use Item");
         }
 
-        // デバッグログ
-        if (inputMotor != 0f || inputSteer != 0f)
-        {
-            Debug.Log($"[INPUT] motor={inputMotor}, steer={inputSteer}");
-        }
+        Debug.Log("パーツ数:" + partsNum);
     }
 
 

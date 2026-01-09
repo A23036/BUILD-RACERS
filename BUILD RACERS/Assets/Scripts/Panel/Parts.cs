@@ -245,14 +245,12 @@ public class Parts : MonoBehaviour
             if (placed)
             {
                 Debug.Log("[Parts] Gimmick placed");
+                panelManager.itemUsed();
                 Destroy(gameObject); // パーツを削除
             }
             else
             {
                 Debug.Log("[Parts] Gimmick placement failed");
-                
-                // 未設置アイテム分減らす
-                panelManager.itemUsed();
 
                 // ミニマップ外で離した：落下させる
                 rb.gravityScale = 2f;
