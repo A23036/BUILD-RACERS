@@ -27,6 +27,9 @@ public class Parts : MonoBehaviour
     private bool isPlaced = false; // 配置済みフラグ
     private Vector3 originalPosition; // ドラッグ開始時の位置
 
+    private Canvas canvas;
+    private RectTransform rectTransform;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -34,6 +37,9 @@ public class Parts : MonoBehaviour
         rb.gravityScale = 2f;
 
         panelManager = FindAnyObjectByType<PanelManager>();
+
+        canvas = GetComponentInParent<Canvas>();
+        rectTransform = GetComponent<RectTransform>();
 
         if (panelManager == null)
             Debug.LogError("PanelManager が見つかりません！");
@@ -130,10 +136,24 @@ public class Parts : MonoBehaviour
         }
 
         // 画面外に落ちたら削除
-        if (transform.position.y < -1000.0f)
+        if (IsOutOfScreen())
         {
-            panelManager.itemUsed(); // 未設置アイテム分減らす
+            panelManager.itemUsed();
             Destroy(gameObject);
+        }
+    }
+
+    // 画面外判定
+    private bool IsOutOfScreen()
+    {
+        Vector3 viewportPos = Camera.main.WorldToViewportPoint(transform.position);
+        if (viewportPos.y < 0f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
