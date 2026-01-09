@@ -128,6 +128,11 @@ public class Parts : MonoBehaviour
         {
             EndDragging();
         }
+
+        if(transform.position.y < -1000.0f)
+        {
+            Destroy(gameObject);
+        }
     }
 
     // ドラッグ開始処理

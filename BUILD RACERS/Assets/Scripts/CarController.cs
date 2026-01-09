@@ -308,7 +308,6 @@ public class CarController : MonoBehaviourPunCallbacks
 
         useItemAction = new InputAction(type: InputActionType.Button);
         useItemAction.AddBinding("<Keyboard>/space");
-        useItemAction.AddBinding("<Mouse>/leftButton");
         useItemAction.AddBinding("<Touchscreen>/primaryTouch/tap");
         useItemAction.Enable();
 
@@ -394,11 +393,10 @@ public class CarController : MonoBehaviourPunCallbacks
         }
         else
         {
-<<<<<<< HEAD
             //　プレイヤー入力
             motorInput = throttleAction.ReadValue<float>() - brakeAction.ReadValue<float>();
             steerInput = steerAction.ReadValue<float>();
-            if (Input.GetMouseButton(0)) motorInput = 1;
+            //if (Input.GetMouseButton(0)) motorInput = 1;
             if (variableJoystick != null && variableJoystick.Direction != Vector2.zero)
                 steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
 
