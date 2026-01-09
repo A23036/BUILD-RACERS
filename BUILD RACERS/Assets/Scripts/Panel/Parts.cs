@@ -129,8 +129,10 @@ public class Parts : MonoBehaviour
             EndDragging();
         }
 
-        if(transform.position.y < -1000.0f)
+        // 画面外に落ちたら削除
+        if (transform.position.y < -1000.0f)
         {
+            panelManager.itemUsed(); // 未設置アイテム分減らす
             Destroy(gameObject);
         }
     }

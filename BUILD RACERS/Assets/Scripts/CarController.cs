@@ -120,12 +120,18 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void AddPartsNum()
     {
-        partsNum++; 
+        if(partsNum < MAXITEMNUM)
+        {
+            partsNum++;
+        }
     }
 
     public void SubstractPartsNum()
     {
-        partsNum--;
+        if (partsNum > 0)
+        {
+            partsNum--;
+        }
     }
     
     public void SetBoost(BoostType boostType)
