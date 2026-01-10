@@ -32,7 +32,7 @@ public class ItemManager : MonoBehaviour
     }
 
     // 最も古いアイテムを取り出す
-    public int? Dequeue()
+    public int? Dequeue(bool isUse)
     {
         if (itemQueue.Count == 0)
             return null;
@@ -41,7 +41,10 @@ public class ItemManager : MonoBehaviour
         int id = firstNode.Value;
         
         PrintItemQueue();
-        SpawnItem((PartsID)id);
+        
+        // 使用フラグが立っていたらアイテム生成
+        if(isUse) SpawnItem((PartsID)id);
+
         return id;
     }
 

@@ -146,6 +146,7 @@ public class Engineer : MonoBehaviourPunCallbacks
         target.RPC("RPC_EnqueueItem", pairPlayer, id);
     }
 
+    // パネルから外したアイテムをキューから削除
     public void RemoveItem(PartsID id)
     {
         //シングルプレイの処理
@@ -188,6 +189,27 @@ public class Engineer : MonoBehaviourPunCallbacks
         target.RPC("RPC_RemovePartsNum", pairPlayer);
     }
 
+    // ドライバーの未設置パーツ数を増やす
+    public void AddPartsNum()
+    {
+        //シングルプレイの処理
+        if (!PhotonNetwork.IsConnected)
+        {
+            var carController = FindObjectOfType<CarController>();
+            carController.RPC_AddPartsNum();
+            return;
+        }
+
+        PhotonView target = PhotonView.Find(pairViewID);
+
+        if (target == null) Debug.Log("target is null");
+        if (pairPlayer == null) Debug.Log("pair player is null");
+        if (photonView == null) Debug.Log("photon view is null");
+
+        // ペアのドライバーの未設置パーツ数を増やす
+        target.RPC("RPC_AddPartsNum", pairPlayer);
+    }
+
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
         Debug.Log("CALL BACK");
@@ -210,8 +232,8 @@ public class Engineer : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    // パーツを削除
-    public void RPC_RemovePlacedItem(PartsID id)
+    // 使用したアイテムパーツを削除
+    public void RPC_RemoveUsedItem(PartsID id)
     {
         PanelManager panelManager = FindAnyObjectByType<PanelManager>();
 

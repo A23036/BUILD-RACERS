@@ -129,10 +129,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void AddPartsNum()
     {
-        if(partsNum < MAXITEMNUM)
-        {
-            partsNum++;
-        }
+        partsNum++;
     }
 
     public void SubstractPartsNum()
@@ -529,7 +526,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
             if (itemManager.GetItemNum() > 0)
             {
-                RemovePlacedItem();
+                RemoveUsedItem();
             }
         }
 
@@ -774,7 +771,7 @@ public class CarController : MonoBehaviourPunCallbacks
     }
 
     // 使用するアイテムを検索、キューから削除
-    public void RemovePlacedItem()
+    public void RemoveUsedItem()
     {
         //シングルプレイ時の操作
         if (!PhotonNetwork.IsConnected)
@@ -783,17 +780,17 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         // 使用するアイテムIDを取り出す
-        PartsID usedId = (PartsID)itemManager.Dequeue();
+        PartsID usedId = (PartsID)itemManager.Dequeue(true);
 
         // ----------------------------
-        // エンジニア側に設置パーツ削除を通知
+        // エンジニア側に使用したアイテムパーツ削除を通知
         // ----------------------------
         if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
             PhotonView target = PhotonView.Find(pairViewID);
             if (target != null)
             {
-                target.RPC("RPC_RemovePlacedItem", pairPlayer, usedId);
+                target.RPC("RPC_RemoveUsedItem", pairPlayer, usedId);
             }
         }
     }
@@ -826,6 +823,24 @@ public class CarController : MonoBehaviourPunCallbacks
         TryPairPlayers();
     }
 
+    // アイテム表示更新
+    private void DisplayItem(int? id)
+    {
+        // アイテム表示更新
+        switch (id)
+        {
+            case (int)PartsID.Energy:
+                itemText.text = "Item : ENERGY";
+                break;
+            case (int)PartsID.Rocket:
+                itemText.text = "Item : ROCKET";
+                break;
+            case null:
+                itemText.text = "Item : NULL";
+                break;
+        }
+    }
+
     // ----- 通信用関数 -----
 
     // アイテムをキューに追加
@@ -839,15 +854,7 @@ public class CarController : MonoBehaviourPunCallbacks
         // アイテム表示更新
         if (itemText.text != "Item : NULL") return;
 
-        switch ((int)id)
-        {
-            case (int)PartsID.Energy:
-                itemText.text = "Item : ENERGY";
-                break;
-            case (int)PartsID.Rocket:
-                itemText.text = "Item : ROCKET";
-                break;
-        }
+        DisplayItem((int)id);
     }
 
     // アイテムをキューから削除
@@ -858,20 +865,33 @@ public class CarController : MonoBehaviourPunCallbacks
 
         itemManager.Remove((int)id);
 
-        int? nextItem = itemManager.Dequeue();
+        int? nextItem = itemManager.Dequeue(false);
+
         // アイテム表示更新
-        switch (nextItem)
-        {
-            case (int)PartsID.Energy:
-                itemText.text = "Item : ENERGY";
-                break;
-            case (int)PartsID.Rocket:
-                itemText.text = "Item : ROCKET";
-                break;
-            case null:
-                itemText.text = "Item : NULL";
-                break;
-        }
+        DisplayItem(nextItem);
+    }
+
+    // アイテムを使用、キューから削除
+    [PunRPC]
+    public void RPC_UseItem(PartsID id)
+    {
+        Debug.Log("Remove Item Request");
+
+        itemManager.Remove((int)id);
+
+        int? nextItem = itemManager.Dequeue(false);
+
+        // アイテム表示更新
+        DisplayItem(nextItem);
+    }
+
+    // 未設置パーツ数を増やす
+    [PunRPC]
+    public void RPC_AddPartsNum()
+    {
+        Debug.Log("Add PartsNum Request");
+
+        AddPartsNum();
     }
 
     // 未設置パーツ数を減らす

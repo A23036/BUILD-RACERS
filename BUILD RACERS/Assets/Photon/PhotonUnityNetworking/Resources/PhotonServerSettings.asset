@@ -57,6 +57,9 @@ MonoBehaviour:
   - RPC_NotifyDriverConnected
   - RPC_UpdateDebugText
   - RPC_UpdateRank
+  - RPC_AddPartsNum
+  - RPC_RemoveUsedItem
+  - RPC_UseItem
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

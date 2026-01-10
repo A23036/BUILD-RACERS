@@ -205,7 +205,36 @@ public class PanelManager : MonoBehaviour
         // 取り外したパーツ情報を送信
         engineer.RemoveItem(parts.GetPartsID());
 
+        // 未設置パーツ数を増やす
+        engineer.AddPartsNum();
+
         Debug.Log("パーツを取り外しました");
+        PrintState();
+
+        return true;
+    }
+
+    // 使用したアイテムパーツを削除
+    public bool RemoveUsedParts(Parts parts)
+    {
+        if (!placedParts.ContainsKey(parts))
+        {
+            return false;
+        }
+
+        List<Vector2Int> occupiedCells = placedParts[parts];
+
+        foreach (Vector2Int cell in occupiedCells)
+        {
+            panelState[cell.x, cell.y] = false;
+        }
+
+        placedParts.Remove(parts);
+
+        // 取り外したパーツ情報を送信
+        engineer.RemoveItem(parts.GetPartsID());
+
+        Debug.Log("使用したアイテムパーツを削除");
         PrintState();
 
         return true;
@@ -423,7 +452,7 @@ public class PanelManager : MonoBehaviour
         }
 
         // グリッド解放 + 辞書削除
-        RemoveParts(targetParts);
+        RemoveUsedParts(targetParts);
 
         // ----------------------------
         // オブジェクト削除
