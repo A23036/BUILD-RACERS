@@ -1,5 +1,6 @@
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using TMPro;
@@ -9,6 +10,8 @@ using UnityEngine.UI;
 
 public class robbyScene : baseScene
 {
+    [SerializeField] private GameObject CreateUI;
+
     private Dictionary<string, GameObject> roomButtons = new Dictionary<string, GameObject>();
 
     private GameObject noRoomsText;
@@ -16,15 +19,25 @@ public class robbyScene : baseScene
     private string createRoomName;
     private string roomStat;
 
+    private int maxPlayers;
+
+    [SerializeField]private float duration = 0.2f;
+    private bool moveUp = true;
+    private bool isMoving = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         preSceneName = "multi";
+
+        maxPlayers = 16;
     }
 
     private void Awake()
     {
         noRoomsText = GameObject.Find("noRoomsText");
+
+        createRoomName = "";
 
         //既に接続済みなら処理なし
         if (PhotonNetwork.IsConnected) return;
@@ -136,15 +149,99 @@ public class robbyScene : baseScene
 
     public void InputText()
     {
-        //共通処理
-        GameObject inputField = GameObject.Find("InputFieldLegacy");
-        InputField input = inputField.GetComponent<InputField>();
+        GameObject inputField = GameObject.Find("InputField (TMP)");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
 
         //ネームバーの文字数制限
         int nameLimitNum = 10;
         if (input.text.Length > nameLimitNum) input.text = input.text.Substring(0, nameLimitNum);
 
         createRoomName = input.text;
+
+        Debug.Log($"Input Room Name : {createRoomName}");
+    }
+
+    public void InputTextPlayersNum()
+    {
+        GameObject inputField = GameObject.Find("InputField (TMP) (1)");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
+
+        //2 ~ 16に制限
+        int playersNum = int.Parse(input.text);
+        if (playersNum < 2) playersNum = 2;
+        else if (playersNum > 16) playersNum = 16;
+
+        maxPlayers = playersNum;
+    }
+
+    public void PushPlusButton()
+    {
+        maxPlayers++;
+
+        //2 ~ 16に制限
+        if (maxPlayers < 2) maxPlayers = 2;
+        else if (maxPlayers > 16) maxPlayers = 16;
+
+        GameObject inputField = GameObject.Find("InputField (TMP) (1)");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
+
+        input.text = maxPlayers.ToString();
+    }
+
+    public void PushMinusButton()
+    {
+        maxPlayers--;
+
+        //2 ~ 16に制限
+        if (maxPlayers < 2) maxPlayers = 2;
+        else if (maxPlayers > 16) maxPlayers = 16;
+
+        GameObject inputField = GameObject.Find("InputField (TMP) (1)");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
+
+        input.text = maxPlayers.ToString();
+    }
+
+    public void PushNewCreate()
+    {
+        //移動中は処理なし
+        if (isMoving) return;
+        MoveY();
+
+        //ボタンのテキスト変更
+        GameObject inputField = GameObject.Find("CreateNewText");
+        TMP_Text text = inputField.GetComponent<TMP_Text>();
+        if(moveUp) text.text = "CREATE NEW";
+        else text.text = "CANCEL";
+    }
+
+    public void MoveY()
+    {
+        StartCoroutine(Move());
+        moveUp = !moveUp;
+    }
+
+    IEnumerator Move()
+    {
+        isMoving = true;
+
+        var rectTransform = CreateUI.GetComponent<RectTransform>();
+
+        Vector2 start = rectTransform.anchoredPosition;
+        Vector2 end = start + new Vector2(0, moveUp ? 1000 : -1000);
+        //Vector3 start = CreateUI.transform.position;
+        //Vector3 end = start + new Vector3(0, moveUp ? 100 : -100, 0);
+        float t = 0;
+
+        while (t < 1)
+        {
+            t += Time.deltaTime / duration;
+            float eased = 1 - Mathf.Pow(1 - t, 5);
+            rectTransform.anchoredPosition = Vector2.Lerp(start, end, eased);
+            yield return null;
+        }
+
+        isMoving = false;
     }
 
     //ルームを新規作成
@@ -169,6 +266,9 @@ public class robbyScene : baseScene
             "masterGameScene"
             }
         };
+
+        //ルームのプレイ人数上限設定　観戦はプレイ人数含めて合計20人まで
+        PlayerPrefs.SetInt("roomLimitPlayers", maxPlayers);
 
         //ルームを新規作成　接続
         PhotonNetwork.JoinOrCreateRoom(createRoomName, options, TypedLobby.Default);
