@@ -111,6 +111,13 @@ public class CarController : MonoBehaviourPunCallbacks
     private Quaternion stanStartRotation;
     private GameObject bodyMesh;
 
+    [Header("パッシブアイテム用パラメータ")]
+    [SerializeField] private float accelerationPower = 0.5f;
+    [SerializeField] private float speedPower = 0.05f;
+    [SerializeField] private float antiStunPower = 0.2f;
+
+    private int[] passiveNumList = { 0, 0, 0 }; // パッシブ強化状態
+
     [Header("回転演出用パラメータ")]
     [SerializeField] private float stanSpinAngle = 720f; // 回転量
     [SerializeField] private AnimationCurve stanEaseCurve;
@@ -139,10 +146,51 @@ public class CarController : MonoBehaviourPunCallbacks
             partsNum--;
         }
     }
+
+    public void SetPassiveState(PartsID id, bool isAdd)
+    {
+        switch (id)
+        {
+            case PartsID.Acceleration:
+                if (isAdd)
+                {
+                    passiveNumList[0]++;
+                }
+                else
+                {
+                    passiveNumList[0]--;
+                }
+                break;
+            case PartsID.Speed:
+                if (isAdd)
+                {
+                    passiveNumList[1]++;
+                }
+                else
+                {
+                    passiveNumList[1]--;
+                }
+                break;
+            case PartsID.AntiStun:
+                if (isAdd)
+                {
+                    passiveNumList[2]++;
+                }
+                else
+                {
+                    passiveNumList[2]--;
+                }
+                break;
+            default:
+                break;
+        }
+
+        Debug.Log("PassiveState: Acceleration: " + passiveNumList[0] + " Speed: " + passiveNumList[1] + " AntiStun: " + passiveNumList[2]);
+    }
     
     public void SetBoost(BoostType boostType)
     {
-        // スタンの強さに応じてスタン時間をセット
+        // ブーストの強さに応じてブースト時間をセット
         switch(boostType) {
             case BoostType.Short:
                 boostTimer = ShortBoostTime;
@@ -165,13 +213,13 @@ public class CarController : MonoBehaviourPunCallbacks
         // スタンの強さに応じてスタン時間をセット
         switch(type) {
             case StunType.Light:
-                stanTime = LightStanTime;
+                stanTime = LightStanTime * (1 - passiveNumList[2] * antiStunPower);// パッシブ量に応じて軽減
                 break;
             case StunType.Midium:
-                stanTime = MidiumStanTime;
+                stanTime = MidiumStanTime * (1 - passiveNumList[2] * antiStunPower);
                 break;
             case StunType.Heavy:
-                stanTime = HeavyStanTime;
+                stanTime = HeavyStanTime * (1 - passiveNumList[2] * antiStunPower);
                 break;
             default:
                 break;
@@ -448,7 +496,7 @@ public class CarController : MonoBehaviourPunCallbacks
             speedMultiplier *= boostSpeedMultiplier;
             boostTimer -= Time.fixedDeltaTime;
         }
-        float maxAllowedSpeed = MaxSpeed * speedMultiplier;
+        float maxAllowedSpeed = MaxSpeed * (1 + passiveNumList[1] * speedPower) * speedMultiplier;
 
         if (rb.linearVelocity.magnitude < maxAllowedSpeed)
         {
@@ -461,7 +509,7 @@ public class CarController : MonoBehaviourPunCallbacks
             Vector3 forwardDir = steerRotation * forwardFlat;
 
             float motorPower =
-                (netMotor < 0 ? MotorForce * 0.6f : MotorForce) * accelMultiplier;
+                (netMotor < 0 ? MotorForce * (1 + passiveNumList[0] * accelerationPower) * 0.6f : MotorForce * (1 + passiveNumList[0] * accelerationPower)) * accelMultiplier;
 
             rb.AddForce(forwardDir * netMotor * motorPower, ForceMode.Acceleration);
         }
@@ -865,5 +913,14 @@ public class CarController : MonoBehaviourPunCallbacks
         Debug.Log("Substract PartsNum Request");
 
         SubstractPartsNum();
+    }
+
+    // パッシブパーツの設置通知
+    [PunRPC]
+    public void RPC_SetPassiveState(PartsID id,bool isAdd)
+    {
+        Debug.Log("PassiveState Request");
+
+        SetPassiveState(id,isAdd);
     }
 }

@@ -172,8 +172,10 @@ public class PanelManager : MonoBehaviour
         placedParts[parts] = occupiedCells;
 
         // 配置したパーツ情報を送信
+        // パッシブ
+        if (parts.GetPartsType() == PartsType.Passive) engineer.SetPassiveState(parts.GetPartsID(), true);
         // アイテム
-        if(parts.GetPartsType() == PartsType.Item)  engineer.SendItem(parts.GetPartsID());
+        if (parts.GetPartsType() == PartsType.Item)  engineer.SendItem(parts.GetPartsID());
 
         // 未設置パーツ数を減らす
         engineer.SubstractPartsNum();
@@ -204,6 +206,7 @@ public class PanelManager : MonoBehaviour
 
         // 取り外したパーツ情報を送信
         engineer.RemoveItem(parts.GetPartsID());
+        if(parts.GetPartsType() == PartsType.Passive) engineer.SetPassiveState(parts.GetPartsID(), false);
 
         // 未設置パーツ数を増やす
         engineer.AddPartsNum();
@@ -461,5 +464,11 @@ public class PanelManager : MonoBehaviour
 
         Debug.Log($"[PanelManager] PartsID {targetId} を削除しました");
         return true;
+    }
+
+    // パッシブパーツの強化状況を更新
+    public void UpdatePassiveState(PartsID id, bool isAdd)
+    {
+        engineer.SetPassiveState(id, isAdd);
     }
 }

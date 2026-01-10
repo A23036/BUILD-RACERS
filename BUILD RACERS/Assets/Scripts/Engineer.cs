@@ -210,6 +210,27 @@ public class Engineer : MonoBehaviourPunCallbacks
         target.RPC("RPC_AddPartsNum", pairPlayer);
     }
 
+    // ドライバーにパッシブの強化状態を送信
+    public void SetPassiveState(PartsID id,bool isAdd)
+    {
+        //シングルプレイの処理
+        if (!PhotonNetwork.IsConnected)
+        {
+            var carController = FindObjectOfType<CarController>();
+            carController.SetPassiveState(id,isAdd);
+            return;
+        }
+
+        PhotonView target = PhotonView.Find(pairViewID);
+
+        if (target == null) Debug.Log("target is null");
+        if (pairPlayer == null) Debug.Log("pair player is null");
+        if (photonView == null) Debug.Log("photon view is null");
+
+        // ペアのドライバーの未設置パーツ数を増やす
+        target.RPC("RPC_SetPassiveState", pairPlayer, id, isAdd);
+    }
+
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
         Debug.Log("CALL BACK");

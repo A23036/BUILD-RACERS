@@ -60,6 +60,7 @@ MonoBehaviour:
   - RPC_AddPartsNum
   - RPC_RemoveUsedItem
   - RPC_UseItem
+  - RPC_SetPassiveState
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
