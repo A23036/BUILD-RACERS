@@ -224,6 +224,9 @@ public class selectScene : baseScene
         //マスターならプレイ人数を設定　そうでなければ受信
         if (PhotonNetwork.IsMasterClient)
         {
+            limitPlayers = PlayerPrefs.GetInt("roomLimitPlayers");
+            Debug.Log("INITIALIZE limitPlayers TO " + limitPlayers);
+
             PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "limitPlayers", limitPlayers } });
         }
         else
