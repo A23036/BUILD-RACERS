@@ -199,59 +199,12 @@ public class CarController : MonoBehaviourPunCallbacks
         var joystick = GameObject.Find("Floating Joystick");
         if(joystick != null) variableJoystick = joystick.GetComponent<Joystick>();
 
-        // スピード表示テキストの設定
-        if (speedText == null)
-        {
-            var text = GameObject.FindWithTag("SpeedText");
-            if (text != null)
-                speedText = text.GetComponent<TextMeshProUGUI>();
-            else
-                speedText = FindObjectOfType<TextMeshProUGUI>();
-        }
-
-        // コイン表示テキストの設定
-        if (coinText == null)
-        {
-            var text = GameObject.FindWithTag("coinText");
-            if (text != null)
-                coinText = text.GetComponent<TextMeshProUGUI>();
-            else
-                coinText = FindObjectOfType<TextMeshProUGUI>();
-        }
-
-        // アイテム表示テキストの設定
-        if (itemText == null)
-        {
-            var text = GameObject.FindWithTag("ItemText");
-            if (text != null)
-                itemText = text.GetComponent<TextMeshProUGUI>();
-            else
-                itemText = FindObjectOfType<TextMeshProUGUI>();
-        }
-
-        //ラップ表示のテキスト設定
-        if (lapText == null)
-        {
-            var text = GameObject.FindWithTag("LapText");
-            if (text != null)
-            {
-                lapText = text.GetComponent<TextMeshProUGUI>();
-            }
-            else
-                lapText = FindObjectOfType<TextMeshProUGUI>();
-        }
-
-        //順位表示のテキスト設定
-        if (rankText == null)
-        {
-            var text = GameObject.FindWithTag("RankText");
-            if (text != null)
-            {
-                rankText = text.GetComponent<TextMeshProUGUI>();
-            }
-            else
-                rankText = FindObjectOfType<TextMeshProUGUI>();
-        }
+        // テキストの設定
+        speedText = InitText(speedText, "SpeedText");
+        coinText = InitText(coinText, "coinText");
+        itemText = InitText(itemText, "ItemText");
+        lapText = InitText(lapText, "LapText");
+        rankText = InitText(rankText, "RankText");
 
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
@@ -267,9 +220,20 @@ public class CarController : MonoBehaviourPunCallbacks
         flags = new bool[3];
     }
 
-    private void Start()
+    private TextMeshProUGUI InitText(TextMeshProUGUI tmpro, string tag)
     {
-        
+        if (tmpro == null)
+        {
+            var text = GameObject.FindWithTag(tag);
+            if (text != null)
+            {
+                tmpro = text.GetComponent<TextMeshProUGUI>();
+            }
+            else
+                tmpro = FindObjectOfType<TextMeshProUGUI>();
+        }
+
+        return tmpro;
     }
 
     private void TryPairPlayers()
