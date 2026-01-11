@@ -26,6 +26,9 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     private string oldkey;
     private string pendingkey;
 
+    [SerializeField]private float selectCooltime = 0.2f;
+    private float selectTimer = 0f;
+
     private float timer;
 
     [SerializeField] private Vector3 offset;
@@ -125,6 +128,9 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         UpdateNameBar();
 
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+
+        //選択クールタイムの更新
+        selectTimer -= Time.deltaTime;
 
         //ゲーミングカラー
         if (gamingColor)
@@ -236,33 +242,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     public void SetNum(int driver, int engineer)
     {
-        if (isReady)
-        {
-            Debug.Log("準備完了しています");
-            return;
-        }
+        if (selectTimer > 0f) return;
 
-        //送信済みならコールバックまで送信しない
-        if (pendingkey != null)
-        {
-            Debug.Log("予約送信済み");
-            return;
-        }
+        selectTimer = selectCooltime;
 
         // 予約をリクエスト　ローカルの確定・更新はコールバックで行う
         pendingkey = (driver != -1) ? $"D_{driver + 1}" : $"B_{engineer + 1}";
 
-        // キーの予約リクエストの送信
-        if (!TryReserveSlot(pendingkey))
-        {
-            //予約失敗なら希望値をリセット
-            pendingkey = null;
-            Debug.Log("予約失敗");
-        }
-        else
-        {
-            Debug.Log("予約成功");
-        }
+        TryReserveSlot(pendingkey);
     }
 
     public void SetNumOffline(int driver, int engineer)
@@ -274,10 +261,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //カスタムプロパティのコールバック
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable changed)
     {
-        Debug.Log("[Custom CallBack]");
+        if (!photonView.IsMine) return;
+
+        Debug.Log($"[Custom CallBack] changed keys: {changed.Count}");
 
         //準備状態の初期化
-        if(photonView.IsMine && changed.ContainsKey("MasterClientViewID"))
+        if (changed.ContainsKey("MasterClientViewID"))
         {
             SendToMaster(false);
             Debug.Log("準備状態の初期化");
@@ -286,28 +275,22 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         //シーン遷移
         if (changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)
         {
-            //遷移中はメッセージ処理を停止
             PhotonNetwork.IsMessageQueueRunning = false;
-
             var sm = GameObject.Find("SceneManager").GetComponent<selectScene>();
             sm.PushStartButton();
         }
 
-        //関係のないコールバックは無視
-        if (pendingkey == null || !changed.ContainsKey(pendingkey))
-        {
-            return;
-        }
+        if (pendingkey == null) return;
 
-        //カスタムプロパティをローカルに反映
-        bool isHit = false;
-
-        var props = PhotonNetwork.CurrentRoom.CustomProperties;
-        foreach (var kv in props)
+        // 差分の中に自分のpendingkeyがあるかチェック
+        if (changed.ContainsKey(pendingkey))
         {
-            if (kv.Value is int n && n == PhotonNetwork.LocalPlayer.ActorNumber)
+            var value = changed[pendingkey];
+
+            // 自分が取得成功
+            if (value is int actorNum && actorNum == PhotonNetwork.LocalPlayer.ActorNumber)
             {
-                //ローカル更新
+                // ローカル更新
                 if (pendingkey.StartsWith("D_"))
                 {
                     selectDriverNum = int.Parse(pendingkey.Substring(2)) - 1;
@@ -322,24 +305,31 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
                 oldkey = pendingkey;
                 key = pendingkey;
 
-                isHit = true;
+                Debug.Log($"Slot acquired: {pendingkey}");
+            }
+            // 他の人が取得した、またはnullになった
+            else
+            {
+                Debug.Log($"Slot failed: {pendingkey} (value={value})");
+            }
+
+            pendingkey = null;
+        }
+
+        // 自分の古いキーが解放されたか確認
+        if (oldkey != null && changed.ContainsKey(oldkey))
+        {
+            if (changed[oldkey] == null || !(changed[oldkey] is int n && n == PhotonNetwork.LocalPlayer.ActorNumber))
+            {
+                // 自分のスロットが解放された
+                selectDriverNum = -1;
+                selectEngineerNum = -1;
+                oldkey = null;
+                key = null;
+
+                Debug.Log("Slot released");
             }
         }
-
-        //キーがなければ画面外に移動
-        if (!isHit)
-        {
-            selectDriverNum = -1;
-            selectEngineerNum = -1;
-
-            oldkey = null;
-            key = null;
-        }
-
-        //希望値をリセット
-        pendingkey = null;
-
-        return;
     }
 
     public void GetNums(out int dn, out int bn)
