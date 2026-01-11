@@ -612,7 +612,11 @@ public class CarController : MonoBehaviourPunCallbacks
     //状態を運転に
     public void SetStartPos(Vector3 pos)
     {
+        //一度のみ実行
+        if (isSetStartPos) return;
+
         transform.position = pos;
+        isSetStartPos = true;
     }
 
     [PunRPC]
@@ -624,6 +628,9 @@ public class CarController : MonoBehaviourPunCallbacks
     //順位更新
     public void UpdateRank()
     {
+        //観戦者の時に作動しないように RPCがバッファされてるのでここで処理止める
+        if (PlayerPrefs.GetInt("isMonitor") == 1) return;
+
         //全カートの角度とラップ数を取得　比較して順位を決定
         CarController[] cars = FindObjectsOfType<CarController>();
         currentRank = 1;

@@ -93,7 +93,7 @@ public class singlePlayScene : baseScene
         var wpContainer = FindObjectOfType<WaypointContainer>();
         for (int i = 0; i < botsNum; i++)
         {
-            var bot = Instantiate(Resources.Load("Player"));
+            var bot = Instantiate(Resources.Load("Player"),new Vector3(0,0,i*3f),Quaternion.identity);
             var botCc = bot.GetComponent<CarController>();
             botCc.SetAI<AIDriver>(wpContainer);
             //0–„‚ß2Œ…‚Å–¼‘O‚ğİ’è

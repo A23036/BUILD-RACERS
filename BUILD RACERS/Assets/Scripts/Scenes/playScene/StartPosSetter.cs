@@ -5,6 +5,7 @@ using ExitGames.Client.Photon;
 
 public class StartPosSetter : MonoBehaviourPunCallbacks
 {
+    [SerializeField] private Vector3 offsetPos = new Vector3(0, 1f, 0);
     public Transform[] startPosList;
     private bool[] isSet;
 
@@ -19,6 +20,13 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        //観戦者の時に作動しないように　RPCはバッファされるため関数先で処理を止める
+        if(PlayerPrefs.GetInt("isMonitor") == 1)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         //ドライバーのスタート地点を取得
         startPosList = new Transform[transform.childCount];
         isSet = new bool[transform.childCount];
@@ -112,9 +120,10 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             foreach (var kart in karts)
             {
                 //初期位置へセット
-                kart.SetStartPos(startPosList[idx++ % startPosList.Length].position);
+                kart.SetStartPos(startPosList[idx++ % startPosList.Length].position + offsetPos);
             }
         }
+
         else if (PhotonNetwork.IsMasterClient)
         {
             //マスタークライアントのみ実行
@@ -126,7 +135,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 if (photonView != null)
                 {
                     //初期位置へセット
-                    photonView.RPC("RPC_SetStartPos", RpcTarget.AllBuffered, startPosList[idx++ % startPosList.Length].position);
+                    photonView.RPC("RPC_SetStartPos", RpcTarget.AllBuffered, startPosList[idx++ % startPosList.Length].position + offsetPos);
 
                     //順位を更新
                     photonView.RPC("RPC_UpdateRank", RpcTarget.AllBuffered);

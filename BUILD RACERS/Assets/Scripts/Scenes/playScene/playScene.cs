@@ -91,7 +91,7 @@ public class playScene : baseScene
             for (int i = 0; i < GenerateBotsNum; i++)
             {
                 // CPUの生成　テスト
-                position = new Vector3(geneX, 3, -i * geneZ);
+                position = new Vector3(geneX, 0f, -i * geneZ);
                 var cpu = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
                 var cpuCc = cpu.GetComponent<CarController>();
 

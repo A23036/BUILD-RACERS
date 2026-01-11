@@ -651,6 +651,9 @@ MonoBehaviour:
   lapText: {fileID: 0}
   rankText: {fileID: 0}
   MAXITEMNUM: 5
+  accelerationPower: 0.5
+  speedPower: 0.05
+  antiStunPower: 0.2
   stanSpinAngle: 360
   stanEaseCurve:
     serializedVersion: 2
