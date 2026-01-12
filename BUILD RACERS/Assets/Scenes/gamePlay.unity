@@ -4508,6 +4508,8 @@ MonoBehaviour:
   partsType: 1
   partsId: 0
   partsResourceName: Parts_Energy
+  cooldownDuration: 1
+  cooldownGauge: {fileID: 0}
 --- !u!50 &475989394
 Rigidbody2D:
   serializedVersion: 5
@@ -5278,6 +5280,8 @@ MonoBehaviour:
   partsType: 0
   partsId: 0
   partsResourceName: Parts01
+  cooldownDuration: 1
+  cooldownGauge: {fileID: 0}
 --- !u!50 &546696098
 Rigidbody2D:
   serializedVersion: 5
@@ -6072,6 +6076,8 @@ MonoBehaviour:
   partsType: 1
   partsId: 1
   partsResourceName: Parts_Rocket
+  cooldownDuration: 1
+  cooldownGauge: {fileID: 0}
 --- !u!50 &650069238
 Rigidbody2D:
   serializedVersion: 5
@@ -6656,7 +6662,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -10009,6 +10015,8 @@ MonoBehaviour:
   partsType: 1
   partsId: 1
   partsResourceName: Parts_Rocket
+  cooldownDuration: 1
+  cooldownGauge: {fileID: 0}
 --- !u!50 &1060470648
 Rigidbody2D:
   serializedVersion: 5
@@ -14782,9 +14790,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 714369830}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 175, y: -125}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -785, y: 415}
   m_SizeDelta: {x: 300, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1574659016
@@ -16471,6 +16479,8 @@ MonoBehaviour:
   partsType: 1
   partsId: 2
   partsResourceName: Parts_Flask
+  cooldownDuration: 1
+  cooldownGauge: {fileID: 0}
 --- !u!50 &1756007315
 Rigidbody2D:
   serializedVersion: 5
@@ -17265,9 +17275,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 714369830}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 320, y: 47.899994}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -640, y: -492.1}
   m_SizeDelta: {x: 600, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1812083596
