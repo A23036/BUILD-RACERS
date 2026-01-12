@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
 public class robbyScene : baseScene
 {
@@ -166,12 +167,19 @@ public class robbyScene : baseScene
         GameObject inputField = GameObject.Find("InputField (TMP) (1)");
         TMP_InputField input = inputField.GetComponent<TMP_InputField>();
 
+        //êîílïœä∑
+        if (!int.TryParse(input.text, out int playersNum))
+        {
+            input.text = "";
+            return;
+        }
+
         //2 ~ 16Ç…êßå¿
-        int playersNum = int.Parse(input.text);
         if (playersNum < 2) playersNum = 2;
         else if (playersNum > 16) playersNum = 16;
 
         maxPlayers = playersNum;
+        input.text = maxPlayers.ToString();
     }
 
     public void PushPlusButton()

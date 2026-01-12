@@ -44,9 +44,11 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        if(!PhotonNetwork.IsConnected)
+        Debug.Log("=== StartPosSetter START ===");
+
+        if (!PhotonNetwork.IsConnected)
         {
             debugText = "READY";
 
@@ -122,6 +124,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 //初期位置へセット
                 kart.SetStartPos(startPosList[idx++ % startPosList.Length].position + offsetPos);
             }
+            Debug.Log("=== Set StartPos Drivers (Offline) ===");
         }
 
         else if (PhotonNetwork.IsMasterClient)

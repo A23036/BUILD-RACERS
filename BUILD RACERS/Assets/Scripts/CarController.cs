@@ -126,7 +126,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     //周回判定用
     private LapManager lapManager;
-    private int lapCount = 0;
+    private int lapCount = -1;
     private float nowAngle = 0f;
     private bool[] flags;
     private bool isLapClear = false;
@@ -266,6 +266,10 @@ public class CarController : MonoBehaviourPunCallbacks
 
         //仮想的なチェックポイント
         flags = new bool[3];
+        for(int i = 0;i < flags.Length;i++)
+        {
+            flags[i] = true;
+        }
     }
 
     private TextMeshProUGUI InitText(TextMeshProUGUI tmpro, string tag)
@@ -447,7 +451,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
 
             //周回数をUIに反映
-            lapText.text = $"Angle : {nowAngle} , Lap : {lapCount}";
+            lapText.text = $"Angle : {nowAngle} , Lap : {Mathf.Max(0,lapCount)}";
 
             //　プレイヤー入力:Update()で取得した入力を使用
             motorInput = inputMotor;
