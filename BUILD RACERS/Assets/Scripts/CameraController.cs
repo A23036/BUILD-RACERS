@@ -18,6 +18,12 @@ public class CameraController : MonoBehaviourPunCallbacks
 
     public void SetTarget(Transform newTarget) => target = newTarget;
 
+    // カメラ固定フラグ
+    public bool isFixed = false;
+    public Vector3 fixedPos;
+    private float elapsedTime = 0f;
+    [SerializeField]private float fixedTime = 3f;
+
     void Awake()
     {
         // ------------ InputAction 初期化（PC専用） ------------
@@ -85,5 +91,38 @@ public class CameraController : MonoBehaviourPunCallbacks
         // -----------------------------------------------
 
         transform.LookAt(target.position + Vector3.up * 1.5f);
+
+        // ------------ カメラ固定処理 ------------
+        if (isFixed)
+        {
+            transform.position = fixedPos;
+            
+            if(elapsedTime >= fixedTime)
+            {
+                isFixed = false;
+                elapsedTime = 0f;
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (isFixed)
+        {
+            elapsedTime += Time.deltaTime;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="pos">固定座標</param>
+    /// <param name="f">固定時間</param>
+    public void SetFixedPos(Vector3 pos , float f = 3f)
+    {
+        fixedPos = pos;
+        isFixed = true;
+        elapsedTime = 0f;
+        fixedTime = f;
     }
 }

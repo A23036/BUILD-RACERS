@@ -127,9 +127,16 @@ public class CarController : MonoBehaviourPunCallbacks
     //周回判定用
     private LapManager lapManager;
     private int lapCount = -1;
+    private int maxLaps = 0;
     private float nowAngle = 0f;
     private bool[] flags;
     private bool isLapClear = false;
+
+    //オフライン用のフラグ　BOTとの区別用
+    public bool isMine = false;
+
+    //リザルトUI ゴールしたら有効化
+    private GameObject resultUI;
 
     //現在の順位
     private int currentRank = 1;
@@ -263,12 +270,21 @@ public class CarController : MonoBehaviourPunCallbacks
         itemManager = GetComponent<ItemManager>();
 
         lapManager = GameObject.Find("LapManager").GetComponent<LapManager>();
+        maxLaps = lapManager.GetMaxLaps();
 
         //仮想的なチェックポイント
         flags = new bool[3];
         for(int i = 0;i < flags.Length;i++)
         {
             flags[i] = true;
+        }
+
+        //シーンマネージャー取得
+        var sceneManager = FindObjectOfType<singlePlayScene>();
+        if(sceneManager != null)
+        {
+            resultUI = sceneManager.GetResultUI();
+            resultUI.SetActive(false);
         }
     }
 
@@ -426,6 +442,17 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             lapCount++;
             nowAngle = 0f;
+        }
+
+        //ゴール判定
+        if(driver == null && lapCount == maxLaps)
+        {
+            //AIに切り替え
+            var wpContainer = FindObjectOfType<WaypointContainer>();
+            SetAI<AIDriver>(wpContainer);
+
+            //リザルトUIを有効化
+            resultUI.SetActive(true);
         }
 
         // 入力取得

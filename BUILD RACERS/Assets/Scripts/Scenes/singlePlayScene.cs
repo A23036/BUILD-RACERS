@@ -10,6 +10,7 @@ public class singlePlayScene : baseScene
 {
     [SerializeField] private GameObject DriverUI;
     [SerializeField] private GameObject EngineerUI;
+    [SerializeField] private GameObject ResultUI;
 
     //ドライバーBOTの生成数
     [SerializeField] private int botsNum;
@@ -44,6 +45,7 @@ public class singlePlayScene : baseScene
             var player = Instantiate(Resources.Load("player"));
             player.GetComponent<CarController>().SetCamera();
             carController = player.GetComponent<CarController>();
+            carController.isMine = true;
 
             //UIの有効化
             DriverUI.SetActive(true);
@@ -99,5 +101,10 @@ public class singlePlayScene : baseScene
             //0埋め2桁で名前を設定
             botCc.SetName("CPU_" + (i + 1).ToString("00"));
         }
+    }
+
+    public GameObject GetResultUI()
+    {
+        return ResultUI;
     }
 }

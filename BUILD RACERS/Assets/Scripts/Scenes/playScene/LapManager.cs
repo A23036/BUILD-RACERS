@@ -9,6 +9,9 @@ public class LapManager : MonoBehaviour
     //Œv‰ñ‚è‚©
     [SerializeField] private bool isClockwise;
 
+    //ƒS[ƒ‹‚Ü‚Å‚Ìü‰ñ”
+    [SerializeField] private int maxLaps;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -38,5 +41,10 @@ public class LapManager : MonoBehaviour
         }
 
         return angle;
+    }
+
+    public int GetMaxLaps()
+    {
+        return maxLaps;
     }
 }
