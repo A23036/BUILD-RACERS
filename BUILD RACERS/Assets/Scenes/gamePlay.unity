@@ -5826,7 +5826,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &638005464
 Transform:
   m_ObjectHideFlags: 0
@@ -10206,6 +10206,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5096402647014935460, guid: 822d02065a7fe974c9fb1b6dda4bfeaa, type: 3}
+      propertyPath: sceneViewId
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1583788797981049240, guid: 822d02065a7fe974c9fb1b6dda4bfeaa, type: 3}
       propertyPath: disappearTime
       value: 2
@@ -15256,7 +15260,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1684157464
 Transform:
   m_ObjectHideFlags: 0
