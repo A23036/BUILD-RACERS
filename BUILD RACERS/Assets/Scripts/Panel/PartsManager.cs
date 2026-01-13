@@ -19,6 +19,7 @@ public enum PartsID
     Mud,
     Balloon,
     Wall,
+    Slope
 }
 
 public class PartsManager : MonoBehaviour
