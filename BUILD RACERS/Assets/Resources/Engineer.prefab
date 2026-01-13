@@ -57,6 +57,7 @@ MonoBehaviour:
   - {fileID: 7965285064093078470, guid: 8603665fadcd43f4ba366bd4f79638cc, type: 3}
   - {fileID: 7965285064093078470, guid: 954484dd1b6425f4f8aac148df7b6962, type: 3}
   - {fileID: 7965285064093078470, guid: 55487a84a50fcdb4b9bd4350d2d83520, type: 3}
+  - {fileID: 7965285064093078470, guid: 4107dcf512815eb43b0936fbe418bef1, type: 3}
   spawnPosDistance: 150
 --- !u!1 &8458905714762264892
 GameObject:

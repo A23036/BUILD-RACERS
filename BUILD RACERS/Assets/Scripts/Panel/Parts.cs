@@ -32,6 +32,14 @@ public class Parts : MonoBehaviour
     [SerializeField] private Image cooldownGauge; // 子オブジェクトの円形ゲージ
     private float cooldownTimer = 0f; // 再配置クールタイム
 
+    [SerializeField] private Transform rotationGuide;
+    [SerializeField] private float clickThreshold = 0.2f; // 短押し判定秒数
+    [SerializeField] private bool isRotate = false; // 短押し判定秒数
+
+    private float pressTime;
+    private bool isPressing;
+    private float setRotation = 0f;
+
     private SpriteRenderer spriteRenderer;
 
     void Awake()
@@ -85,6 +93,8 @@ public class Parts : MonoBehaviour
                 Collider2D hit = Physics2D.OverlapPoint(mousePos);
                 if (hit == GetComponent<Collider2D>())
                 {
+                    isPressing = true;
+                    pressTime = Time.time;
                     StartDragging(mousePos);
                 }
             }
@@ -114,6 +124,8 @@ public class Parts : MonoBehaviour
                     Collider2D hit = Physics2D.OverlapPoint(touchPos);
                     if (hit == GetComponent<Collider2D>())
                     {
+                        isPressing = true;
+                        pressTime = Time.time;
                         StartDragging(touchPos);
                         draggingTouchId = touchId;
                     }
@@ -221,6 +233,16 @@ public class Parts : MonoBehaviour
     {
         isDragging = false;
         draggingTouchId = null;
+
+        float pressDuration = Time.time - pressTime;
+
+        // ---- オブジェクト回転判定 ----
+        if (isRotate && pressDuration <= clickThreshold)
+        {
+            RotateGuide();
+            return; // 配置処理をしない
+        }
+
         panelManager.ClearPreview();
 
         Debug.Log($"[Parts] ドラッグ終了");
@@ -302,7 +324,7 @@ public class Parts : MonoBehaviour
                 return;
             }
 
-            bool placed = createGimmick.TrySpawnAtScreenPosition(screenPos, partsId);
+            bool placed = createGimmick.TrySpawnAtScreenPosition(screenPos, partsId, setRotation);
 
             if (placed)
             {
@@ -318,6 +340,16 @@ public class Parts : MonoBehaviour
                 rb.gravityScale = 2f;
             }
         }
+    }
+
+    // ギミックパーツの回転処理
+    private void RotateGuide()
+    {
+        if (rotationGuide == null) return;
+
+        rotationGuide.Rotate(0f, 0f, -45f);
+
+        setRotation -= 45f;
     }
 
     private void UpdateColliderState()

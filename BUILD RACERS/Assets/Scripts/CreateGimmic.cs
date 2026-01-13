@@ -8,7 +8,7 @@ public class CreateGimmic : MonoBehaviour
     public RectTransform miniMapUI;// RawImage の RectTransform
     public GameObject spawnPrefab; // 置きたいプレハブ
 
-    public bool TrySpawnAtScreenPosition(Vector2 screenPos, PartsID partsId)
+    public bool TrySpawnAtScreenPosition(Vector2 screenPos, PartsID partsId, float rotationY)
     {
         // Canvas のカメラを取得
         Canvas canvas = miniMapUI.GetComponentInParent<Canvas>();
@@ -45,13 +45,15 @@ public class CreateGimmic : MonoBehaviour
         {
             Debug.Log($"[Gimmick] Place at {hit.point}");
 
+            Quaternion rot = Quaternion.Euler(0f, -rotationY, 0f);
+
             if (PhotonNetwork.IsConnected)
             {
-                PhotonNetwork.Instantiate(partsId.ToString(), hit.point, Quaternion.identity);
+                PhotonNetwork.Instantiate(partsId.ToString(), hit.point, rot);
             }
             else
             {
-                Instantiate(Resources.Load(partsId.ToString()), hit.point, Quaternion.identity);
+                Instantiate(Resources.Load(partsId.ToString()), hit.point, rot);
             }
             return true;
         }

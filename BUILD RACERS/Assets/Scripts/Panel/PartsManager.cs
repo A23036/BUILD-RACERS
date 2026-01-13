@@ -18,6 +18,7 @@ public enum PartsID
     AntiStun,
     Mud,
     Balloon,
+    Wall,
 }
 
 public class PartsManager : MonoBehaviour
