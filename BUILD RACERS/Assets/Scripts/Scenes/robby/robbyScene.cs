@@ -31,7 +31,7 @@ public class robbyScene : baseScene
     {
         preSceneName = "menu";
 
-        maxPlayers = 16;
+        maxPlayers = 0;
     }
 
     private void Awake()
