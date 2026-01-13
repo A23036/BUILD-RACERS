@@ -19466,11 +19466,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 3, z: -6}
   smoothSpeed: 5
-<<<<<<< HEAD
-  isFixed: 0
-  fixedPos: {x: 0, y: 0, z: 0}
-  fixedTime: 3
-=======
   fixedTime: 3
   viewPoints:
   - {fileID: 1507884891}
@@ -19480,7 +19475,6 @@ MonoBehaviour:
   - {fileID: 752389730}
   - {fileID: 1130619722}
   - {fileID: 1914969}
->>>>>>> unnnoHiroto
 --- !u!114 &2016620362
 MonoBehaviour:
   m_ObjectHideFlags: 0
