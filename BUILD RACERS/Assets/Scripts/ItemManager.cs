@@ -113,15 +113,19 @@ public class ItemManager : MonoBehaviour
                     return PartsID.Rocket;
                 }
             case PartsType.Gimmick:
-                int r3 = Random.Range(0, 2);
+                int r3 = Random.Range(0, 3);
                 Debug.Log("RandomItem:" + r3);
                 if (r3 == 0)
                 {
                     return PartsID.Mud;
                 }
-                else
+                else if (r3 == 1)
                 {
                     return PartsID.Balloon;
+                }
+                else
+                {
+                    return PartsID.Wall;
                 }
             default:
                 return 0;

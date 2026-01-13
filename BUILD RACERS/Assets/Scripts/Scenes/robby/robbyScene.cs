@@ -29,7 +29,7 @@ public class robbyScene : baseScene
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        preSceneName = "multi";
+        preSceneName = "menu";
 
         maxPlayers = 16;
     }
