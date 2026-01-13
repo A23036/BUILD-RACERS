@@ -17705,6 +17705,11 @@ MonoBehaviour:
   miniMapCamera: {fileID: 1448708586}
   miniMapUI: {fileID: 1881033434}
   spawnPrefab: {fileID: 7011438752912030972, guid: e360199485970a84e91b12b19963a585, type: 3}
+  groundTags:
+  - Road
+  - Dirt
+  removeEffectPrefab: {fileID: 985483039366664255, guid: 5ce5ed284d19793429bd73436f113db8, type: 3}
+  effectLifeTime: 2
 --- !u!1 &1903604219
 GameObject:
   m_ObjectHideFlags: 0

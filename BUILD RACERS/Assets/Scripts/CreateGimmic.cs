@@ -8,6 +8,11 @@ public class CreateGimmic : MonoBehaviour
     public RectTransform miniMapUI;// RawImage の RectTransform
     public GameObject spawnPrefab; // 置きたいプレハブ
 
+    [SerializeField] private string[] groundTags = { "Road", "Dirt" };
+
+    [SerializeField] private GameObject removeEffectPrefab;
+    [SerializeField] private float effectLifeTime = 2f;
+
     public bool TrySpawnAtScreenPosition(Vector2 screenPos, PartsID partsId, float rotationY)
     {
         // Canvas のカメラを取得
@@ -38,56 +43,128 @@ public class CreateGimmic : MonoBehaviour
             (localPos.y / miniMapUI.rect.height) + 0.5f
         );
 
-        // ミニマップ Ray
         Ray ray = miniMapCamera.ViewportPointToRay(normalized);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 500f))
-        {
-            Debug.Log($"[Gimmick] Place at {hit.point}");
+        // ミニマップ Ray
+        RaycastHit[] hits = Physics.RaycastAll(ray, 500f);
 
+        if (hits.Length == 0)
+        {
+            Debug.Log("[Gimmick] RaycastAll hit nothing");
+            return false;
+        }
+
+        // 距離順ソート
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (var hit in hits)
+        {
+            if (!IsValidGround(hit.collider))
+                continue;
+
+            Vector3 placePos = hit.point;
             Quaternion rot = Quaternion.Euler(0f, -rotationY, 0f);
 
+            // ★ 既存ギミック削除
+            RemoveExistingGimmicks(placePos);
+
+            // ★ 新規生成
             if (PhotonNetwork.IsConnected)
             {
-                PhotonNetwork.Instantiate(partsId.ToString(), hit.point, rot);
+                PhotonNetwork.Instantiate(
+                    partsId.ToString(),
+                    placePos,
+                    rot
+                );
             }
             else
             {
-                Instantiate(Resources.Load(partsId.ToString()), hit.point, rot);
+                GameObject prefab = Resources.Load<GameObject>(partsId.ToString());
+                Instantiate(prefab, placePos, rot);
             }
+
+            Debug.Log($"[Gimmick] Placed on {hit.collider.tag}");
             return true;
         }
 
-        Debug.Log("[Gimmick] Raycast failed");
+        Debug.Log("[Gimmick] No valid ground found");
         return false;
     }
 
-
-    void ConvertToWorldAndSpawn(Vector2 localPos)
+    // ----------------------------
+    // 地面タグ判定
+    // ----------------------------
+    private bool IsValidGround(Collider col)
     {
-        // --- UI の幅・高さから 0?1 に正規化 ---
-        Vector2 normalized = new Vector2(
-            (localPos.x / miniMapUI.rect.width) + 0.5f,
-            (localPos.y / miniMapUI.rect.height) + 0.5f
-        );
-
-        // --- ミニマップカメラの RenderTexture 空間の UV 座標に変換 ---
-        Ray ray = miniMapCamera.ViewportPointToRay(normalized);
-
-        // --- 地面との当たり判定 ---
-        if (Physics.Raycast(ray, out RaycastHit hit, 500f/*, LayerMask.GetMask("Ground")*/))
+        foreach (var tag in groundTags)
         {
-            Debug.Log("設置位置" + hit.point);
+            if (col.CompareTag(tag))
+                return true;
+        }
+        return false;
+    }
 
-            //オンラインかそうでないかで処理を分ける
-            if(PhotonNetwork.IsConnected)
+    // ----------------------------
+    // 既存ギミック削除
+    // ----------------------------
+    private void RemoveExistingGimmicks(Vector3 position)
+    {
+        Collider[] cols = Physics.OverlapSphere(position, 1.0f);
+
+        foreach (var col in cols)
+        {
+            if (!col.CompareTag("Gimmick"))
+                continue;
+
+            GameObject gimmick = col.gameObject;
+            Vector3 effectPos = gimmick.transform.position;
+
+            // 削除エフェクト生成
+            SpawnRemoveEffect(effectPos);
+
+            if (PhotonNetwork.IsConnected)
             {
-                PhotonNetwork.Instantiate("Mud", hit.point, Quaternion.identity);
+                PhotonView pv = gimmick.GetComponent<PhotonView>();
+                if (pv != null && pv.IsMine)
+                {
+                    PhotonNetwork.Destroy(gimmick);
+                }
             }
             else
             {
-                Instantiate(Resources.Load("Mud"),hit.point, Quaternion.identity);
+                Destroy(gimmick);
             }
         }
     }
+
+    // 削除時エフェクト生成
+    private void SpawnRemoveEffect(Vector3 position)
+    {
+        if (removeEffectPrefab == null)
+            return;
+
+        if (PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.Instantiate(
+                removeEffectPrefab.name,
+                position,
+                Quaternion.identity
+            );
+        }
+        else
+        {
+            GameObject effect =
+                Instantiate(removeEffectPrefab, position, Quaternion.identity);
+            Destroy(effect, effectLifeTime);
+        }
+    }
+
+#if UNITY_EDITOR
+    // デバッグ用：削除範囲表示
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, 0.5f);
+    }
+#endif
 }
