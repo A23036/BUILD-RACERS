@@ -16,6 +16,7 @@ TagManager:
   - LapText
   - RankText
   - Gimmick
+  - TimerText
   layers:
   - Default
   - TransparentFX

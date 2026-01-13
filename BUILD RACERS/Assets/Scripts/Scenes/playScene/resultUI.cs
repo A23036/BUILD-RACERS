@@ -1,4 +1,6 @@
+using Photon.Pun;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -23,10 +25,14 @@ public class resultUI : MonoBehaviour
     [SerializeField] private GameObject[] rankingUIObjects = new GameObject[8]; // 8つのUIプレハブ
     [SerializeField] private float moveInterval = 0.2f; // 各UIの表示間隔(秒)
     [SerializeField] private float moveDuration = 0.5f; // 移動時間
-    [SerializeField] private Vector3 startOffset = new Vector3(-1000, 0, 0); // 初期オフセット位置
+    [SerializeField] private Vector3 rankUIstartOffset = new Vector3(-1000, 0, 0); // 初期オフセット位置
+    [SerializeField] private Vector3 menuUIstartOffset = new Vector3(-1000, 0, 0); // 初期オフセット位置
 
     //プレイシーンから遷移するボタン
     [SerializeField] private GameObject[] menuUIObjects;
+
+    //上からランクUIが更新されるように
+    private bool[] rankUIupdateFlags = new bool[8];
 
     private void Awake()
     {
@@ -40,12 +46,18 @@ public class resultUI : MonoBehaviour
 
     void OnEnable()
     {
-        StartCoroutine(PlayResultSequence());
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+    }
+
+    //コルーチンの開始
+    public void StartCoroutines()
+    {
+        StartCoroutine(PlayResultSequence());
     }
 
     // メインのシーケンス制御コルーチン
@@ -97,7 +109,7 @@ public class resultUI : MonoBehaviour
             {
                 var obj = rankingUIObjects[i];
                 var nowPos = obj.GetComponent<RectTransform>().anchoredPosition;
-                StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos + startOffset));
+                StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos + rankUIstartOffset));
                 yield return new WaitForSeconds(moveInterval);
             }
         }
@@ -120,7 +132,7 @@ public class resultUI : MonoBehaviour
             {
                 var obj = rankingUIObjects[i];
                 var nowPos = obj.GetComponent<RectTransform>().anchoredPosition;
-                StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos - startOffset));
+                StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos - rankUIstartOffset));
                 yield return new WaitForSeconds(moveInterval);
             }
         }
@@ -134,7 +146,7 @@ public class resultUI : MonoBehaviour
             {
                 var obj = menuUIObjects[i];
                 var nowPos = obj.GetComponent<RectTransform>().anchoredPosition;
-                StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos + startOffset));
+                StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos + menuUIstartOffset));
                 yield return new WaitForSeconds(moveInterval);
             }
         }
@@ -163,6 +175,8 @@ public class resultUI : MonoBehaviour
             rt.anchoredPosition = Vector2.Lerp(startPos, endPos, eased);
             yield return null;
         }
+
+        rt.anchoredPosition = endPos;
     }
 
     IEnumerator Animate(float fromA, float toA, Vector3 fromS, Vector3 toS, float time)
@@ -198,5 +212,36 @@ public class resultUI : MonoBehaviour
     {
         //メニューシーンへ遷移
         SceneManager.LoadScene("menu");
+    }
+
+    //ランキング表の更新
+    public void UpdateRankUI(string name , string time)
+    {
+        int rank = 0;
+        for (int i = 0; i < rankUIupdateFlags.Length; i++)
+        {
+            if (rankUIupdateFlags[i]) continue;
+            else
+            {
+                rankUIupdateFlags[i] = true;
+                rank = i + 1;
+                break;
+            }
+        }
+
+        var Text = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>();
+        if (Text == null) return;
+        string rankStr = rank.ToString();
+        if (rank == 1) rankStr += " st";
+        else if (rank == 2) rankStr += " nd";
+        else if (rank == 3) rankStr += " rd";
+        else rankStr += " th";
+        string format = $"{rankStr} , {name.PadRight(8)} & xxxxxxxx , {time}";
+        Text.text = format;
+
+        //プレイヤーなら黄色に
+        if (name == PlayerPrefs.GetString("PlayerName")) Text.color = Color.yellow;
+
+        Debug.Log("UPDATE RANK UI : " + format);
     }
 }

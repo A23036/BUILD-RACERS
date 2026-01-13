@@ -650,6 +650,7 @@ MonoBehaviour:
   itemText: {fileID: 0}
   lapText: {fileID: 0}
   rankText: {fileID: 0}
+  timerText: {fileID: 0}
   MAXITEMNUM: 5
   accelerationPower: 0.5
   speedPower: 0.05
@@ -689,6 +690,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   isMine: 0
+  lapBlinkTime: 3
+  lapBlinkInterval: 0.3
 --- !u!114 &2777997212412123024
 MonoBehaviour:
   m_ObjectHideFlags: 0

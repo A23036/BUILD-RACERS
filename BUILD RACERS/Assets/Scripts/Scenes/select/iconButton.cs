@@ -56,7 +56,7 @@ public class iconButton : MonoBehaviour
         }
         
         //ss‚ªŒ©‚Â‚©‚ê‚ÎˆÊ’u‚ğXV
-        if(ss != null)
+        if(ss != null && ss.IsReady() == false)
         {
             ss.SetNum(driverNum, builderNum);
         }

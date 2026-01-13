@@ -81,6 +81,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI itemText;  // アイテム表示テキスト
     [SerializeField] private TextMeshProUGUI lapText;  // 周回数表示テキスト
     [SerializeField] private TextMeshProUGUI rankText;  // 順位表示テキスト
+    [SerializeField] private TextMeshProUGUI timerText;  // タイム表示テキスト
 
     [Header("保持なアイテムの数")]
     [SerializeField] private int MAXITEMNUM = 5;
@@ -140,6 +141,16 @@ public class CarController : MonoBehaviourPunCallbacks
 
     //現在の順位
     private int currentRank = 1;
+
+    //スタートからの経過秒数
+    private float timer;
+
+    //ラップタイムが点滅する時間
+    [SerializeField] private float lapBlinkTime = 3f;
+    private float blinkTimer = 0f;
+    private float nextBlinkTime = 0f;
+    [SerializeField]private float lapBlinkInterval = .25f;
+
 
     public void AddPartsNum()
     {
@@ -260,6 +271,7 @@ public class CarController : MonoBehaviourPunCallbacks
         itemText = InitText(itemText, "ItemText");
         lapText = InitText(lapText, "LapText");
         rankText = InitText(rankText, "RankText");
+        timerText = InitText(timerText, "TimerText");
 
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
@@ -397,6 +409,12 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void Update()
     {
+        //時間計測
+        if (state == State.Drive)
+        {
+            timer += Time.deltaTime;
+        }
+
         // 操作できない状態は入力を取らない
         if (state != State.Drive) return;
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
@@ -454,17 +472,42 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             lapCount++;
             nowAngle = 0f;
+
+            //タイマーを点滅
+            blinkTimer = lapBlinkTime;
         }
 
         //ゴール判定
-        if(driver == null && lapCount == maxLaps)
+        if(lapCount == maxLaps)
         {
-            //AIに切り替え
-            var wpContainer = FindObjectOfType<WaypointContainer>();
-            SetAI<AIDriver>(wpContainer);
-
             //リザルトUIを有効化
-            resultUI.SetActive(true);
+            if(resultUI.activeSelf == false) resultUI.SetActive(true);
+
+            //ランキングUIを更新
+            var result = resultUI.GetComponent<resultUI>();
+            if (result != null)
+            {
+                result.UpdateRankUI(GetName() , timerText.text);
+            }
+
+            if (driver == null)
+            {
+                //AIに切り替え
+                var wpContainer = FindObjectOfType<WaypointContainer>();
+                SetAI<AIDriver>(wpContainer);
+
+                //リザルトUIを表示開始
+                result.StartCoroutines();
+            }
+
+            //ゴール後に表示されるように
+            if(isMine) UpdateRank();
+
+            //タイマー黄色に変更
+            timerText.color = Color.yellow;
+
+            //ゴール判定が一度のみ実行されるように
+            maxLaps = -1;
         }
 
         // 入力取得
@@ -498,6 +541,9 @@ public class CarController : MonoBehaviourPunCallbacks
 
             //順位更新
             UpdateRank();
+
+            //タイムをUIに反映
+            UpdateTimerUI();
         }
 
         // combine motor & brake: motorInput 0..1, brakeInput 0..1 -> netMotor (-1..1) or separate
@@ -698,15 +744,54 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //UIに反映
-        if (currentRank == 1) rankText.text = "1st";
-        else if (currentRank == 2) rankText.text = "2nd";
-        else if (currentRank == 3) rankText.text = "3rd";
-        else rankText.text = currentRank + "th";
+        if(lapCount == maxLaps - 1 && lapManager.NowAngle(transform.position) >= 340f)
+        {
+            //ゴール直前なら表示なし
+            rankText.text = "";
+        }
+        else
+        {
+            if (currentRank == 1) rankText.text = "1st";
+            else if (currentRank == 2) rankText.text = "2nd";
+            else if (currentRank == 3) rankText.text = "3rd";
+            else rankText.text = currentRank + "th";
+        }
     }
 
     public int GetLapCount()
     {
         return lapCount;
+    }
+
+    public void UpdateTimerUI()
+    {
+        //点滅
+        if(blinkTimer > 0f)
+        {
+            blinkTimer -= Time.deltaTime;
+            timerText.color = Color.yellow;
+
+            if (Time.time >= nextBlinkTime)
+            {
+                timerText.enabled = !timerText.enabled;
+                nextBlinkTime = Time.time + lapBlinkInterval;
+            }
+
+            //ラップタイムをしばらく点滅で表示するため処理はここで終了
+            return;
+        }
+        else
+        {
+            blinkTimer = 0f;
+            timerText.enabled = true;
+            timerText.color = Color.white;
+        }
+
+        int minutes = (int)(timer / 60);
+        int seconds = (int)(timer % 60);
+        int milliseconds = (int)((timer * 1000) % 1000);
+
+        timerText.text = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
     }
 
     // 地面の種類をRaycastで検出
@@ -805,6 +890,23 @@ public class CarController : MonoBehaviourPunCallbacks
                 nameLabel.text = s;
             }
         }
+    }
+
+    public string GetName()
+    {
+        string ret = string.Empty;
+
+        Transform labelTransform = transform.Find("NameLabel");
+        if (labelTransform != null)
+        {
+            TextMeshPro nameLabel = labelTransform.GetComponent<TextMeshPro>();
+            if (nameLabel != null)
+            {
+                ret = nameLabel.text;
+            }
+        }
+
+        return ret;
     }
 
     public void SendParts(PartsID id)
