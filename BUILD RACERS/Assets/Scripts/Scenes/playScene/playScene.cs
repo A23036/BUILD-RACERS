@@ -12,6 +12,7 @@ public class playScene : baseScene
     [SerializeField] private GameObject DriverUI;
     [SerializeField] private GameObject EngineerUI;
     [SerializeField] private GameObject MonitorUI;
+    [SerializeField] private GameObject ResultUI;
 
     private bool isNotifyDriverConnected = false;
     private InputAction resultAction;
@@ -86,6 +87,7 @@ public class playScene : baseScene
             var player = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
             var playerCc = player.GetComponent<CarController>();
             playerCc.SetCamera();
+            playerCc.isMine = true;
 
             float geneX = 0, geneZ = 0;
             for (int i = 0; i < GenerateBotsNum; i++)
@@ -154,5 +156,9 @@ public class playScene : baseScene
 
             isNotifyDriverConnected = true;
         }
+    }
+    public GameObject GetResultUI()
+    {
+        return ResultUI;
     }
 }
