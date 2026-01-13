@@ -14,7 +14,7 @@ public class resultUI : MonoBehaviour
     [SerializeField] Vector3 startScale = Vector3.zero;
     [SerializeField] Vector3 endScale = Vector3.one;
 
-    private float timeElapsed = 0f;
+    private bool isResultInitCamera = false;
 
     private void Awake()
     {
@@ -24,7 +24,6 @@ public class resultUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
     }
 
     void OnEnable()
@@ -51,11 +50,26 @@ public class resultUI : MonoBehaviour
         // フェードアウト
         yield return Animate(1, 0, endScale, endScale * 1.1f, fadeDuration);
 
+        /*
         //カメラを固定にする
         var cameraController = Camera.main.GetComponent<CameraController>();
         if (cameraController != null)
         {
             cameraController.SetFixedPos(new Vector3(-20,7,60) , 3f);
+        }
+        */
+
+        //初回のみ実行
+        if (!isResultInitCamera)
+        {
+            //カメラワークをゴール後に変更
+            var cc = Camera.main.GetComponent<CameraController>();
+            if (cc != null)
+            {
+                cc.SetIsResult(true);
+            }
+
+            isResultInitCamera = true;
         }
     }
 

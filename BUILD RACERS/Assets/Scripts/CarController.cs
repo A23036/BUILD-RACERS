@@ -280,11 +280,23 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //シーンマネージャー取得
-        var sceneManager = FindObjectOfType<singlePlayScene>();
-        if(sceneManager != null)
+        if(PhotonNetwork.IsConnected)
         {
-            resultUI = sceneManager.GetResultUI();
-            resultUI.SetActive(false);
+            var sceneManager = FindObjectOfType<playScene>();
+            if (sceneManager != null)
+            {
+                resultUI = sceneManager.GetResultUI();
+                resultUI.SetActive(false);
+            }
+        }
+        else
+        {
+            var sceneManager = FindObjectOfType<singlePlayScene>();
+            if (sceneManager != null)
+            {
+                resultUI = sceneManager.GetResultUI();
+                resultUI.SetActive(false);
+            }
         }
     }
 
@@ -797,6 +809,12 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void SendParts(PartsID id)
     {
+        //ゴール後は処理なし
+        if(resultUI.gameObject.activeSelf)
+        {
+            return;
+        }
+
         //シングルプレイ時の操作
         if (!PhotonNetwork.IsConnected)
         {
