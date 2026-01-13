@@ -1,10 +1,13 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class resultUI : MonoBehaviour
 {
+    //ゴール時の画像
     [SerializeField] private GameObject resultImageObj;
     private Image resultImage;
 
@@ -15,6 +18,15 @@ public class resultUI : MonoBehaviour
     [SerializeField] Vector3 endScale = Vector3.one;
 
     private bool isResultInitCamera = false;
+
+    //順位表の画像
+    [SerializeField] private GameObject[] rankingUIObjects = new GameObject[8]; // 8つのUIプレハブ
+    [SerializeField] private float moveInterval = 0.2f; // 各UIの表示間隔(秒)
+    [SerializeField] private float moveDuration = 0.5f; // 移動時間
+    [SerializeField] private Vector3 startOffset = new Vector3(-1000, 0, 0); // 初期オフセット位置
+
+    //プレイシーンから遷移するボタン
+    [SerializeField] private GameObject[] menuUIObjects;
 
     private void Awake()
     {
@@ -28,12 +40,25 @@ public class resultUI : MonoBehaviour
 
     void OnEnable()
     {
-        StartCoroutine(PlayResultImage());
+        StartCoroutine(PlayResultSequence());
     }
 
     // Update is called once per frame
     void Update()
     {
+    }
+
+    // メインのシーケンス制御コルーチン
+    IEnumerator PlayResultSequence()
+    {
+        // 最初にPlayResultImageを実行
+        yield return StartCoroutine(PlayResultImage());
+
+        // 完了後に8つのUIを表示
+        yield return StartCoroutine(ShowRankingUI());
+
+        //シーン遷移UI表示
+        yield return StartCoroutine(ShowMenuUI());
     }
 
     IEnumerator PlayResultImage()
@@ -50,15 +75,6 @@ public class resultUI : MonoBehaviour
         // フェードアウト
         yield return Animate(1, 0, endScale, endScale * 1.1f, fadeDuration);
 
-        /*
-        //カメラを固定にする
-        var cameraController = Camera.main.GetComponent<CameraController>();
-        if (cameraController != null)
-        {
-            cameraController.SetFixedPos(new Vector3(-20,7,60) , 3f);
-        }
-        */
-
         //初回のみ実行
         if (!isResultInitCamera)
         {
@@ -70,6 +86,82 @@ public class resultUI : MonoBehaviour
             }
 
             isResultInitCamera = true;
+        }
+    }
+
+    IEnumerator ShowRankingUI()
+    {
+        for (int i = 0; i < rankingUIObjects.Length; i++)
+        {
+            if (rankingUIObjects[i] != null)
+            {
+                var obj = rankingUIObjects[i];
+                var nowPos = obj.GetComponent<RectTransform>().anchoredPosition;
+                StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos + startOffset));
+                yield return new WaitForSeconds(moveInterval);
+            }
+        }
+
+        //クリック or タッチでUIを画面外へ
+        while (true)
+        {
+            if ((Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) ||
+                (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame))
+            {
+                break; // 入力されたらループを抜ける
+            }
+
+            yield return null;
+        }
+
+        for (int i = 0; i < rankingUIObjects.Length; i++)
+        {
+            if (rankingUIObjects[i] != null)
+            {
+                var obj = rankingUIObjects[i];
+                var nowPos = obj.GetComponent<RectTransform>().anchoredPosition;
+                StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos - startOffset));
+                yield return new WaitForSeconds(moveInterval);
+            }
+        }
+    }
+
+    IEnumerator ShowMenuUI()
+    {
+        for (int i = 0; i < menuUIObjects.Length; i++)
+        {
+            if (menuUIObjects[i] != null)
+            {
+                var obj = menuUIObjects[i];
+                var nowPos = obj.GetComponent<RectTransform>().anchoredPosition;
+                StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos + startOffset));
+                yield return new WaitForSeconds(moveInterval);
+            }
+        }
+    }
+
+    // 個別のUI要素を移動させるコルーチン
+    IEnumerator MoveUIElement(GameObject uiObj , Vector3 start , Vector3 end)
+    {
+        RectTransform rt = uiObj.GetComponent<RectTransform>();
+        if (rt == null) yield break;
+
+        // Vector3をVector2に変換（Z座標を無視）
+        Vector2 startPos = new Vector2(start.x, start.y);
+        Vector2 endPos = new Vector2(end.x, end.y);
+
+        // 初期位置を設定
+        rt.anchoredPosition = startPos;
+        uiObj.SetActive(true);
+
+        // 移動アニメーション
+        float t = 0;
+        while (t < moveDuration)
+        {
+            t += Time.deltaTime;
+            float eased = 1 - Mathf.Pow(1 - t, 5);
+            rt.anchoredPosition = Vector2.Lerp(startPos, endPos, eased);
+            yield return null;
         }
     }
 
@@ -100,5 +192,11 @@ public class resultUI : MonoBehaviour
     {
         RectTransform rt = image.GetComponent<RectTransform>();
         rt.localScale = v;
+    }
+
+    public void PushToMenuButton()
+    {
+        //メニューシーンへ遷移
+        SceneManager.LoadScene("menu");
     }
 }
