@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8402293572175783209}
   m_Layer: 0
-  m_Name: Jumping_Platform
+  m_Name: Slope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,6 +41,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 8402293572175783209}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -54,19 +66,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -74,11 +86,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       propertyPath: m_Name
@@ -91,6 +107,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8916367501040764060}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4640709843977935439}
   m_SourcePrefab: {fileID: 100100000, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
 --- !u!1 &2400736973045879373 stripped
 GameObject:
@@ -119,6 +138,28 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 6329158148709259305, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}
+--- !u!114 &4640709843977935439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2400736973045879373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!4 &3034002428245281015 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5f3b898014c7ded45a92991617c653ad, type: 3}

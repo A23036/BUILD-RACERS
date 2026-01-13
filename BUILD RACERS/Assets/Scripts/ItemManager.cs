@@ -113,7 +113,7 @@ public class ItemManager : MonoBehaviour
                     return PartsID.Rocket;
                 }
             case PartsType.Gimmick:
-                int r3 = Random.Range(0, 3);
+                int r3 = Random.Range(0, 4);
                 Debug.Log("RandomItem:" + r3);
                 if (r3 == 0)
                 {
@@ -123,9 +123,13 @@ public class ItemManager : MonoBehaviour
                 {
                     return PartsID.Balloon;
                 }
-                else
+                else if (r3 == 2)
                 {
                     return PartsID.Wall;
+                }
+                else
+                {
+                    return PartsID.Slope;
                 }
             default:
                 return 0;
