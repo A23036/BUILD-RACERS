@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -19,10 +20,17 @@ public class CameraController : MonoBehaviourPunCallbacks
     public void SetTarget(Transform newTarget) => target = newTarget;
 
     // カメラ固定フラグ
-    public bool isFixed = false;
-    public Vector3 fixedPos;
+    private bool isFixed = false;
+    private Vector3 fixedPos;
     private float elapsedTime = 0f;
     [SerializeField]private float fixedTime = 3f;
+
+    //リザルトフラグ
+    private bool isResult = false;
+
+    //リザルトカメラワーク座標
+    [SerializeField] private Transform[] viewPoints;
+    private float switchTime = 0f;
 
     void Awake()
     {
@@ -50,6 +58,53 @@ public class CameraController : MonoBehaviourPunCallbacks
         if (target == null)
         {
             return;
+        }
+
+        //リザルトなら定期的にカメラワークを変更
+        if(isResult)
+        {
+            if(switchTime == 0f)
+            {
+                //固定と追従を交互にする
+                int r = 0;
+                if (isFixed)
+                {
+                    //最短地点を固定座標にする
+                    float len = 10000;
+                    Vector3 kartPos = Vector3.zero;
+                    var karts = FindObjectsOfType<CarController>();
+                    foreach(var kart in karts)
+                    {
+                        if(kart.isMine) kartPos = kart.transform.position;
+                    }
+
+                    for(int i = 0;i < viewPoints.Length;i++)
+                    {
+                        float dist = (kartPos - viewPoints[i].transform.position).magnitude;
+                        if (len > dist)
+                        {
+                            len = dist;
+                            r = i;
+                        }
+                    }
+                    SetFixedPos(viewPoints[r].transform.position);
+                    isFixed = false;
+                    if (len != 1e6) Debug.Log("Fix");
+                    else Debug.LogError("Not Found ViewPoint");
+                }
+                else
+                {
+                    r = Random.Range(0, viewPoints.Length);
+                    isFixed = true;
+                    Debug.Log("Target");
+                }
+
+                switchTime = 3f;
+            }
+            else
+            {
+                switchTime = Mathf.Max(0f, switchTime - Time.deltaTime);
+            }
         }
 
         Vector3 desiredPosition;
@@ -93,11 +148,70 @@ public class CameraController : MonoBehaviourPunCallbacks
         transform.LookAt(target.position + Vector3.up * 1.5f);
 
         // ------------ カメラ固定処理 ------------
-        if (isFixed)
+        if (switchTime > 0f && !isFixed)
         {
             transform.position = fixedPos;
-            
-            if(elapsedTime >= fixedTime)
+
+            //視線が通らなければ追従へ戻す
+            float distance = 1000f;
+
+            // Rayはカメラの位置からとばす
+            var rayStartPosition = transform.position;
+            // Rayはカメラが向いてる方向にとばす
+            var rayDirection = transform.forward.normalized;
+
+            // Hitしたオブジェクト格納用
+            RaycastHit raycastHit;
+
+            // Rayを飛ばす（out raycastHit でHitしたオブジェクトを取得する）
+            var isHit = Physics.Raycast(rayStartPosition, rayDirection, out raycastHit, distance);
+
+            // Debug.DrawRay (Vector3 start(rayを開始する位置), Vector3 dir(rayの方向と長さ), Color color(ラインの色));
+            Debug.DrawRay(rayStartPosition, rayDirection * distance, Color.red);
+
+            // なにかを検出したら
+            if (isHit)
+            {
+                //カートに視線が通っていれば固定続行
+                var cc = raycastHit.collider.gameObject.GetComponent<CarController>();
+                if(cc != null)
+                {
+                    isHit = false;
+                }
+                else
+                {
+                    isHit= true;
+                }
+            }
+            else
+            {
+                Debug.Log("RAY NOT HIT");
+            }
+
+            Debug.DrawRay(rayStartPosition, rayDirection * distance, Color.red);
+
+            //最短地点を固定座標にする
+            float len = 10000;
+            Vector3 kartPos = Vector3.zero;
+            var karts = FindObjectsOfType<CarController>();
+            foreach (var kart in karts)
+            {
+                if (kart.isMine) kartPos = kart.transform.position;
+            }
+
+            int idx = 0;
+            for (int i = 0; i < viewPoints.Length; i++)
+            {
+                float dist = (kartPos - viewPoints[i].transform.position).magnitude;
+                if (len > dist)
+                {
+                    len = dist;
+                    idx = i;
+                }
+            }
+            SetFixedPos(viewPoints[idx].transform.position);
+
+            if (elapsedTime >= fixedTime || isHit)
             {
                 isFixed = false;
                 elapsedTime = 0f;
@@ -107,14 +221,14 @@ public class CameraController : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        if (isFixed)
+        if (isResult)
         {
             elapsedTime += Time.deltaTime;
         }
     }
 
     /// <summary>
-    /// 
+    /// カメラを一定時間固定
     /// </summary>
     /// <param name="pos">固定座標</param>
     /// <param name="f">固定時間</param>
@@ -124,5 +238,12 @@ public class CameraController : MonoBehaviourPunCallbacks
         isFixed = true;
         elapsedTime = 0f;
         fixedTime = f;
+    }
+
+    //リザルトシーンに遷移したらtrueをセット
+    public void SetIsResult(bool b)
+    {
+        isResult = b;
+        isFixed = b;
     }
 }
