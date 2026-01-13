@@ -53,9 +53,10 @@ public class Parts : MonoBehaviour
         if (panelManager == null)
             Debug.LogError("PanelManager が見つかりません！");
 
-        if(partsType != PartsType.Gimmick)
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (partsType != PartsType.Gimmick)
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
             cooldownGauge.enabled = false;
         }
 
@@ -224,6 +225,13 @@ public class Parts : MonoBehaviour
             isPlaced = false;
         }
 
+        if(partsType == PartsType.Gimmick)
+        {
+            Color color = spriteRenderer.color;
+            color.a = 0.5f;
+            spriteRenderer.color = color;
+        }
+
         // Collider を掴み判定可能に
         UpdateColliderState();
     }
@@ -235,6 +243,13 @@ public class Parts : MonoBehaviour
         draggingTouchId = null;
 
         float pressDuration = Time.time - pressTime;
+
+        if (partsType == PartsType.Gimmick)
+        {
+            Color color = spriteRenderer.color;
+            color.a = 1.0f;
+            spriteRenderer.color = color;
+        }
 
         // ---- オブジェクト回転判定 ----
         if (isRotate && pressDuration <= clickThreshold)
