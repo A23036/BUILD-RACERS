@@ -25,11 +25,15 @@ public class ItemManager : MonoBehaviour
 
     CarController carController;
 
+    [SerializeField] private ItemUIManager itemUI;
+
     public int GetItemNum() => itemQueue.Count;
 
     private void Start()
     {
         carController = GetComponent<CarController>();
+
+        itemUI = GameObject.Find("ItemSlotRoot").GetComponent<ItemUIManager>();
 
         //重みの設定
         itemWeightMap = new Dictionary<PartsID, int>();
@@ -56,6 +60,9 @@ public class ItemManager : MonoBehaviour
             nodeMap[itemId] = new List<LinkedListNode<int>>();
 
         nodeMap[itemId].Add(node);
+
+        // アイテムUIの更新
+        itemUI.RefreshFromQueue(new List<int>(itemQueue));
         PrintItemQueue();
     }
 
@@ -78,6 +85,9 @@ public class ItemManager : MonoBehaviour
         
         // 使用フラグが立っていたらアイテム生成
         if(isUse) SpawnItem((PartsID)id);
+
+        // アイテムUIの更新
+        itemUI.RefreshFromQueue(new List<int>(itemQueue));
 
         return id;
     }
@@ -103,6 +113,7 @@ public class ItemManager : MonoBehaviour
                 nodeMap.Remove(itemId);
         }
 
+        itemUI.RefreshFromQueue(new List<int>(itemQueue));
         PrintItemQueue();
         return true;
     }

@@ -747,6 +747,7 @@ MonoBehaviour:
   speedWeight: 5
   accelerationWeight: 5
   maxCapacity: 25
+  itemUI: {fileID: 0}
 --- !u!1 &8388995873041266228
 GameObject:
   m_ObjectHideFlags: 0
