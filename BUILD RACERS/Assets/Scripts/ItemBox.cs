@@ -1,4 +1,5 @@
 using UnityEngine;
+using Photon.Pun;
 
 public class ItemBoxController : MonoBehaviour
 {
@@ -104,15 +105,30 @@ public class ItemBoxController : MonoBehaviour
             itemManager = other.GetComponentInParent<ItemManager>();
             carController = other.GetComponentInParent<CarController>();
 
-            // --- アイテムボックスが破壊されるときの処理 ---
-            // 1. アイテムを渡す処理をここに記述（あれば）
-            // アイテム取得数の上限でなければランダムなアイテムを生成
-            if (carController.CanGetItem())
+            if (carController.isMine && PhotonNetwork.IsConnected)
             {
-                carController.SendParts(itemManager.GetRandomItem(partsType));
-                carController.AddPartsNum(); // アイテム数を追加
+                // --- アイテムボックスが破壊されるときの処理 ---
+                // 1. アイテムを渡す処理をここに記述（あれば）
+                // アイテム取得数の上限でなければランダムなアイテムを生成
+                if (carController.CanGetItem())
+                {
+                    carController.SendParts(itemManager.GetRandomItem(partsType));
+                    carController.AddPartsNum(); // アイテム数を追加
+                }
+            }
+            else if(carController.isMine)
+            {
+                //シングル or チュートリアルならそのままアイテム獲得する
+                if(/*個数制限*/true)
+                {
+                    PartsID id = itemManager.GetRandomItem(partsType);
+                    carController.AddPartsNum(); // アイテム数を追加
+
+                    itemManager.Enqueue((int)id);
+                }
             }
 
+            //共通処理
             // 2. 破壊エフェクトを生成する
             if (breakEffectPrefab != null)
             {
