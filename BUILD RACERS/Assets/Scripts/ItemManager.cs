@@ -6,6 +6,18 @@ using UnityEngine.UIElements;
 
 public class ItemManager : MonoBehaviour
 {
+    //シングルで使うアイテムの重み
+    private Dictionary<PartsID, int> itemWeightMap;
+
+    //各アイテムの重み
+    [SerializeField] private int energyWeight;
+    [SerializeField] private int rocketWeight;
+    [SerializeField] private int speedWeight;
+    [SerializeField] private int accelerationWeight;
+
+    [SerializeField] private int maxCapacity;
+    private int nowCapacity;
+
     private LinkedList<int> itemQueue = new LinkedList<int>();
 
     // 同じIDのノードをリストで管理
@@ -18,11 +30,26 @@ public class ItemManager : MonoBehaviour
     private void Start()
     {
         carController = GetComponent<CarController>();
+
+        //重みの設定
+        itemWeightMap = new Dictionary<PartsID, int>();
+        SetItemWeight();
+
+        nowCapacity = 0;
     }
 
     // アイテム追加（同じIDも追加可能）
     public void Enqueue(int itemId)
     {
+        //シングルプレイなら重みチェック
+        if (!PhotonNetwork.IsConnected)
+        {
+            //キャパオーバーなら処理なし
+            if (nowCapacity + itemWeightMap[(PartsID)itemId] > maxCapacity) return;
+
+            nowCapacity += itemWeightMap[(PartsID)itemId];
+        }
+
         var node = itemQueue.AddLast(itemId);
 
         if (!nodeMap.ContainsKey(itemId))
@@ -42,6 +69,12 @@ public class ItemManager : MonoBehaviour
         int id = firstNode.Value;
         
         PrintItemQueue();
+
+        //シングルプレイなら重み計算
+        if(!PhotonNetwork.IsConnected)
+        {
+            nowCapacity -= itemWeightMap[(PartsID)id];
+        }
         
         // 使用フラグが立っていたらアイテム生成
         if(isUse) SpawnItem((PartsID)id);
@@ -198,5 +231,13 @@ public class ItemManager : MonoBehaviour
 
             return;
         }
+    }
+
+    public void SetItemWeight()
+    {
+        itemWeightMap[PartsID.Rocket] = rocketWeight;
+        itemWeightMap[PartsID.Energy] = energyWeight;
+        itemWeightMap[PartsID.Speed] = speedWeight;
+        itemWeightMap[PartsID.Acceleration] = accelerationWeight;
     }
 }

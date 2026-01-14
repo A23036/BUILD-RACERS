@@ -742,6 +742,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95c774c4b974d5246ab0e8dc2a7d15dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  energyWeight: 5
+  rocketWeight: 10
+  speedWeight: 5
+  accelerationWeight: 5
+  maxCapacity: 25
 --- !u!1 &8388995873041266228
 GameObject:
   m_ObjectHideFlags: 0
