@@ -16616,7 +16616,7 @@ MonoBehaviour:
   uiRoot: {fileID: 1690822460}
   slotPrefab: {fileID: 3741653177114495235, guid: 223e400008aa2ec49bbb222b075e8959, type: 3}
   maxSlots: 3
-  slotSpacing: 150
+  slotSpacing: 160
   moveSpeed: 10
   floatInOffsetX: -200
   spriteTable: {fileID: 11400000, guid: 5480ae3b4ae9af841a42d6ea2df39c94, type: 2}
