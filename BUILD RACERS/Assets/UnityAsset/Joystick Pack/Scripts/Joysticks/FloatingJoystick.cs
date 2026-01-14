@@ -7,6 +7,13 @@ public class FloatingJoystick : Joystick
 {
     protected override void Start()
     {
+        //Android以外で動作しないように
+        if(Application.platform != RuntimePlatform.Android)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         base.Start();
         background.gameObject.SetActive(false);
     }
