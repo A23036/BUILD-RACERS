@@ -12,6 +12,7 @@ public enum PartsID
 {
     Energy = 0,
     Rocket,
+    RocketHoming,
     Flask,
     Acceleration,
     Speed,

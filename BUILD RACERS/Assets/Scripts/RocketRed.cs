@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class RocketMove : MonoBehaviour
+public class RocketRed : MonoBehaviour
 {
     // Inspectorで速度を設定できるように public にします
-    public float speed = 20f;
+    public float speed = 50f;
     // ロケットが発射されてから自動的に消滅するまでの時間
-    public float lifeTime = 5f;
+    public float lifeTime = 100f;
 
     [Header("Reflect Settings")]
     [Tooltip("ロケットが反射できる最大回数")]
@@ -29,6 +29,22 @@ public class RocketMove : MonoBehaviour
     [Tooltip("エフェクトが自動で消えるまでの時間")]
     public float effectLifeTime = 2f;
 
+    [Header("Homing Settings")]
+    public float homingStrength = 5f;   // 追従の強さ
+    public float detectDistance = 30f;  // Rayの距離
+    public float detectAngle = 30f;     // 斜めRay角度
+
+    private Transform targetPlayer;
+    private Transform ownerPlayer; // 発射元
+
+    private bool isLockedOn = false;
+
+    // 生成者をセット
+    public void SetOwner(Transform owner)
+    {
+        ownerPlayer = owner;
+    }
+
     void Start()
     {
         // 破壊タイマーを開始
@@ -44,6 +60,16 @@ public class RocketMove : MonoBehaviour
         // 高さ維持処理
         MaintainHeight();
 
+        // ロックオン処理
+        if (!isLockedOn)
+        {
+            SearchTargetPlayer();   // 見つかるまで毎フレーム
+        }
+        else
+        {
+            UpdateHoming();         // ロック後は追従
+        }
+
         // 毎フレーム、currentDirectionに基づいて移動します
         transform.Translate(currentDirection * speed * Time.deltaTime, Space.World);
 
@@ -54,7 +80,95 @@ public class RocketMove : MonoBehaviour
         }
     }
 
-    // ★ 高さ維持処理 ★
+    void UpdateHoming()
+    {
+        if (targetPlayer == null)
+            return;
+
+        Vector3 targetDir =
+            (targetPlayer.position - transform.position).normalized;
+        
+        targetDir.y = 0f; // Y成分を無視（高さを変えない）
+        
+        currentDirection =
+            Vector3.Lerp(
+                currentDirection,
+                targetDir,
+                Time.deltaTime * homingStrength
+            ).normalized;
+    }
+
+    // ロックオン対象を探す
+    void SearchTargetPlayer()
+    {
+        Vector3 origin = transform.position;
+
+        Vector3[] directions =
+        {
+        currentDirection,
+        Quaternion.Euler(0, detectAngle, 0) * currentDirection,
+        Quaternion.Euler(0, -detectAngle, 0) * currentDirection
+    };
+
+        foreach (var dir in directions)
+        {
+            if (Physics.Raycast(origin, dir, out RaycastHit hit, detectDistance))
+            {
+                if (hit.collider.CompareTag("Player"))
+                {
+                    Transform hitPlayer = hit.collider.transform.root;
+
+                    if (hitPlayer != ownerPlayer)
+                    {
+                        targetPlayer = hitPlayer;
+                        isLockedOn = true;
+
+                        Debug.Log($"[Rocket] Lock On {hitPlayer.name}");
+                        return;
+                    }
+                }
+            }
+
+            Debug.DrawRay(origin, dir * detectDistance, Color.cyan);
+        }
+    }
+
+
+    // プレイヤーの方向を向かせる
+    void DetectTargetPlayer()
+    {
+        Vector3 origin = transform.position;
+
+        Vector3[] directions =
+        {
+        transform.forward,
+        Quaternion.Euler(0, detectAngle, 0) * transform.forward,
+        Quaternion.Euler(0, -detectAngle, 0) * transform.forward
+    };
+
+        foreach (var dir in directions)
+        {
+            if (Physics.Raycast(origin, dir, out RaycastHit hit, detectDistance))
+            {
+                if (hit.collider.CompareTag("Player"))
+                {
+                    Transform hitPlayer = hit.collider.transform.root;
+
+                    // 自分を発射したPlayerは除外
+                    if (hitPlayer != ownerPlayer)
+                    {
+                        targetPlayer = hitPlayer;
+                        Debug.Log($"[Rocket] Lock On {hitPlayer.name}");
+                        return;
+                    }
+                }
+            }
+
+            Debug.DrawRay(origin, dir * detectDistance, Color.cyan, 2f);
+        }
+    }
+
+    // 高さ維持処理
     void MaintainHeight()
     {
         RaycastHit hit;
@@ -113,7 +227,12 @@ public class RocketMove : MonoBehaviour
             {
                 // 反射回数が残っていない場合、ロケットを破壊する
                 Destroy(gameObject);
+                Debug.Log("[redrocket]Refrect Limit");
             }
+        }
+        else if(collision.gameObject.CompareTag("Dirt") || collision.gameObject.CompareTag("Road"))
+        {
+            return;
         }
         else
         {
@@ -135,6 +254,8 @@ public class RocketMove : MonoBehaviour
             PlayDestroyEffect();
             // ロケットを破壊
             Destroy(gameObject);
+
+            Debug.Log("[redrocket]not wall");
         }
     }
 }

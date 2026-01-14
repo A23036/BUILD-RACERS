@@ -12,6 +12,7 @@ public class ItemManager : MonoBehaviour
     //各アイテムの重み
     [SerializeField] private int energyWeight;
     [SerializeField] private int rocketWeight;
+    [SerializeField] private int rocketHomingWeight;
     [SerializeField] private int speedWeight;
     [SerializeField] private int accelerationWeight;
 
@@ -147,15 +148,19 @@ public class ItemManager : MonoBehaviour
                 }
 
             case PartsType.Item:
-                int r2 = Random.Range(0, 2);
+                int r2 = Random.Range(0, 3);
                 Debug.Log("RandomItem:" + r2);
                 if (r2 == 0)
                 {
                     return PartsID.Energy;
                 }
-                else
+                else if(r2 == 1)
                 {
                     return PartsID.Rocket;
+                }
+                else
+                {
+                    return PartsID.RocketHoming;
                 }
             case PartsType.Gimmick:
                 int r3 = Random.Range(0, 4);
@@ -185,10 +190,11 @@ public class ItemManager : MonoBehaviour
     {
         PartsType type = 0;
 
-        switch ((PartsID)id)
+        switch (id)
         {
             case PartsID.Energy:
             case PartsID.Rocket:
+            case PartsID.RocketHoming:
                 type = PartsType.Item;
                 break;
             case PartsID.Speed:
@@ -242,11 +248,46 @@ public class ItemManager : MonoBehaviour
 
             return;
         }
+        if (id == PartsID.RocketHoming)
+        {
+            float forwardOffset = 5.0f;   // 前方距離
+            float heightOffset = 1.5f;   // 少し浮かせる（地面埋まり防止）
+
+            Vector3 spawnPos =
+                transform.position +
+                transform.forward * forwardOffset +
+                Vector3.up * heightOffset;
+
+            if (PhotonNetwork.IsConnected)
+            {
+                var rocket = PhotonNetwork.Instantiate(
+                    "PetBottle_Rocket_Red",
+                    spawnPos,
+                    transform.rotation   // 向きも自身に合わせる
+                );
+                // ロケットの生成者をセット
+                rocket.GetComponent<RocketRed>().SetOwner(transform);
+            }
+            else
+            {
+                GameObject prefab = (GameObject)Resources.Load("PetBottle_Rocket_Red");
+
+                var rocket = Instantiate(
+                    prefab,
+                    spawnPos,
+                    transform.rotation   // 向きも自身に合わせる
+                );
+                rocket.GetComponent<RocketRed>().SetOwner(transform);
+            }
+
+            return;
+        }
     }
 
     public void SetItemWeight()
     {
         itemWeightMap[PartsID.Rocket] = rocketWeight;
+        itemWeightMap[PartsID.RocketHoming] = rocketHomingWeight;
         itemWeightMap[PartsID.Energy] = energyWeight;
         itemWeightMap[PartsID.Speed] = speedWeight;
         itemWeightMap[PartsID.Acceleration] = accelerationWeight;
