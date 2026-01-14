@@ -1,6 +1,7 @@
-using UnityEngine;
-using System.Collections.Generic;
 using Photon.Pun;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
 public class ItemManager : MonoBehaviour
@@ -136,14 +137,30 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    public void SpawnItem(PartsID id)
+    public PartsType GetPartsType(PartsID id)
     {
-        //シングルプレイ時のCPU処理
-        if(!PhotonNetwork.IsConnected)
+        PartsType type = 0;
+
+        switch ((PartsID)id)
         {
-            return;
+            case PartsID.Energy:
+            case PartsID.Rocket:
+                type = PartsType.Item;
+                break;
+            case PartsID.Speed:
+            case PartsID.Acceleration:
+                type = PartsType.Passive;
+                break;
+            default:
+                type = PartsType.Gimmick;
+                break;
         }
 
+        return type;
+    }
+
+    public void SpawnItem(PartsID id)
+    {
         if(id == PartsID.Energy)
         {
             // 加速状態を付与
@@ -160,11 +177,25 @@ public class ItemManager : MonoBehaviour
                 transform.forward * forwardOffset +
                 Vector3.up * heightOffset;
 
-            PhotonNetwork.Instantiate(
-                "PetBottle_Rocket_Green",
-                spawnPos,
-                transform.rotation   // 向きも自身に合わせる
-            );
+            if(PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.Instantiate(
+                    "PetBottle_Rocket_Green",
+                    spawnPos,
+                    transform.rotation   // 向きも自身に合わせる
+                );
+            }
+            else
+            {
+                GameObject prefab = (GameObject)Resources.Load("PetBottle_Rocket_Green");
+
+                Instantiate(
+                    prefab,
+                    spawnPos,
+                    transform.rotation   // 向きも自身に合わせる
+                );
+            }
+
             return;
         }
     }

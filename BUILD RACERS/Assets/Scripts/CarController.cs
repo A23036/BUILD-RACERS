@@ -246,6 +246,8 @@ public class CarController : MonoBehaviourPunCallbacks
         // ----- 回転初期化 -----
         stanElapsed = 0f;
         stanStartRotation = transform.rotation;
+
+        Debug.Log($"SET STAN : {GetName()}");
     }
     　
     private void Awake()
@@ -277,7 +279,7 @@ public class CarController : MonoBehaviourPunCallbacks
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        bodyMesh = GameObject.Find("BodyMesh");
+        bodyMesh = gameObject.transform.Find("BodyMesh").gameObject;
 
         itemManager = GetComponent<ItemManager>();
 
@@ -448,7 +450,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
-        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        if (PhotonNetwork.IsConnected && !isMine) return;
 
         //停止状態なら処理しない
         if (state == State.Stop)
@@ -943,12 +945,6 @@ public class CarController : MonoBehaviourPunCallbacks
     // 使用するアイテムを検索、キューから削除
     public void RemoveUsedItem()
     {
-        //シングルプレイ時の操作
-        if (!PhotonNetwork.IsConnected)
-        {
-            return;
-        }
-
         // 使用するアイテムIDを取り出す
         PartsID usedId = (PartsID)itemManager.Dequeue(true);
 
@@ -962,6 +958,10 @@ public class CarController : MonoBehaviourPunCallbacks
             {
                 target.RPC("RPC_RemoveUsedItem", pairPlayer, usedId);
             }
+        }
+        else if(!PhotonNetwork.IsConnected && isMine)
+        {
+            RPC_RemoveItem(usedId);
         }
     }
 
