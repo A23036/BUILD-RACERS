@@ -138,12 +138,6 @@ public class ItemManager : MonoBehaviour
 
     public void SpawnItem(PartsID id)
     {
-        //シングルプレイ時のCPU処理
-        if(!PhotonNetwork.IsConnected)
-        {
-            return;
-        }
-
         if(id == PartsID.Energy)
         {
             // 加速状態を付与
@@ -160,11 +154,25 @@ public class ItemManager : MonoBehaviour
                 transform.forward * forwardOffset +
                 Vector3.up * heightOffset;
 
-            PhotonNetwork.Instantiate(
-                "PetBottle_Rocket_Green",
-                spawnPos,
-                transform.rotation   // 向きも自身に合わせる
-            );
+            if(PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.Instantiate(
+                    "PetBottle_Rocket_Green",
+                    spawnPos,
+                    transform.rotation   // 向きも自身に合わせる
+                );
+            }
+            else
+            {
+                GameObject prefab = (GameObject)Resources.Load("PetBottle_Rocket_Green");
+
+                Instantiate(
+                    prefab,
+                    spawnPos,
+                    transform.rotation   // 向きも自身に合わせる
+                );
+            }
+
             return;
         }
     }
