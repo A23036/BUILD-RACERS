@@ -54,11 +54,12 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private float SteerAngle = 60f;
     [SerializeField] private float TurnSensitivity = 2f;
     [SerializeField] private float MaxSpeed = 20f;
-    [SerializeField] private float LightStanTime = 0.5f;
-    [SerializeField] private float MidiumStanTime = 1.0f;
-    [SerializeField] private float HeavyStanTime = 2.0f;
+    [SerializeField] private float LightStunTime = 0.5f;
+    [SerializeField] private float MidiumStunTime = 1.0f;
+    [SerializeField] private float HeavyStunTime = 2.0f;
     [SerializeField] private float ShortBoostTime = 0.5f;
     [SerializeField] private float LongBoostTime = 1.0f;
+    [SerializeField] private float stunBrakeFactor = 0.92f; // 毎FixedUpdateで減衰
 
     [Header("重力補正")]
     [SerializeField] private float extraGravity = 20f;
@@ -106,10 +107,11 @@ public class CarController : MonoBehaviourPunCallbacks
     private int partsNum = 0;
 
     private State state;
-    private float stanTime = 0;
+    private float stunTime = 0;
 
-    private float stanElapsed = 0f;
-    private Quaternion stanStartRotation;
+    private float stunElapsed = 0f;
+    private Quaternion stunStartRotation;
+    private Quaternion stunStartLocalRotation;
     private GameObject bodyMesh;
 
     [Header("パッシブアイテム用パラメータ")]
@@ -120,8 +122,9 @@ public class CarController : MonoBehaviourPunCallbacks
     private int[] passiveNumList = { 0, 0, 0 }; // パッシブ強化状態
 
     [Header("回転演出用パラメータ")]
-    [SerializeField] private float stanSpinAngle = 720f; // 回転量
-    [SerializeField] private AnimationCurve stanEaseCurve;
+    [SerializeField] private AnimationCurve stunEaseCurve;
+    [SerializeField] private float stunMinSpeed = 2.0f;
+    private float stunSpinAngle = 360f; // 回転量
 
     private bool isSetStartPos = false;
 
@@ -231,21 +234,24 @@ public class CarController : MonoBehaviourPunCallbacks
         // スタンの強さに応じてスタン時間をセット
         switch(type) {
             case StunType.Light:
-                stanTime = LightStanTime * (1 - passiveNumList[2] * antiStunPower);// パッシブ量に応じて軽減
+                stunTime = LightStunTime * (1 - passiveNumList[2] * antiStunPower);// パッシブ量に応じて軽減
+                stunSpinAngle = 360f;
                 break;
             case StunType.Midium:
-                stanTime = MidiumStanTime * (1 - passiveNumList[2] * antiStunPower);
+                stunTime = MidiumStunTime * (1 - passiveNumList[2] * antiStunPower);
+                stunSpinAngle = 360f;
                 break;
             case StunType.Heavy:
-                stanTime = HeavyStanTime * (1 - passiveNumList[2] * antiStunPower);
+                stunTime = HeavyStunTime * (1 - passiveNumList[2] * antiStunPower);
+                stunSpinAngle = 720f;
                 break;
             default:
                 break;
         }
 
         // ----- 回転初期化 -----
-        stanElapsed = 0f;
-        stanStartRotation = transform.rotation;
+        stunElapsed = 0f;
+        stunStartLocalRotation = bodyMesh.transform.localRotation;
 
         Debug.Log($"SET STAN : {GetName()}");
     }
@@ -460,7 +466,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         if (state == State.Stun)
         {
-            UpdateStan();
+            UpdateStun();
             return;
         }
 
@@ -810,32 +816,42 @@ public class CarController : MonoBehaviourPunCallbacks
         }
     }
 
-    private void UpdateStan()
+    private void UpdateStun()
     {
-        // プレイヤーを回転させる処理
-        stanElapsed += Time.deltaTime;
+        stunElapsed += Time.deltaTime;
 
-        float t = Mathf.Clamp01(stanElapsed / stanTime);
+        float t = Mathf.Clamp01(stunElapsed / stunTime);
+        float ease = stunEaseCurve.Evaluate(t);
+        float angle = ease * stunSpinAngle;
 
-        // イージング取得（0 → 1 → 0）
-        float ease = stanEaseCurve.Evaluate(t);
+        // ローカル回転で演出
+        bodyMesh.transform.localRotation = stunStartLocalRotation * Quaternion.Euler(0f, angle, 0f);
 
-        // Y軸回転（必要なら Z でもOK）
-        float angle = ease * stanSpinAngle;
+        // ---- 速度減衰 ----
+        Vector3 velocity = rb.linearVelocity;
+        // y軸は計算しない
+        velocity.y = rb.linearVelocity.y;
+        // スタン軽減によって減速率を軽減
+        velocity.x *= stunBrakeFactor * (1 - passiveNumList[2] * antiStunPower);
+        velocity.z *= stunBrakeFactor * (1 - passiveNumList[2] * antiStunPower);
 
-        bodyMesh.transform.rotation = stanStartRotation * Quaternion.Euler(0f, angle, 0f);
-        
-        // StanTimeを進める
-        stanTime -= Time.deltaTime;
+        float speed = velocity.magnitude;
 
-        if (stanTime <= 0f)
+        if (speed > stunMinSpeed)
         {
-            // 終了時に元の回転に完全に戻す
-            transform.rotation = stanStartRotation;
+            rb.linearVelocity = velocity;
+        }
 
+        stunTime -= Time.deltaTime;
+
+        if (stunTime <= 0f)
+        {
+            // 見た目だけ元に戻す
+            bodyMesh.transform.localRotation = stunStartLocalRotation;
             state = State.Drive;
         }
     }
+
 
     //接触がコインならカウント
     private void OnTriggerEnter(Collider other)

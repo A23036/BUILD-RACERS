@@ -124,7 +124,7 @@ public class RocketMove : MonoBehaviour
 
                 if (car != null)
                 {
-                    // ヒットしたPlayerに中程度のスタン状態を設定
+                    // ヒットしたPlayerに軽程度のスタン状態を設定
                     car.SetStun(StunType.Light);
 
                     Debug.Log($"HIT ROCKET : {car.GetName()}");
