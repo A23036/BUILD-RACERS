@@ -124,7 +124,17 @@ public class ItemBoxController : MonoBehaviour
                     PartsID id = itemManager.GetRandomItem(partsType);
                     carController.AddPartsNum(); // アイテム数を追加
 
-                    itemManager.Enqueue((int)id);
+                    //アイテム
+                    PartsType itemType = itemManager.GetPartsType(id);
+                    if (itemType == PartsType.Item)
+                    {
+                        itemManager.Enqueue((int)id);
+                    }
+                    //パッシブ
+                    else if(itemType == PartsType.Passive)
+                    {
+                        carController.RPC_SetPassiveState(id, true);
+                    }
                 }
             }
 

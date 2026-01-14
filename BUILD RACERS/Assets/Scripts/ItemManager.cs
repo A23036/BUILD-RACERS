@@ -1,6 +1,7 @@
-using UnityEngine;
-using System.Collections.Generic;
 using Photon.Pun;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
 public class ItemManager : MonoBehaviour
@@ -134,6 +135,28 @@ public class ItemManager : MonoBehaviour
             default:
                 return 0;
         }
+    }
+
+    public PartsType GetPartsType(PartsID id)
+    {
+        PartsType type = 0;
+
+        switch ((PartsID)id)
+        {
+            case PartsID.Energy:
+            case PartsID.Rocket:
+                type = PartsType.Item;
+                break;
+            case PartsID.Speed:
+            case PartsID.Acceleration:
+                type = PartsType.Passive;
+                break;
+            default:
+                type = PartsType.Gimmick;
+                break;
+        }
+
+        return type;
     }
 
     public void SpawnItem(PartsID id)
