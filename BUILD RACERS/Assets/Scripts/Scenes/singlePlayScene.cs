@@ -39,7 +39,7 @@ public class singlePlayScene : baseScene
         if (PlayerPrefs.GetInt("driverNum") != -1)
         {
             //ドライバーの生成
-            var player = Instantiate(Resources.Load("player"));
+            var player = Instantiate(Resources.Load("player") , new Vector3(0,0,0),Quaternion.identity);
             player.GetComponent<CarController>().SetCamera();
             carController = player.GetComponent<CarController>();
             carController.isMine = true;
@@ -95,7 +95,7 @@ public class singlePlayScene : baseScene
         var wpContainer = FindObjectOfType<WaypointContainer>();
         for (int i = 0; i < botsNum; i++)
         {
-            var bot = Instantiate(Resources.Load("Player"),new Vector3(0,0,i*3f),Quaternion.identity);
+            var bot = Instantiate(Resources.Load("Player"),new Vector3(0,0,(i+1)*-6f),Quaternion.identity);
             var botCc = bot.GetComponent<CarController>();
             botCc.SetAI<AIDriver>(wpContainer);
             //0埋め2桁で名前を設定

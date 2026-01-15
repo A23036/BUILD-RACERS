@@ -51,10 +51,10 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
 
         if (!PhotonNetwork.IsConnected)
         {
-            debugText = "READY";
-
+            debugText = "LOADING...";
+            
             //ドライバーを初期位置にセット
-            Invoke(nameof(SetStartPosDrivers), 0.2f);
+            Invoke(nameof(SetStartPosDrivers), 3f);
 
             //N秒後にドライバー開始
             Invoke(nameof(DriverStart), untilStartTime);
