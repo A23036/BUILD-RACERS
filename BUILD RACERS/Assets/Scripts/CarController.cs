@@ -586,7 +586,7 @@ public class CarController : MonoBehaviourPunCallbacks
         // --- 地面別・ブースト補正(同じ) ---
         float accelMultiplier = 1f;
         float speedMultiplier = 1f;
-        if (currentGroundTag == "Dirt")
+        if (currentGroundTag == "Dirt" && boostTimer <= 0f)
         {
             accelMultiplier = dirtAccelMultiplier;
             speedMultiplier = dirtSpeedMultiplier;

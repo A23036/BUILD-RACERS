@@ -633,7 +633,7 @@ MonoBehaviour:
   LightStunTime: 0.5
   MidiumStunTime: 1
   HeavyStunTime: 2
-  ShortBoostTime: 0.5
+  ShortBoostTime: 0.25
   LongBoostTime: 1
   stunBrakeFactor: 0.92
   extraGravity: 10
