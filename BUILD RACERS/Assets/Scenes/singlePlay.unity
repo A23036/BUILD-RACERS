@@ -12102,7 +12102,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3893771998911656109, guid: 822d02065a7fe974c9fb1b6dda4bfeaa, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6911907272056998504, guid: 822d02065a7fe974c9fb1b6dda4bfeaa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13442,7 +13442,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2622146079113070769, guid: 65cf759b017f40047b5d1f984e257d92, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4640709843977935439, guid: 65cf759b017f40047b5d1f984e257d92, type: 3}
       propertyPath: sceneViewId
@@ -22614,6 +22614,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mud
       objectReference: {fileID: 0}
+    - target: {fileID: 7011438752912030972, guid: e360199485970a84e91b12b19963a585, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -22912,7 +22916,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3261097858096690942, guid: 3727f03d56777704ab071cf1b85161f8, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
