@@ -31,6 +31,9 @@ public class selectScene : baseScene
     private TextMeshProUGUI monitorsCounter;
     private TextMeshProUGUI roomNameText;
 
+    //現在のルームの状態
+    private string nowRoomStat;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -50,6 +53,8 @@ public class selectScene : baseScene
         roomNameText.color = Color.black;
 
         monitorsCounter = GameObject.Find("monitorsCounter").transform.Find("Text").GetComponent<TextMeshProUGUI>();
+
+        nowRoomStat = "";
     }
 
     private void Awake()
@@ -61,13 +66,19 @@ public class selectScene : baseScene
 
     private void Update()
     {
+        if (PhotonNetwork.CurrentRoom != null)
+        {
+            PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("masterGameScene", out var stat);
+            if (stat is string) nowRoomStat = (string)stat;
+        }
+
         //人数表示の更新
-        string curPlayresNum = PhotonNetwork.PlayerList.Length.ToString();
+        string curPlayresNum = FindObjectsOfType<selectSystem>().Length.ToString();
         string maxPlayresNum = limitPlayers.ToString();
         playersCountText.text = curPlayresNum + " / " + maxPlayresNum;
 
         //観戦者数の更新　超過人数を観戦者としてカウント
-        monitorsCounter.text = "×" + (Mathf.Max(PhotonNetwork.PlayerList.Length - limitPlayers,0)).ToString();
+        monitorsCounter.text = FindObjectsOfType<monitorSystem>().Length.ToString();
 
         //プレイヤーか観戦者かによって処理を分岐
         if (ss != null) selectorUpdate();
@@ -118,6 +129,7 @@ public class selectScene : baseScene
             if(monitor != null)
             {
                 PlayerPrefs.SetInt("isMonitor", 1);
+                Debug.Log("IM MONITOR**************");
             }
             else
             {
@@ -135,6 +147,10 @@ public class selectScene : baseScene
     {
         //観戦者は処理なし
         if (ss == null) return;
+
+        //未選択なら処理なし
+        ss.GetNums(out int dn, out int bn);
+        if (dn == -1 && bn == -1) return;
 
         ss.PushedReady();
 
@@ -272,9 +288,20 @@ public class selectScene : baseScene
     //カスタムプロパティのコールバック
     public override void OnRoomPropertiesUpdate(Hashtable changedProps)
     {
-        if (!PhotonNetwork.IsMasterClient && changedProps.TryGetValue("limitPlayers", out var v))
+        if (!PhotonNetwork.IsMasterClient && changedProps.TryGetValue("limitPlayers", out var v) && v is int)
         {
             limitPlayers = (int)v;
+        }
+
+        //ルームの状態を更新
+        var props = PhotonNetwork.CurrentRoom.CustomProperties;
+        if(props.TryGetValue("masterGameScene" , out var scene) && scene is string str && str == "select")
+        {
+            nowRoomStat = "Waiting";
+        }
+        else
+        {
+            nowRoomStat = "";
         }
     }
 
@@ -311,6 +338,63 @@ public class selectScene : baseScene
         ss.DeleteMyStat();
 
         base.PushBackButton();
+    }
+
+    public void PushMonitorButton()
+    {
+        Debug.Log("NOW ROOM STAT : " + nowRoomStat);
+
+        //ルームの状態がStartingなら処理なし
+        if (nowRoomStat != "Waiting") return;
+
+        SwitchSide();
+    }
+
+    public void SwitchSide()
+    {
+        //観戦とプレイヤーを切り替え
+        Debug.Log("Switch Monitor");
+
+        if (monitor != null)
+        {
+            SpawnSelector();
+        }
+        else if(selector != null)
+        {
+            //選択を解放する処理
+            ss.ReleaseSlotAll(PhotonNetwork.LocalPlayer.ActorNumber);
+
+            //準備状態を削除
+            var pv = ss.GetComponent<PhotonView>();
+            pv.RPC("RPC_ReleaseSelectorStat", RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber);
+
+            //観戦生成
+            SpawnMonitor();
+        }
+        else
+        {
+            Debug.Log("プレイヤーでも観戦でもない状態");
+        }
+    }
+
+    public void SpawnSelector()
+    {
+        //生成する空きがあれば観戦者を削除してセレクター生成
+        PhotonNetwork.Destroy(monitor);
+
+        selector = PhotonNetwork.Instantiate("Selector", new Vector3(-1000, -1000, -1000), Quaternion.identity);
+        ss = selector.GetComponent<selectSystem>();
+        ss.DecideColor();
+    }
+
+    public void SpawnMonitor()
+    {
+        //生成する空きがあれば観戦者を削除してセレクター生成
+        PhotonNetwork.Destroy(selector);
+
+        monitor = PhotonNetwork.Instantiate("Monitor", new Vector3(-1000, -1000, -1000), Quaternion.identity);
+        ms = monitor.GetComponent<monitorSystem>();
+        ms.DecideColor();
     }
 
     ~selectScene()

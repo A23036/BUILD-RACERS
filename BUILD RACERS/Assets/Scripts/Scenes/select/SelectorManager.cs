@@ -130,7 +130,8 @@ public class SelectorManager : MonoBehaviourPunCallbacks
             if (pv != null && pv.Owner != null)
             {
                 int actor = pv.Owner.ActorNumber;
-                
+
+                ///*
                 if (!selectorsStat.TryGetValue(actor, out bool b) || !b)
                 {
                     Debug.Log(actor + " is not ready");
@@ -145,6 +146,25 @@ public class SelectorManager : MonoBehaviourPunCallbacks
 
                     break;
                 }
+                //*/
+
+                /*
+                if (ss.IsReady() == false)
+                {
+                    Debug.Log(actor + " is not ready");
+                    isEveryoneReady = false;
+
+                    //ÉãÅ[ÉÄÇÃèÛë‘ÇWaitingÇ…ïœçX
+                    var propsw = new Hashtable();
+                    propsw["masterGameScene"] = "Waiting";
+                    PhotonNetwork.CurrentRoom.SetCustomProperties(propsw);
+
+                    Debug.Log($"Set {propsw["masterGameScene"]}");
+
+                    break;
+                }
+                */
+
                 isEveryoneReady = true;
             }
         }
