@@ -481,8 +481,8 @@ public class CarController : MonoBehaviourPunCallbacks
             lapCount++;
             nowAngle = 0f;
 
-            //タイマーを点滅
-            blinkTimer = lapBlinkTime;
+            //タイマーを点滅　スタート直後を除いて実行
+            if(lapCount > 0) blinkTimer = lapBlinkTime;
         }
 
         //ゴール判定
@@ -495,7 +495,7 @@ public class CarController : MonoBehaviourPunCallbacks
             var result = resultUI.GetComponent<resultUI>();
             if (result != null)
             {
-                result.UpdateRankUI(GetName() , timerText.text);
+                result.UpdateRankUI(GetName() , timer);
             }
 
             if (driver == null)

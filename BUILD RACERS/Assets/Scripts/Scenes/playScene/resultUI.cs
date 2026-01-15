@@ -215,7 +215,7 @@ public class resultUI : MonoBehaviour
     }
 
     //ランキング表の更新
-    public void UpdateRankUI(string name , string time)
+    public void UpdateRankUI(string name , float time)
     {
         int rank = 0;
         for (int i = 0; i < rankUIupdateFlags.Length; i++)
@@ -231,12 +231,19 @@ public class resultUI : MonoBehaviour
 
         var Text = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>();
         if (Text == null) return;
+        
         string rankStr = rank.ToString();
         if (rank == 1) rankStr += " st";
         else if (rank == 2) rankStr += " nd";
         else if (rank == 3) rankStr += " rd";
         else rankStr += " th";
-        string format = $"{rankStr} , {name.PadRight(8)} & xxxxxxxx , {time}";
+
+        int minutes = (int)(time / 60);
+        int seconds = (int)(time % 60);
+        int milliseconds = (int)((time * 100) % 100);
+        string timeStr = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+        
+        string format = $"{rankStr} , {name.PadRight(8)} & xxxxxxxx , {timeStr}";
         Text.text = format;
 
         //プレイヤーなら黄色に
