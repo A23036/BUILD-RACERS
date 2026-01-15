@@ -255,6 +255,7 @@ public class Parts : MonoBehaviour
         if (isRotate && pressDuration <= clickThreshold)
         {
             RotateGuide();
+            rb.gravityScale = 2f;
             return; // 配置処理をしない
         }
 
