@@ -28,9 +28,6 @@ public class singlePlayScene : baseScene
             //エンジニアのカメラ追従設定
             engineer.SetCamera();
         }
-
-        //BOTドライバーの生成
-        GenerateBotDrivers();
     }
 
     private void Awake()
@@ -71,6 +68,9 @@ public class singlePlayScene : baseScene
             EngineerUI.SetActive(true);
         }
         else Debug.Log("not select");
+
+        //BOTドライバーの生成
+        GenerateBotDrivers();
     }
 
     // Update is called once per frame
