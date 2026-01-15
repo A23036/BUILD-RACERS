@@ -380,12 +380,14 @@ public class CarController : MonoBehaviourPunCallbacks
         throttleAction = new InputAction(type: InputActionType.Value);
         throttleAction.AddBinding("<Keyboard>/w");
         throttleAction.AddBinding("<Keyboard>/upArrow");
+        throttleAction.AddBinding("<Gamepad>/buttonEast");
         throttleAction.AddBinding("<Touchscreen>/primaryTouch/press");
         throttleAction.Enable();
 
         brakeAction = new InputAction(type: InputActionType.Button);
         brakeAction.AddBinding("<Keyboard>/s");
         brakeAction.AddBinding("<Keyboard>/downArrow");
+        brakeAction.AddBinding("<Gamepad>/buttonSouth");
         brakeAction.Enable();
 
         steerAction = new InputAction(type: InputActionType.Value);
@@ -395,10 +397,13 @@ public class CarController : MonoBehaviourPunCallbacks
         steerAction.AddCompositeBinding("1DAxis")
             .With("Negative", "<Keyboard>/leftArrow")
             .With("Positive", "<Keyboard>/rightArrow");
+        steerAction.AddBinding("<Gamepad>/leftStick/x");
         steerAction.Enable();
 
         useItemAction = new InputAction(type: InputActionType.Button);
         useItemAction.AddBinding("<Keyboard>/space");
+        useItemAction.AddBinding("<Gamepad>/leftShoulder");
+        useItemAction.AddBinding("<Gamepad>/leftTrigger");
         useItemAction.AddBinding("<Touchscreen>/primaryTouch/tap");
         useItemAction.Enable();
 
