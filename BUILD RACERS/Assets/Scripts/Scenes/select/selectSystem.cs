@@ -465,23 +465,12 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //ルームマスターに準備状態を送信
     public void SendToMaster(bool readyStat)
     {
-        photonView.RPC("RPC_OnSelectorChanged", RpcTarget.MasterClient, readyStat, PhotonNetwork.LocalPlayer.ActorNumber);
+        var pv = GetComponent<PhotonView>();
+
+        pv.RPC("RPC_OnSelectorChanged", RpcTarget.All, readyStat, PhotonNetwork.LocalPlayer.ActorNumber);
         Debug.Log("*** SEND TO MASTER ***");
 
         return;
-
-        int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClientViewID"];
-        PhotonView target = PhotonView.Find(viewID);
-
-        if (target != null)
-        {
-            target.RPC("RPC_OnSelectorChanged", RpcTarget.MasterClient, readyStat, PhotonNetwork.LocalPlayer.ActorNumber);
-            Debug.Log("SendToMaster");
-        }
-        else
-        {
-            Debug.Log($"not found : {viewID}'s MasterClientViewID");
-        }
     }
 
     //ルームマスターに削除命令を送信

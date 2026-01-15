@@ -33,7 +33,7 @@ public class ItemManager : MonoBehaviour
     private void Start()
     {
         var pv = GetComponent<PhotonView>();
-        if(pv != null && pv.IsMine == false)
+        if(PhotonNetwork.IsConnected && pv != null && pv.IsMine == false)
         {
             return;
         }

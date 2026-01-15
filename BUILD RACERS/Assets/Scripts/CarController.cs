@@ -500,7 +500,14 @@ public class CarController : MonoBehaviourPunCallbacks
             var result = resultUI.GetComponent<resultUI>();
             if (result != null)
             {
-                result.UpdateRankUI(GetName() , timer);
+                if (PhotonNetwork.IsConnected)
+                {
+                    photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, GetName(), timer);
+                }
+                else
+                {
+                    result.UpdateRankUI(GetName(), timer);
+                }
             }
 
             if (driver == null)

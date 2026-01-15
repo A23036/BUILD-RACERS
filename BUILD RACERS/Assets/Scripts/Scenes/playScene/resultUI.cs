@@ -46,7 +46,7 @@ public class resultUI : MonoBehaviour
 
     void OnEnable()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -77,7 +77,7 @@ public class resultUI : MonoBehaviour
     {
         //transform.localScale = startScale;
         SetTransform(startScale, resultImage);
-        SetAlpha(0 , resultImage);
+        SetAlpha(0, resultImage);
 
         // フェードイン + 拡大
         yield return Animate(0, 1, startScale, endScale, scaleDuration);
@@ -153,7 +153,7 @@ public class resultUI : MonoBehaviour
     }
 
     // 個別のUI要素を移動させるコルーチン
-    IEnumerator MoveUIElement(GameObject uiObj , Vector3 start , Vector3 end)
+    IEnumerator MoveUIElement(GameObject uiObj, Vector3 start, Vector3 end)
     {
         RectTransform rt = uiObj.GetComponent<RectTransform>();
         if (rt == null) yield break;
@@ -195,7 +195,7 @@ public class resultUI : MonoBehaviour
         }
     }
 
-    void SetAlpha(float a , Image image)
+    void SetAlpha(float a, Image image)
     {
         Color c = image.color;
         c.a = a;
@@ -215,6 +215,12 @@ public class resultUI : MonoBehaviour
     }
 
     //ランキング表の更新
+    [PunRPC]
+    public void RPC_UpdateRankUI(string name , float time)
+    {
+        UpdateRankUI(name, time);
+    }
+    
     public void UpdateRankUI(string name , float time)
     {
         int rank = 0;
