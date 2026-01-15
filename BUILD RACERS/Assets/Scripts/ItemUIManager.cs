@@ -1,3 +1,4 @@
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,6 +26,7 @@ public class ItemUIManager : MonoBehaviour
 
 
     private readonly List<ItemSlotUI> slots = new();
+    private readonly Dictionary<Transform, Coroutine> moveRoutines = new();
 
     void Awake()
     {
@@ -51,7 +53,7 @@ public class ItemUIManager : MonoBehaviour
             slot.transform.localPosition = GetSlotPos(i);
 
             slot.Clear();
-            slot.gameObject.SetActive(false); // –¾Ž¦“I‚É”ñ•\Ž¦
+            slot.gameObject.SetActive(false); // IÉ”\
 
             slots.Add(slot);
         }
@@ -62,6 +64,7 @@ public class ItemUIManager : MonoBehaviour
         for (int i = 0; i < maxSlots; i++)
         {
             ItemSlotUI slot = slots[i];
+            bool wasActive = slot.gameObject.activeSelf;
 
             PartsID? newId =
                 i < queue.Count ? (PartsID)queue[i] : null;
@@ -72,8 +75,15 @@ public class ItemUIManager : MonoBehaviour
             if (newId.HasValue)
             {
                 Sprite sprite = spriteTable.GetSprite(newId.Value);
-                slot.SetItem(newId.Value, sprite);
-                slot.gameObject.SetActive(true);
+                if (!wasActive)
+                {
+                    ActivateSlot(i, newId.Value, sprite);
+                }
+                else
+                {
+                    slot.SetItem(newId.Value, sprite);
+                    slot.gameObject.SetActive(true);
+                }
             }
             else
             {
@@ -95,14 +105,14 @@ public class ItemUIManager : MonoBehaviour
             if (!slot.gameObject.activeSelf)
                 continue;
 
-            // ˆê”ÔãiŽg—p‰Â”\ƒAƒCƒeƒ€j‚¾‚¯‘å‚«‚­
+            // ÔigpÂ”\ACejå‚«
             slot.transform.localScale =
                 (i == 0) ? activeScale : normalScale;
         }
     }
 
     // ----------------------------
-    // “à•”ˆ—
+    // 
     // ----------------------------
     private void ActivateSlot(int index, PartsID id, Sprite sprite)
     {
@@ -124,7 +134,7 @@ public class ItemUIManager : MonoBehaviour
         Vector3 start = target + Vector3.right * floatInOffsetX;
 
         slot.transform.localPosition = start;
-        StartCoroutine(Move(slot.transform, target));
+        StartMove(slot.transform, target);
     }
 
 
@@ -132,7 +142,7 @@ public class ItemUIManager : MonoBehaviour
     {
         for (int i = 0; i < slots.Count; i++)
         {
-            StartCoroutine(Move(slots[i].transform, GetSlotPos(i)));
+            StartMove(slots[i].transform, GetSlotPos(i));
         }
     }
 
@@ -153,7 +163,17 @@ public class ItemUIManager : MonoBehaviour
 
 
 
-    private System.Collections.IEnumerator Move(Transform t, Vector3 target)
+    private void StartMove(Transform t, Vector3 target)
+    {
+        if (moveRoutines.TryGetValue(t, out Coroutine routine) && routine != null)
+        {
+            StopCoroutine(routine);
+        }
+
+        moveRoutines[t] = StartCoroutine(Move(t, target));
+    }
+
+    private IEnumerator Move(Transform t, Vector3 target)
     {
         while (Vector3.Distance(t.localPosition, target) > 0.1f)
         {
@@ -168,9 +188,7 @@ public class ItemUIManager : MonoBehaviour
     {
         for (int i = 0; i < slots.Count; i++)
         {
-            StartCoroutine(
-                Move(slots[i].transform, GetSlotPos(i))
-            );
+            StartMove(slots[i].transform, GetSlotPos(i));
         }
     }
 
