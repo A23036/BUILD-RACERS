@@ -258,6 +258,9 @@ public class robbyScene : baseScene
         //０文字なら処理なし
         if (createRoomName.Length <= 0) return;
 
+        //プレイ人数が異常値なら処理なし
+        if(maxPlayers < 2 || 16 < maxPlayers) return;
+
         //シーン遷移
         SceneManager.LoadScene("select");
 
