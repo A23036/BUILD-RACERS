@@ -41,14 +41,15 @@ public class iconButton : MonoBehaviour
         if (ss == null)
         {
             //自分のセレクターを検索する
-            PhotonView[] allss = FindObjectsOfType<PhotonView>();
+            selectSystem[] allss = FindObjectsOfType<selectSystem>();
 
             //接続数をコンソールに出力
             Debug.Log("CONNECTS COUNT : " + allss.Count());
             
             foreach(var css in allss)
             {
-                if (css.IsMine)
+                PhotonView pv = css.gameObject.GetComponent<PhotonView>();
+                if (pv.IsMine)
                 {
                     ss = css.GetComponent<selectSystem>();
                 }
@@ -59,6 +60,14 @@ public class iconButton : MonoBehaviour
         if(ss != null && ss.IsReady() == false)
         {
             ss.SetNum(driverNum, builderNum);
+        }
+        else if(ss == null)
+        {
+            Debug.Log("NOT FOUND SS");
+        }
+        else if (ss.IsReady())
+        {
+            Debug.Log("SS STAT = READY");
         }
     }
 }

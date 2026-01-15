@@ -30,6 +30,7 @@ public class monitorSystem : MonoBehaviourPunCallbacks, IPunObservable
         //セレクトの初期化
         PlayerPrefs.SetInt("driverNum", -1);
         PlayerPrefs.SetInt("engineerNum", -1);
+        PlayerPrefs.SetInt("isMonitor", 1);
 
         //キャンバスの子供に設定
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
@@ -176,6 +177,7 @@ public class monitorSystem : MonoBehaviourPunCallbacks, IPunObservable
         //シーン遷移
         if (changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)
         {
+            PhotonNetwork.IsMessageQueueRunning = false;
             var sm = GameObject.Find("SceneManager").GetComponent<selectScene>();
             sm.PushStartButton();
         }
@@ -189,6 +191,9 @@ public class monitorSystem : MonoBehaviourPunCallbacks, IPunObservable
     //ルームから誰か抜けた時に呼ばれるコールバック
     public override void OnPlayerLeftRoom(Photon.Realtime.Player other)
     {
+        //自由にプレイヤーと観戦を入れ替われるようにするので処理停止
+        return;
+
         //空きがあればセレクターとして参加
         var sceneManager = GameObject.Find("SceneManager");
         if (sceneManager != null)

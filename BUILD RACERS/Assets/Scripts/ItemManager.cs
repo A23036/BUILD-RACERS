@@ -32,6 +32,12 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
+        var pv = GetComponent<PhotonView>();
+        if(pv != null && pv.IsMine == false)
+        {
+            return;
+        }
+
         carController = GetComponent<CarController>();
 
         itemUI = GameObject.Find("ItemSlotRoot").GetComponent<ItemUIManager>();

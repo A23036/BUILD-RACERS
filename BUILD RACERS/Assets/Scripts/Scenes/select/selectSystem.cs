@@ -44,6 +44,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     private GameObject checkmark;
     private GameObject crown;
 
+    private SelectorManager selectorManager;
+
     void Start()
     {
         selectDriverNum = -1;
@@ -56,6 +58,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         {
             PlayerPrefs.SetInt("driverNum", 1);
             PlayerPrefs.SetInt("engineerNum", -1);
+            PlayerPrefs.SetInt("isMonitor", -1);
         }
 
         //キャンバスの子供に設定
@@ -89,6 +92,8 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             isRoomMaster = true;
             crown.SetActive(true);
         }
+
+        selectorManager = this.gameObject.GetComponent<SelectorManager>();
     }
 
     private void Awake()
@@ -460,6 +465,11 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //ルームマスターに準備状態を送信
     public void SendToMaster(bool readyStat)
     {
+        photonView.RPC("RPC_OnSelectorChanged", RpcTarget.MasterClient, readyStat, PhotonNetwork.LocalPlayer.ActorNumber);
+        Debug.Log("*** SEND TO MASTER ***");
+
+        return;
+
         int viewID = (int)PhotonNetwork.CurrentRoom.CustomProperties["MasterClientViewID"];
         PhotonView target = PhotonView.Find(viewID);
 

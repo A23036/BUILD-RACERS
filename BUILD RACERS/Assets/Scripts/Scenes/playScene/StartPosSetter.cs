@@ -20,8 +20,9 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        //観戦者の時に作動しないように　RPCはバッファされるため関数先で処理を止める
-        if(PlayerPrefs.GetInt("isMonitor") == 1)
+        //観戦者の時に作動しないように　RPCはバッファされるため関数先で処理を止める　＝＞　途中参加でREADY GO!が表示されないように
+        //マスターなら途中参加でない　＋　カートの初期位置セットを実行したいので false にしない
+        if(!photonView.IsMine && PlayerPrefs.GetInt("isMonitor") == 1)
         {
             gameObject.SetActive(false);
             return;
