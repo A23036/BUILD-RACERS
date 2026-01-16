@@ -16,6 +16,7 @@ public class ItemManager : MonoBehaviour
     [SerializeField] private int balloonTrapWeight;
     [SerializeField] private int speedWeight;
     [SerializeField] private int accelerationWeight;
+    [SerializeField] private int antiStunWeight;
 
     [SerializeField] private int maxCapacity;
     private int nowCapacity;
@@ -57,9 +58,15 @@ public class ItemManager : MonoBehaviour
         if (!PhotonNetwork.IsConnected)
         {
             //キャパオーバーなら処理なし
-            if (nowCapacity + itemWeightMap[(PartsID)itemId] > maxCapacity) return;
+            if (nowCapacity + itemWeightMap[(PartsID)itemId] > maxCapacity)
+            {
+                Debug.Log("parts capacity over");
+                Debug.Log("Capacity : " + nowCapacity);
+                return;
+            }
 
             nowCapacity += itemWeightMap[(PartsID)itemId];
+            Debug.Log("Capacity : " + nowCapacity);
         }
 
         var node = itemQueue.AddLast(itemId);
@@ -89,6 +96,7 @@ public class ItemManager : MonoBehaviour
         if(!PhotonNetwork.IsConnected)
         {
             nowCapacity -= itemWeightMap[(PartsID)id];
+            Debug.Log("Capacity : " + nowCapacity);
         }
         
         // 使用フラグが立っていたらアイテム生成
@@ -328,11 +336,12 @@ public class ItemManager : MonoBehaviour
 
     public void SetItemWeight()
     {
+        itemWeightMap[PartsID.Energy] = energyWeight;
         itemWeightMap[PartsID.Rocket] = rocketWeight;
         itemWeightMap[PartsID.RocketHoming] = rocketHomingWeight;
         itemWeightMap[PartsID.BalloonTrap] = balloonTrapWeight;
-        itemWeightMap[PartsID.Energy] = energyWeight;
-        itemWeightMap[PartsID.Speed] = speedWeight;
         itemWeightMap[PartsID.Acceleration] = accelerationWeight;
+        itemWeightMap[PartsID.Speed] = speedWeight;
+        itemWeightMap[PartsID.AntiStun] = antiStunWeight;
     }
 }

@@ -740,6 +740,7 @@ MonoBehaviour:
   balloonTrapWeight: 5
   speedWeight: 5
   accelerationWeight: 5
+  antiStunWeight: 10
   maxCapacity: 25
   itemUI: {fileID: 0}
 --- !u!1 &8388995873041266228

@@ -1785,7 +1785,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -890, y: -90}
+  m_AnchoredPosition: {x: -890, y: -100}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &109726418
@@ -1804,6 +1804,7 @@ MonoBehaviour:
   slotPrefab: {fileID: 6808437776095124983, guid: 5ff670ab3aeea974f8edfabd1b397bf0, type: 3}
   initialSlots: 6
   slotSpacing: 100
+  rowSpacing: 100
   moveSpeed: 10
   floatInOffsetX: -200
   spriteTable: {fileID: 11400000, guid: 4adbccff5942d51459bdf533921c15f6, type: 2}
