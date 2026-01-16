@@ -27,7 +27,7 @@ public class menu : baseScene
 
     public void PushMultiButton()
     {
-        SceneManager.LoadScene("multi");
+        SceneManager.LoadScene("Robby");
     }
     public void PushOptionButton()
     {
@@ -36,5 +36,9 @@ public class menu : baseScene
     public void PushShopButton()
     {
         SceneManager.LoadScene("shop");
+    }
+    public void PushBackButton()
+    {
+        SceneManager.LoadScene("tittle");
     }
 }
