@@ -215,12 +215,6 @@ public class resultUI : MonoBehaviour
     }
 
     //ランキング表の更新
-    [PunRPC]
-    public void RPC_UpdateRankUI(string name , float time)
-    {
-        UpdateRankUI(name, time);
-    }
-    
     public void UpdateRankUI(string name , float time)
     {
         int rank = 0;

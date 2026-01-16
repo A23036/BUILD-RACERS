@@ -1021,6 +1021,14 @@ public class CarController : MonoBehaviourPunCallbacks
 
     // ----- 通信用関数 -----
 
+    //確定順位と時間を送信
+    [PunRPC]
+    public void RPC_UpdateRankUI(string name, float time)
+    {
+        var result = resultUI.GetComponent<resultUI>();
+        result.UpdateRankUI(name, time);
+    }
+
     // アイテムをキューに追加
     [PunRPC]
     public void RPC_EnqueueItem(PartsID id)
