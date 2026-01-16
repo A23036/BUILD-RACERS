@@ -39,8 +39,8 @@ public class selectScene : baseScene
     {
         preSceneName = "menu";
 
-        GameObject inputField = GameObject.Find("InputFieldLegacy");
-        InputField input = inputField.GetComponent<InputField>();
+        GameObject inputField = GameObject.Find("InputField (TMP)");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
         input.text = PlayerPrefs.GetString("PlayerName");
 
         debugMessage = GameObject.Find("DebugMessage").GetComponent<TextMeshProUGUI>();
@@ -174,8 +174,8 @@ public class selectScene : baseScene
     public void InputText()
     {
         //共通処理
-        GameObject inputField = GameObject.Find("InputFieldLegacy");
-        InputField input = inputField.GetComponent<InputField>();
+        GameObject inputField = GameObject.Find("InputField (TMP)");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
 
         //ネームバーの文字数制限
         int nameLimitNum = 8;
@@ -227,6 +227,8 @@ public class selectScene : baseScene
 
             ms.UpdateNameBar();
         }
+
+        PhotonNetwork.LocalPlayer.NickName = input.text;
     }
 
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック

@@ -353,7 +353,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3138850101410374379, guid: 8497c1a290e5c2943b472260297d51f1, type: 3}
       propertyPath: maxLaps
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5764649725172744299, guid: 8497c1a290e5c2943b472260297d51f1, type: 3}
       propertyPath: m_Name
@@ -7781,6 +7781,9 @@ MonoBehaviour:
   rotateSmooth: 8
   mouseSensitivity: 3
   monitorDistance: 10
+  scrollSpeed: 2
+  monitorMinDistance: 3
+  monitorMaxDistance: 30
 --- !u!1 &721326453
 GameObject:
   m_ObjectHideFlags: 0
