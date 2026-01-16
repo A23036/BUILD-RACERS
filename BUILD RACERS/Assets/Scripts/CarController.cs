@@ -534,6 +534,9 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
             }
 
+            //ずれが生じないように
+            UpdateTimerUI();
+
             if (driver == null)
             {
                 //AIに切り替え

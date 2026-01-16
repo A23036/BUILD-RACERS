@@ -246,9 +246,43 @@ public class resultUI : MonoBehaviour
         string format = $"{rankStr} , {name.PadRight(8)} & xxxxxxxx , {timeStr}";
         Text.text = format;
 
-        //プレイヤーなら黄色に
-        if (name == PlayerPrefs.GetString("PlayerName")) Text.color = Color.yellow;
+        //誤差の修正　自分より長いタイムがあれば交換する
+        for (int i = rankUIupdateFlags.Length - 1; i >= 0; i--)
+        {
+            //未登録 or 自分自身なら処理なし
+            if (rankUIupdateFlags[i] == false || i == rank - 1) continue;
 
-        Debug.Log("UPDATE RANK UI : " + format);
+            var text = rankingUIObjects[i].GetComponent<TextMeshProUGUI>();
+            Debug.Log(text.text);
+            string uiTimeStr = text.text.Substring(text.text.Length - 8);
+            int uiMinute = int.Parse(uiTimeStr.Substring(0, 2));
+            int uiSecond = int.Parse(uiTimeStr.Substring(3, 2));
+            float uiMiriSec = int.Parse(uiTimeStr.Substring(6, 2));
+
+            float uiSumTime = uiMinute * 60 + uiSecond + uiMiriSec / 100;
+
+            Debug.Log($"UI:{uiSumTime} <= NEW:{time}");
+            if(uiSumTime <= time) continue;
+            Debug.Log(" *** SWAP RANK *** ");
+
+            //登録済みのタイムより短ければ入れ替え　順位以降を入れ替え
+            var tempUIStr = rankingUIObjects[i].GetComponent<TextMeshProUGUI>().text;
+            var tempCurStr = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().text;
+            //文字列を切る場所の添え字
+            int cutIdx = 4;
+            var preUI = tempUIStr.Substring(0, cutIdx);
+            var preCur = tempCurStr.Substring(0, cutIdx);
+            var suffUI = tempUIStr.Substring(cutIdx);
+            var suffCur = tempCurStr.Substring(cutIdx);
+            rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().text = preCur + suffUI;
+            rankingUIObjects[i].GetComponent<TextMeshProUGUI>().text = preUI + suffCur;
+
+            rank = i + 1;
+        }
+
+        //プレイヤーなら黄色に
+        Text = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>();
+        //if (name == PlayerPrefs.GetString("PlayerName")) Text.color = Color.yellow;
+        if (name == PhotonNetwork.LocalPlayer.NickName) Text.color = Color.yellow;
     }
 }
