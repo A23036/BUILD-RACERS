@@ -7777,11 +7777,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 051d36f9aa848c849a7bba23e86c918c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 3, z: -6}
+  offset: {x: 0, y: 4, z: -10}
   followSmooth: 8
   rotateSmooth: 8
   mouseSensitivity: 3
-  monitorDistance: 6
+  monitorDistance: 10
 --- !u!1 &721326453
 GameObject:
   m_ObjectHideFlags: 0

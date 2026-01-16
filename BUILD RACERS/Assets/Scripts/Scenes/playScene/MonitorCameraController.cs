@@ -7,13 +7,16 @@ using UnityEngine.InputSystem;
 
 public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {
-    [SerializeField] private Vector3 offset = new Vector3(0, 3, -6);
+    [SerializeField] private Vector3 offset = new Vector3(0, 3, -10);
     [SerializeField] private float followSmooth = 8f;
     [SerializeField] private float rotateSmooth = 8f;
 
     [Header("Spectator")]
     [SerializeField] private float mouseSensitivity = 3f;
-    [SerializeField] private float monitorDistance = 6f;
+    [SerializeField] private float monitorDistance;
+    [SerializeField] private float scrollSpeed = 2f;
+    [SerializeField] private float monitorMinDistance = 3;
+    [SerializeField] private float monitorMaxDistance = 30;
 
     private Transform target;
 
@@ -31,6 +34,12 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
     private InputAction clickAction;
     private InputAction pointerDeltaAction;
     private InputAction backViewAction;
+
+    // Input Actions
+    private InputAction scrollAction;
+
+    // ピンチ用
+    private float previousPinchDistance;
 
     void Awake()
     {
@@ -58,6 +67,8 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
         {
             Debug.Log("Monitor Target is null");
         }
+
+        monitorDistance = - offset.z;
     }
 
     void OnEnable()
@@ -78,6 +89,14 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
         backViewAction = new InputAction(type: InputActionType.Button);
         backViewAction.AddBinding("<Keyboard>/b");
         backViewAction.Enable();
+
+        // マウスホイール
+        scrollAction = new InputAction(
+            type: InputActionType.Value,
+            binding: "<Mouse>/scroll/y"
+        );
+        scrollAction.Enable();
+        
         base.OnEnable();
     }
 
@@ -86,6 +105,7 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
         clickAction?.Disable();
         pointerDeltaAction?.Disable();
         backViewAction?.Disable();
+        scrollAction?.Disable();
         base.OnDisable();
     }
 
@@ -94,6 +114,49 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
         if (target == null) return;
 
         Vector3 desired;
+
+        //---------------------------------
+        // PC：マウスホイール
+        //---------------------------------
+        float scroll = scrollAction.ReadValue<float>();
+        if (scroll > 0.01f)
+        {
+            monitorDistance -= scrollSpeed;
+        }
+        else if(scroll < -0.01f)
+        {
+            monitorDistance += scrollSpeed;
+        }
+
+        //ピンチ
+        if (Touchscreen.current != null)
+        {
+            var touches = Touchscreen.current.touches;
+
+            if (touches.Count >= 2 &&
+                touches[0].press.isPressed &&
+                touches[1].press.isPressed)
+            {
+                Vector2 pos0 = touches[0].position.ReadValue();
+                Vector2 pos1 = touches[1].position.ReadValue();
+
+                float currentDistance = Vector2.Distance(pos0, pos1);
+
+                if (previousPinchDistance > 0f)
+                {
+                    float delta = currentDistance - previousPinchDistance;
+                    monitorDistance -= delta * 0.1f * scrollSpeed;
+                }
+
+                previousPinchDistance = currentDistance;
+            }
+            else
+            {
+                previousPinchDistance = 0f;
+            }
+        }
+
+        monitorDistance = Mathf.Clamp(monitorDistance,monitorMinDistance,monitorMaxDistance);
 
         // --- 押した瞬間 ---
         if (clickAction.WasPressedThisFrame())
@@ -136,7 +199,6 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
         transform.position = desired;
         transform.LookAt(target.position + Vector3.up * 1.5f);
     }
-
 
 
     public void SetNextTarget(int step)
