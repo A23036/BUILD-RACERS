@@ -681,6 +681,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   stunMinSpeed: 2
   isMine: 0
+  passiveUI: {fileID: 0}
   lapBlinkTime: 3
   lapBlinkInterval: 0.3
 --- !u!114 &2777997212412123024

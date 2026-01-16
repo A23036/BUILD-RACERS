@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cc8c4909f146e148a407be35ff06a3b, type: 3}
+  m_Name: Passive Sprite Table
+  m_EditorClassIdentifier: 
+  entries:
+  - id: 5
+    sprite: {fileID: 21300000, guid: b111ca23a0a4a9d4983d6b96b13348af, type: 3}
+  - id: 6
+    sprite: {fileID: 21300000, guid: a9360f0cdb400b149bbd96846428f7f8, type: 3}
+  - id: 7
+    sprite: {fileID: 21300000, guid: ac72fcc92a9a5b041976113409697e25, type: 3}

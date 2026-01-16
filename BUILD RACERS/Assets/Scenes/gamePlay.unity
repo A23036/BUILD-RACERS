@@ -353,7 +353,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3138850101410374379, guid: 8497c1a290e5c2943b472260297d51f1, type: 3}
       propertyPath: maxLaps
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5764649725172744299, guid: 8497c1a290e5c2943b472260297d51f1, type: 3}
       propertyPath: m_Name
@@ -1752,6 +1752,61 @@ MonoBehaviour:
   labelFontSize: 35
   sphereRadius: 3
   gizmoAlpha: 0.2
+--- !u!1 &109726416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 109726417}
+  - component: {fileID: 109726418}
+  m_Layer: 5
+  m_Name: PassiveSlotRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &109726417
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109726416}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 714369830}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -890, y: -90}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &109726418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109726416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dd16ffabcedeaa47b22dc58bff8a640, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiRoot: {fileID: 109726417}
+  slotPrefab: {fileID: 6808437776095124983, guid: 5ff670ab3aeea974f8edfabd1b397bf0, type: 3}
+  initialSlots: 6
+  slotSpacing: 100
+  moveSpeed: 10
+  floatInOffsetX: -200
+  spriteTable: {fileID: 11400000, guid: 4adbccff5942d51459bdf533921c15f6, type: 2}
 --- !u!4 &117270832 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5191127672243601461, guid: dd2998b6d230cfb499f131d89d16de9f, type: 3}
@@ -3218,7 +3273,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: partsType
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
@@ -7464,6 +7519,7 @@ RectTransform:
   - {fileID: 1574659015}
   - {fileID: 1306223818}
   - {fileID: 403939636}
+  - {fileID: 109726417}
   m_Father: {fileID: 1684157464}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -22237,7 +22293,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: partsType
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name

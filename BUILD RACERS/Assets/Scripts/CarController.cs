@@ -138,6 +138,10 @@ public class CarController : MonoBehaviourPunCallbacks
     //オフライン用のフラグ　BOTとの区別用
     public bool isMine = false;
 
+    [Header("UI")]
+    [SerializeField] private PassiveUIManager passiveUI;
+    private bool shouldUpdatePassiveUI;
+
     //リザルトUI ゴールしたら有効化
     private GameObject resultUI;
 
@@ -205,9 +209,20 @@ public class CarController : MonoBehaviourPunCallbacks
                 break;
         }
 
-        Debug.Log("PassiveState: Acceleration: " + passiveNumList[0] + " Speed: " + passiveNumList[1] + " AntiStun: " + passiveNumList[2]);
+        Debug.Log("PassiveState: Acceleration: " + passiveNumList[0] + " Speed: " + passiveNumList[1] + " AntiStun: " + passiveNumList[2]); 
+        UpdatePassiveUI();
     }
-    
+
+    private void UpdatePassiveUI()
+    {
+        if (!shouldUpdatePassiveUI || passiveUI == null)
+        {
+            return;
+        }
+
+        passiveUI.RefreshFromCounts(passiveNumList[0], passiveNumList[1], passiveNumList[2]);
+    }
+
     public void SetBoost(BoostType boostType)
     {
         // ブーストの強さに応じてブースト時間をセット
@@ -286,6 +301,17 @@ public class CarController : MonoBehaviourPunCallbacks
         bodyMesh = gameObject.transform.Find("BodyMesh").gameObject;
 
         itemManager = GetComponent<ItemManager>();
+
+        shouldUpdatePassiveUI = !PhotonNetwork.IsConnected || photonView.IsMine;
+        if (shouldUpdatePassiveUI && passiveUI == null)
+        {
+            GameObject passiveRoot = GameObject.Find("PassiveSlotRoot");
+            if (passiveRoot != null)
+            {
+                passiveUI = passiveRoot.GetComponent<PassiveUIManager>();
+            }
+        }
+        UpdatePassiveUI();
 
         lapManager = GameObject.Find("LapManager").GetComponent<LapManager>();
         maxLaps = lapManager.GetMaxLaps();
