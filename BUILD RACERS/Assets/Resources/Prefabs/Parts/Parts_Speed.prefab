@@ -355,7 +355,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   partsData: {fileID: 11400000, guid: 6ef657c169e5845449ab5c8d081ded11, type: 2}
   partsType: 0
-  partsId: 4
+  partsId: 6
   partsResourceName: Parts_Speed
   cooldownDuration: 1
   cooldownGauge: {fileID: 6495522504787599778}
+  rotationGuide: {fileID: 0}
+  clickThreshold: 0.2
+  isRotate: 0

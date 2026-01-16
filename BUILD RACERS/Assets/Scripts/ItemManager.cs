@@ -13,6 +13,7 @@ public class ItemManager : MonoBehaviour
     [SerializeField] private int energyWeight;
     [SerializeField] private int rocketWeight;
     [SerializeField] private int rocketHomingWeight;
+    [SerializeField] private int balloonTrapWeight;
     [SerializeField] private int speedWeight;
     [SerializeField] private int accelerationWeight;
 
@@ -154,7 +155,7 @@ public class ItemManager : MonoBehaviour
                 }
 
             case PartsType.Item:
-                int r2 = Random.Range(0, 3);
+                int r2 = Random.Range(0, 4);
                 Debug.Log("RandomItem:" + r2);
                 if (r2 == 0)
                 {
@@ -164,9 +165,13 @@ public class ItemManager : MonoBehaviour
                 {
                     return PartsID.Rocket;
                 }
-                else
+                else if (r2 == 2)
                 {
                     return PartsID.RocketHoming;
+                }
+                else
+                {
+                    return PartsID.BalloonTrap;
                 }
             case PartsType.Gimmick:
                 int r3 = Random.Range(0, 4);
@@ -225,7 +230,7 @@ public class ItemManager : MonoBehaviour
 
         if(id == PartsID.Rocket)
         {
-            float forwardOffset = 5.0f;   // 前方距離
+            float forwardOffset = 3.0f;   // 前方距離
             float heightOffset = 1.5f;   // 少し浮かせる（地面埋まり防止）
 
             Vector3 spawnPos =
@@ -256,7 +261,7 @@ public class ItemManager : MonoBehaviour
         }
         if (id == PartsID.RocketHoming)
         {
-            float forwardOffset = 5.0f;   // 前方距離
+            float forwardOffset = 3.0f;   // 前方距離
             float heightOffset = 1.5f;   // 少し浮かせる（地面埋まり防止）
 
             Vector3 spawnPos =
@@ -288,12 +293,44 @@ public class ItemManager : MonoBehaviour
 
             return;
         }
+        if (id == PartsID.BalloonTrap)
+        {
+            float forwardOffset = -4.0f;   // 後方距離
+            float heightOffset = 0f;
+
+            Vector3 spawnPos =
+                transform.position +
+                transform.forward * forwardOffset +
+                Vector3.up * heightOffset;
+
+            if (PhotonNetwork.IsConnected)
+            {
+                var rocket = PhotonNetwork.Instantiate(
+                    "BalloonTrap",
+                    spawnPos,
+                    transform.rotation   // 向きも自身に合わせる
+                );
+            }
+            else
+            {
+                GameObject prefab = (GameObject)Resources.Load("BalloonTrap");
+
+                var rocket = Instantiate(
+                    prefab,
+                    spawnPos,
+                    transform.rotation   // 向きも自身に合わせる
+                );
+            }
+
+            return;
+        }
     }
 
     public void SetItemWeight()
     {
         itemWeightMap[PartsID.Rocket] = rocketWeight;
         itemWeightMap[PartsID.RocketHoming] = rocketHomingWeight;
+        itemWeightMap[PartsID.BalloonTrap] = balloonTrapWeight;
         itemWeightMap[PartsID.Energy] = energyWeight;
         itemWeightMap[PartsID.Speed] = speedWeight;
         itemWeightMap[PartsID.Acceleration] = accelerationWeight;

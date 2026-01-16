@@ -648,7 +648,6 @@ MonoBehaviour:
   boostDuration: 0.05
   speedText: {fileID: 0}
   coinText: {fileID: 0}
-  itemText: {fileID: 0}
   lapText: {fileID: 0}
   rankText: {fileID: 0}
   timerText: {fileID: 0}
@@ -737,6 +736,7 @@ MonoBehaviour:
   energyWeight: 5
   rocketWeight: 10
   rocketHomingWeight: 10
+  balloonTrapWeight: 5
   speedWeight: 5
   accelerationWeight: 5
   maxCapacity: 25

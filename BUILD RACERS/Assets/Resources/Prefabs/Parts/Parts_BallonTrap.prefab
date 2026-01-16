@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 5709932856685404126}
   - component: {fileID: 8865322114886408684}
   m_Layer: 0
-  m_Name: Parts_Energy
+  m_Name: Parts_BallonTrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -257,7 +257,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 1061ed49bca3d934da7c1c2d3febe4b2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8d9ea26060b894f44b2e60ad6211d65b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -306,7 +306,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5, y: 5}
+    oldSize: {x: 4.2, y: 3.57}
     newSize: {x: 2.98, y: 4.73}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -353,10 +353,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c52e683d197a54990de9823505cc89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  partsData: {fileID: 11400000, guid: 1fb4ba5abec52e546b09530894f304f6, type: 2}
+  partsData: {fileID: 11400000, guid: e74f2f2423c4b39449c99314e8695f5d, type: 2}
   partsType: 1
-  partsId: 0
-  partsResourceName: Parts_Energy
+  partsId: 3
+  partsResourceName: Parts_BalloonTrap
   cooldownDuration: 1
   cooldownGauge: {fileID: 8496143199002685186}
   rotationGuide: {fileID: 0}

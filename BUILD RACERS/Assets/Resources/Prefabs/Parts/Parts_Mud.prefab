@@ -177,7 +177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   partsData: {fileID: 0}
   partsType: 2
-  partsId: 7
+  partsId: 8
   partsResourceName: Parts_Mud
   cooldownDuration: 1
   cooldownGauge: {fileID: 0}
