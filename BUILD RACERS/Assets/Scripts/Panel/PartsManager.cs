@@ -13,6 +13,7 @@ public enum PartsID
     Energy = 0,
     Rocket,
     RocketHoming,
+    BalloonTrap,
     Flask,
     Acceleration,
     Speed,

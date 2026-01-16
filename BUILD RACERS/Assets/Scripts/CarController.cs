@@ -79,7 +79,6 @@ public class CarController : MonoBehaviourPunCallbacks
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
     [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
-    [SerializeField] private TextMeshProUGUI itemText;  // アイテム表示テキスト
     [SerializeField] private TextMeshProUGUI lapText;  // 周回数表示テキスト
     [SerializeField] private TextMeshProUGUI rankText;  // 順位表示テキスト
     [SerializeField] private TextMeshProUGUI timerText;  // タイム表示テキスト
@@ -276,7 +275,6 @@ public class CarController : MonoBehaviourPunCallbacks
         // テキストの設定
         speedText = InitText(speedText, "SpeedText");
         coinText = InitText(coinText, "coinText");
-        itemText = InitText(itemText, "ItemText");
         lapText = InitText(lapText, "LapText");
         rankText = InitText(rankText, "RankText");
         timerText = InitText(timerText, "TimerText");
@@ -1021,24 +1019,6 @@ public class CarController : MonoBehaviourPunCallbacks
         TryPairPlayers();
     }
 
-    // アイテム表示更新
-    private void DisplayItem(int? id)
-    {
-        // アイテム表示更新
-        switch (id)
-        {
-            case (int)PartsID.Energy:
-                itemText.text = "Item : ENERGY";
-                break;
-            case (int)PartsID.Rocket:
-                itemText.text = "Item : ROCKET";
-                break;
-            case null:
-                itemText.text = "Item : NULL";
-                break;
-        }
-    }
-
     // ----- 通信用関数 -----
 
     // アイテムをキューに追加
@@ -1048,11 +1028,6 @@ public class CarController : MonoBehaviourPunCallbacks
         Debug.Log("Enqueue Item Request");
 
         itemManager.Enqueue((int)id);
-
-        // アイテム表示更新
-        if (itemText.text != "Item : NULL") return;
-
-        DisplayItem((int)id);
     }
 
     // アイテムをキューから削除
@@ -1064,9 +1039,6 @@ public class CarController : MonoBehaviourPunCallbacks
         itemManager.Remove((int)id);
 
         int? nextItem = itemManager.Dequeue(false);
-
-        // アイテム表示更新
-        DisplayItem(nextItem);
     }
 
     // アイテムを使用、キューから削除
@@ -1078,9 +1050,6 @@ public class CarController : MonoBehaviourPunCallbacks
         itemManager.Remove((int)id);
 
         int? nextItem = itemManager.Dequeue(false);
-
-        // アイテム表示更新
-        DisplayItem(nextItem);
     }
 
     // 未設置パーツ数を増やす

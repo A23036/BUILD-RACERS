@@ -178,7 +178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   partsData: {fileID: 0}
   partsType: 2
-  partsId: 10
+  partsId: 11
   partsResourceName: Parts_Slope
   cooldownDuration: 1
   cooldownGauge: {fileID: 0}
