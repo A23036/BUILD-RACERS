@@ -646,6 +646,10 @@ MonoBehaviour:
   boostSpeedMultiplier: 2
   boostAccelMultiplier: 3
   boostDuration: 0.05
+  boostEffectPrefab: {fileID: 1839717119504527754, guid: af9288fbafe681a4893a0faed2f0dae7, type: 3}
+  boostEffectLocalPosition: {x: 0, y: 0, z: 1.2}
+  boostEffectLocalRotation: {x: 0, y: 0, z: 0}
+  boostEffectLocalScale: {x: 1, y: 1, z: 1}
   speedText: {fileID: 0}
   coinText: {fileID: 0}
   lapText: {fileID: 0}

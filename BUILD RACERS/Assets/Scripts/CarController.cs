@@ -77,6 +77,14 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private float boostDuration = 2.0f;          // 効果時間（秒）
     private float boostTimer = 0f;  // 残りブースト時間
 
+    [Header("ブースト演出")]
+    [SerializeField] private GameObject boostEffectPrefab;
+    [SerializeField] private Vector3 boostEffectLocalPosition = new Vector3(0f, 0f, 1.2f);
+    [SerializeField] private Vector3 boostEffectLocalRotation = Vector3.zero;
+    [SerializeField] private Vector3 boostEffectLocalScale = Vector3.one;
+    private GameObject boostEffectInstance;
+    private ParticleSystem boostEffectParticle;
+
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
     [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
@@ -246,6 +254,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // スタン状態をセット
         state = State.Stun;
+        ClearBoostEffect();
 
         // スタンエフェクト発生
         var effect = Instantiate(stunEffect, transform); // 親を指定
@@ -467,6 +476,7 @@ public class CarController : MonoBehaviourPunCallbacks
         brakeAction?.Disable();
         steerAction?.Disable();
         useItemAction?.Disable();
+        ClearBoostEffect();
 
         base.OnDisable();
     }
@@ -659,6 +669,7 @@ public class CarController : MonoBehaviourPunCallbacks
             speedMultiplier *= boostSpeedMultiplier;
             boostTimer -= Time.fixedDeltaTime;
         }
+
         float maxAllowedSpeed = MaxSpeed * (1 + passiveNumList[1] * speedPower) * speedMultiplier;
 
         if (rb.linearVelocity.magnitude < maxAllowedSpeed)
@@ -679,7 +690,9 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // 速度表示など残す（rb.linearVelocity -> rb.velocity）
         float speed = rb.linearVelocity.magnitude * 3.6f;
-        if (speedText != null && driver == null) speedText.text = $"{speed:F1} km/h";   
+        if (speedText != null && driver == null) speedText.text = $"{speed:F1} km/h";
+
+        UpdateBoostEffect(speed);
 
         // 横滑り防止
         Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
@@ -1068,7 +1081,53 @@ public class CarController : MonoBehaviourPunCallbacks
             cameraController.SetTarget(transform);
     }
 
-    
+    private void UpdateBoostEffect(float speed)
+    {
+        if (!isMine || boostEffectPrefab == null)
+        {
+            return;
+        }
+
+        bool shouldPlay = speed > 90f;
+
+        if (shouldPlay)
+        {
+            if (boostEffectInstance == null)
+            {
+                Transform cameraTransform = cameraController != null ? cameraController.transform : Camera.main?.transform;
+                if (cameraTransform == null)
+                {
+                    return;
+                }
+
+                boostEffectInstance = Instantiate(boostEffectPrefab, cameraTransform);
+                boostEffectInstance.transform.localPosition = boostEffectLocalPosition;
+                boostEffectInstance.transform.localRotation = Quaternion.Euler(boostEffectLocalRotation);
+                boostEffectInstance.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                boostEffectParticle = boostEffectInstance.GetComponent<ParticleSystem>();
+            }
+
+            if (boostEffectParticle != null && !boostEffectParticle.isPlaying)
+            {
+                boostEffectParticle.Play();
+            }
+        }
+        else
+        {
+            ClearBoostEffect();
+        }
+    }
+
+    private void ClearBoostEffect()
+    {
+        if (boostEffectInstance != null)
+        {
+            Destroy(boostEffectInstance);
+            boostEffectInstance = null;
+            boostEffectParticle = null;
+        }
+    }
+
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
         Debug.Log("CALL BACK");
