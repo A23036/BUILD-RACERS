@@ -35,4 +35,9 @@ public class LapSetter : MonoBehaviour
         lapCnt = lap;
         lapInput.text = lap.ToString();
     }
+
+    public int GetLapCnt()
+    {
+        return lapCnt;
+    }
 }
