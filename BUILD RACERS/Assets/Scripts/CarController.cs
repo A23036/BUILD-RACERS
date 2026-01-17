@@ -2,6 +2,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -489,12 +490,6 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        //時間計測
-        if (state == State.Drive)
-        {
-            timer += Time.deltaTime;
-        }
-
         // 操作できない状態は入力を取らない
         if (state != State.Drive) return;
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
@@ -528,6 +523,12 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
+        //時間計測
+        if (state == State.Drive)
+        {
+            timer += Time.deltaTime;
+        }
+
         if (PhotonNetwork.IsConnected && !isMine) return;
 
         //停止状態なら処理しない
@@ -571,6 +572,7 @@ public class CarController : MonoBehaviourPunCallbacks
             {
                 if (PhotonNetwork.IsConnected)
                 {
+                    Debug.Log($"GOAL TIME : {timer}");
                     photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, GetName(), timer);
                 }
                 else
@@ -578,9 +580,6 @@ public class CarController : MonoBehaviourPunCallbacks
                     result.UpdateRankUI(GetName(), timer);
                 }
             }
-
-            //ゴール後にずれが生じないように
-            UpdateTimerUI();
 
             if (driver == null)
             {
@@ -593,7 +592,17 @@ public class CarController : MonoBehaviourPunCallbacks
             }
 
             //ゴール後に表示されるように
-            if(isMine) UpdateRank();
+            if (isMine)
+            {
+                UpdateRank();
+
+                //ゴール後にずれが生じないように
+                int minutes = (int)(timer / 60);
+                int seconds = (int)(timer % 60);
+                int milliseconds = (int)((timer * 1000) % 1000);
+                timerText.text = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
+                timerText.enabled = true;
+            }
 
             //タイマー黄色に変更
             timerText.color = Color.yellow;
@@ -861,7 +870,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void UpdateTimerUI()
     {
-        Debug.Log(" === UpdateTimerUI === ");
+        Debug.Log($"UpdateTimerUI:{DateTime.Now}");
 
         //点滅
         if(blinkTimer > 0f)

@@ -240,9 +240,11 @@ public class resultUI : MonoBehaviour
 
         int minutes = (int)(time / 60);
         int seconds = (int)(time % 60);
-        int milliseconds = (int)((time * 100) % 100);
-        string timeStr = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
-        
+        int milliseconds = (int)((time * 1000) % 1000);
+        string timeStr = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
+
+        Debug.Log($"FUNC GOAL TIME : {timeStr}");
+
         string format = $"{rankStr} , {name.PadRight(8)} & xxxxxxxx , {timeStr}";
         Text.text = format;
 
@@ -254,12 +256,12 @@ public class resultUI : MonoBehaviour
 
             var text = rankingUIObjects[i].GetComponent<TextMeshProUGUI>();
             Debug.Log(text.text);
-            string uiTimeStr = text.text.Substring(text.text.Length - 8);
+            string uiTimeStr = text.text.Substring(text.text.Length - 9);
             int uiMinute = int.Parse(uiTimeStr.Substring(0, 2));
             int uiSecond = int.Parse(uiTimeStr.Substring(3, 2));
-            float uiMiriSec = int.Parse(uiTimeStr.Substring(6, 2));
+            float uiMiriSec = int.Parse(uiTimeStr.Substring(6, 3));
 
-            float uiSumTime = uiMinute * 60 + uiSecond + uiMiriSec / 100;
+            float uiSumTime = uiMinute * 60 + uiSecond + uiMiriSec / 1000;
 
             Debug.Log($"UI:{uiSumTime} <= NEW:{time}");
             if(uiSumTime <= time) continue;
