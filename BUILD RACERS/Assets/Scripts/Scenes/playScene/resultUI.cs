@@ -243,9 +243,7 @@ public class resultUI : MonoBehaviour
         int milliseconds = (int)((time * 1000) % 1000);
         string timeStr = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
 
-        Debug.Log($"FUNC GOAL TIME : {timeStr}");
-
-        string format = $"{rankStr} , {name.PadRight(8)} & xxxxxxxx , {timeStr}";
+        string format = $"<mspace=0.7em>{rankStr} , {name.PadRight(8)} & xxxxxxxx , {timeStr}</mspace>";
         Text.text = format;
 
         //誤差の修正　自分より長いタイムがあれば交換する
@@ -256,7 +254,7 @@ public class resultUI : MonoBehaviour
 
             var text = rankingUIObjects[i].GetComponent<TextMeshProUGUI>();
             Debug.Log(text.text);
-            string uiTimeStr = text.text.Substring(text.text.Length - 9);
+            string uiTimeStr = text.text.Substring(text.text.Length - 9 - 9);
             int uiMinute = int.Parse(uiTimeStr.Substring(0, 2));
             int uiSecond = int.Parse(uiTimeStr.Substring(3, 2));
             float uiMiriSec = int.Parse(uiTimeStr.Substring(6, 3));
@@ -272,10 +270,10 @@ public class resultUI : MonoBehaviour
             var tempCurStr = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().text;
             //文字列を切る場所の添え字
             int cutIdx = 4;
-            var preUI = tempUIStr.Substring(0, cutIdx);
-            var preCur = tempCurStr.Substring(0, cutIdx);
-            var suffUI = tempUIStr.Substring(cutIdx);
-            var suffCur = tempCurStr.Substring(cutIdx);
+            var preUI = tempUIStr.Substring(0, cutIdx + 14);
+            var preCur = tempCurStr.Substring(0, cutIdx + 14);
+            var suffUI = tempUIStr.Substring(cutIdx + 14);
+            var suffCur = tempCurStr.Substring(cutIdx + 14);
             rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().text = preCur + suffUI;
             rankingUIObjects[i].GetComponent<TextMeshProUGUI>().text = preUI + suffCur;
 
@@ -284,7 +282,7 @@ public class resultUI : MonoBehaviour
 
         //プレイヤーなら黄色に
         Text = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>();
-        //if (name == PlayerPrefs.GetString("PlayerName")) Text.color = Color.yellow;
-        if (name == PhotonNetwork.LocalPlayer.NickName) Text.color = Color.yellow;
+        if (name == PlayerPrefs.GetString("PlayerName")) Text.color = Color.yellow;
+        //if (name == PhotonNetwork.LocalPlayer.NickName) Text.color = Color.yellow;
     }
 }
