@@ -378,6 +378,12 @@ public class CarController : MonoBehaviourPunCallbacks
             {
             }
         }
+
+        //ラップ数の設定　オンラインはカスタムコールバックで取得する
+        if (!PhotonNetwork.IsConnected)
+        {
+            maxLaps = PlayerPrefs.GetInt("lapCnt");
+        }
     }
 
     private TextMeshProUGUI InitText(TextMeshProUGUI tmpro, string tag)
@@ -573,7 +579,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
             }
 
-            //ずれが生じないように
+            //ゴール後にずれが生じないように
             UpdateTimerUI();
 
             if (driver == null)

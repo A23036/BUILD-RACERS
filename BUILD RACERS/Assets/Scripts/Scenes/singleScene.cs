@@ -7,6 +7,9 @@ public class singleScene : baseScene
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
+    //ラップ数設定
+    [SerializeField] GameObject lapSetter;
+
     //セレクター関係
     private selectSystem ss;
 
@@ -46,6 +49,10 @@ public class singleScene : baseScene
 
         //選択なしで処理なし
         if (PlayerPrefs.GetInt("driverNum") == -1 && PlayerPrefs.GetInt("engineerNum") == -1) return;
+
+        //ラップ数を記録
+        var ls = lapSetter.GetComponent<LapSetter>();
+        PlayerPrefs.SetInt("lapCnt",ls.GetLapCnt());
 
         //シングルプレイへ
         SceneManager.LoadScene("singlePlay");
