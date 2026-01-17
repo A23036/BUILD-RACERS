@@ -43,6 +43,11 @@ public class LapManager : MonoBehaviour
         return angle;
     }
 
+    public void SetMaxLaps(int n)
+    {
+        maxLaps = n;
+    }
+
     public int GetMaxLaps()
     {
         return maxLaps;

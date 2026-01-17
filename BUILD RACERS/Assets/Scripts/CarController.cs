@@ -344,7 +344,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //シーンマネージャー取得
-        if(SceneManager.GetActiveScene().name == "playScene")
+        if(SceneManager.GetActiveScene().name == "gamePlay")
         {
             var sceneManager = FindObjectOfType<playScene>();
             if (sceneManager != null)

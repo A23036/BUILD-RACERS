@@ -17,6 +17,8 @@ public class selectScene : baseScene
     //セレクターの上限数　これ以上の接続は観戦者にまわす
     [SerializeField] private int limitPlayers;
 
+    [SerializeField] private GameObject lapSetter;
+
     //セレクター関係
     private GameObject selector = null;
     private selectSystem ss = null;
@@ -129,7 +131,6 @@ public class selectScene : baseScene
             if(monitor != null)
             {
                 PlayerPrefs.SetInt("isMonitor", 1);
-                Debug.Log("IM MONITOR**************");
             }
             else
             {
@@ -285,6 +286,9 @@ public class selectScene : baseScene
                 Debug.Log("準備状態の初期化");
             }
         }
+
+        //ラップ数を決めるオブジェクト　マスター以外は表示しない
+        if (PhotonNetwork.IsMasterClient) lapSetter.SetActive(true);
     }
 
     //カスタムプロパティのコールバック
@@ -316,6 +320,12 @@ public class selectScene : baseScene
             //ルームの上限数を更新
             PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "limitPlayers", limitPlayers } });
         }
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        //ラップ数を決めるオブジェクト　マスター以外は表示しない
+        lapSetter.SetActive(PhotonNetwork.IsMasterClient);
     }
 
     //空きがあればセレクターを生成
