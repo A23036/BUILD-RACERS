@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
@@ -334,7 +335,6 @@ public class CarController : MonoBehaviourPunCallbacks
         UpdatePassiveUI();
 
         lapManager = GameObject.Find("LapManager").GetComponent<LapManager>();
-        if(lapManager != null) maxLaps = lapManager.GetMaxLaps();
 
         //仮想的なチェックポイント
         flags = new bool[3];
@@ -353,7 +353,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 resultUI.SetActive(false);
             }
         }
-        else if(SceneManager.GetActiveScene().name == "singlePlayScene")
+        else if(SceneManager.GetActiveScene().name == "singlePlay")
         {
             var sceneManager = FindObjectOfType<singlePlayScene>();
             if (sceneManager != null)
@@ -539,6 +539,8 @@ public class CarController : MonoBehaviourPunCallbacks
 
             //タイマーを点滅　スタート直後を除いて実行
             if(lapCount > 0) blinkTimer = lapBlinkTime;
+
+            isLapClear = false;
         }
 
         //ゴール判定
@@ -607,7 +609,8 @@ public class CarController : MonoBehaviourPunCallbacks
                 steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
 
             //周回数をUIに反映
-            lapText.text = $"Angle : {nowAngle} , Lap : {Mathf.Max(0,lapCount)}";
+            //lapText.text = $"Angle : {nowAngle} , Lap : {Mathf.Max(0,lapCount)}";
+            lapText.text = $"Lap : {Mathf.Max(0,lapCount)} / {maxLaps}";
 
             //　プレイヤー入力:Update()で取得した入力を使用
             motorInput = inputMotor;
@@ -839,6 +842,8 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void UpdateTimerUI()
     {
+        Debug.Log(" === UpdateTimerUI === ");
+
         //点滅
         if(blinkTimer > 0f)
         {
@@ -1073,6 +1078,18 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         Debug.Log("CALL BACK");
         TryPairPlayers();
+    }
+
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        var prop = PhotonNetwork.CurrentRoom.CustomProperties;
+        if(prop.TryGetValue("lapCnt",out var lapCnt) && lapCnt is int)
+        {
+            lapManager.SetMaxLaps((int)lapCnt);
+            maxLaps = (int)lapCnt;
+
+            Debug.Log($"SET MAX LAP : {maxLaps}");
+        }
     }
 
     // ----- 通信用関数 -----

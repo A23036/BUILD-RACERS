@@ -17,6 +17,7 @@ public class selectScene : baseScene
     //セレクターの上限数　これ以上の接続は観戦者にまわす
     [SerializeField] private int limitPlayers;
 
+    //ラップ数を設定
     [SerializeField] private GameObject lapSetter;
 
     //セレクター関係
@@ -123,6 +124,16 @@ public class selectScene : baseScene
         hash["engineerNum"] = PlayerPrefs.GetInt("engineerNum");
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+
+        //マスターはラップ数を共有
+        if(PhotonNetwork.IsMasterClient)
+        {
+            int lapCnt = lapSetter.GetComponent<LapSetter>().GetLapCnt();
+
+            hash = new Hashtable();
+            hash["lapCnt"] = lapCnt;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+        }
 
         //名前が一文字以上でシーン遷移
         if (PlayerPrefs.GetString("PlayerName").Length > 0)
