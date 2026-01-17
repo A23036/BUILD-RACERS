@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class tutorialScene : baseScene
 {
@@ -12,5 +13,10 @@ public class tutorialScene : baseScene
     void Update()
     {
         base.Update();
+    }
+
+    public void PushDriverTestButton()
+    {
+        SceneManager.LoadScene("driver tutorial");
     }
 }
