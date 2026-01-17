@@ -680,6 +680,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   stunMinSpeed: 2
+  stunEffect: {fileID: 2052286146680414621, guid: 4f0e8e8a0ff447049b07873c2e3f6444, type: 3}
   isMine: 0
   passiveUI: {fileID: 0}
   lapBlinkTime: 3

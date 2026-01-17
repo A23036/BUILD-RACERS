@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6591828595171948361}
   m_Layer: 0
-  m_Name: Stan
+  m_Name: Stun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,13 +77,13 @@ ParticleSystem:
   m_GameObject: {fileID: 5253720264234074745}
   serializedVersion: 8
   lengthInSec: 5
-  simulationSpeed: 1
+  simulationSpeed: 2
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -4943,7 +4943,7 @@ ParticleSystem:
   m_GameObject: {fileID: 5505295895395982653}
   serializedVersion: 8
   lengthInSec: 5
-  simulationSpeed: 1
+  simulationSpeed: 2
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
@@ -9809,13 +9809,13 @@ ParticleSystem:
   m_GameObject: {fileID: 8623063372641882767}
   serializedVersion: 8
   lengthInSec: 5
-  simulationSpeed: 1
+  simulationSpeed: 2
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0

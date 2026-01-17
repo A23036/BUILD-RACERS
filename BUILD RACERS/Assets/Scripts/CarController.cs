@@ -123,6 +123,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [Header("回転演出用パラメータ")]
     [SerializeField] private AnimationCurve stunEaseCurve;
     [SerializeField] private float stunMinSpeed = 2.0f;
+    [SerializeField] private GameObject stunEffect;
     private float stunSpinAngle = 360f; // 回転量
 
     private bool isSetStartPos = false;
@@ -245,8 +246,14 @@ public class CarController : MonoBehaviourPunCallbacks
         // スタン状態をセット
         state = State.Stun;
 
+        // スタンエフェクト発生
+        var effect = Instantiate(stunEffect, transform); // 親を指定
+        effect.transform.localPosition = new Vector3(0f, 1.0f, 0f); // 親基準でY+1
+        effect.transform.localRotation = Quaternion.identity;
+        effect.transform.localScale = Vector3.one;
+
         // スタンの強さに応じてスタン時間をセット
-        switch(type) {
+        switch (type) {
             case StunType.Light:
                 stunTime = LightStunTime * (1 - passiveNumList[2] * antiStunPower);// パッシブ量に応じて軽減
                 stunSpinAngle = 360f;
@@ -263,10 +270,12 @@ public class CarController : MonoBehaviourPunCallbacks
                 break;
         }
 
+        Destroy(effect, stunTime + 1.0f);
+
         // ----- 回転初期化 -----
         stunElapsed = 0f;
         stunStartLocalRotation = bodyMesh.transform.localRotation;
-
+        
         Debug.Log($"SET STAN : {GetName()}");
     }
     　
