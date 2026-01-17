@@ -1,9 +1,10 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Photon.Pun;
-using TMPro;
-using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
 public enum State // カートの状態
 {
@@ -283,8 +284,18 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         Debug.Log("AWAKE");
 
-        //初期状態は停止状態
-        state = State.Stop;
+        //初期状態　シーンによって変更
+        string nowSceneName = SceneManager.GetActiveScene().name;
+        switch (nowSceneName)
+        {
+            case "singlePlay":
+            case "gamePlay":
+                state = State.Stop;
+                break;
+            case "driverTutorial":
+                state = State.Drive;
+                break;
+        }
 
         driverNum = PlayerPrefs.GetInt("driverNum");
 
@@ -323,7 +334,7 @@ public class CarController : MonoBehaviourPunCallbacks
         UpdatePassiveUI();
 
         lapManager = GameObject.Find("LapManager").GetComponent<LapManager>();
-        maxLaps = lapManager.GetMaxLaps();
+        if(lapManager != null) maxLaps = lapManager.GetMaxLaps();
 
         //仮想的なチェックポイント
         flags = new bool[3];
@@ -333,7 +344,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //シーンマネージャー取得
-        if(PhotonNetwork.IsConnected)
+        if(SceneManager.GetActiveScene().name == "playScene")
         {
             var sceneManager = FindObjectOfType<playScene>();
             if (sceneManager != null)
@@ -342,13 +353,20 @@ public class CarController : MonoBehaviourPunCallbacks
                 resultUI.SetActive(false);
             }
         }
-        else
+        else if(SceneManager.GetActiveScene().name == "singlePlayScene")
         {
             var sceneManager = FindObjectOfType<singlePlayScene>();
             if (sceneManager != null)
             {
                 resultUI = sceneManager.GetResultUI();
                 resultUI.SetActive(false);
+            }
+        }
+        else if(SceneManager.GetActiveScene().name == "driverTutorial")
+        {
+            var sceneManager = FindObjectOfType<driverTutorial>();
+            if (sceneManager != null)
+            {
             }
         }
     }
