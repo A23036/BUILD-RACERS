@@ -34,6 +34,9 @@ public class resultUI : MonoBehaviour
     //上からランクUIが更新されるように
     private bool[] rankUIupdateFlags = new bool[8];
 
+    private int pairDriverID = 0;
+    private int pairEngineerID = 0;
+
     private void Awake()
     {
         resultImage = resultImageObj.GetComponent<Image>();
@@ -52,6 +55,51 @@ public class resultUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void SetPairDriverID(int id)
+    {
+        pairDriverID = id;
+    }
+
+    public void SetPairEngineerID(int id)
+    {
+        pairEngineerID = id;
+    }
+
+    //ランキングの文字の色を指定
+    public void SetTextColor(Color color)
+    {
+        foreach(var obj in rankingUIObjects)
+        {
+            var text = obj.GetComponent<TextMeshProUGUI>();
+            text.color = color;
+        }
+    }
+
+    public void SetOutLine(float f , Color color)
+    {
+        foreach (var obj in rankingUIObjects)
+        {
+            var text = obj.GetComponent<TextMeshProUGUI>();
+
+            // マテリアルを個別化
+            text.fontMaterial = new Material(text.fontMaterial);
+
+            var mat = text.fontMaterial;
+
+            // ★ Outline キーワードを有効化（重要）
+            mat.EnableKeyword("OUTLINE_ON");
+
+            // アウトライン色
+            mat.SetColor(ShaderUtilities.ID_OutlineColor, color);
+
+            // アウトライン太さ
+            mat.SetFloat(ShaderUtilities.ID_OutlineWidth, f);
+
+            // ★ メッシュ更新（重要）
+            text.ForceMeshUpdate();
+        }
     }
 
     //コルーチンの開始
@@ -215,7 +263,7 @@ public class resultUI : MonoBehaviour
     }
 
     //ランキング表の更新
-    public void UpdateRankUI(string name , float time)
+    public void UpdateRankUI(string name , float time , int d_id = -1 , int e_id = -1)
     {
         int rank = 0;
         for (int i = 0; i < rankUIupdateFlags.Length; i++)
@@ -243,7 +291,24 @@ public class resultUI : MonoBehaviour
         int milliseconds = (int)((time * 1000) % 1000);
         string timeStr = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
 
-        string format = $"<mspace=0.7em>{rankStr} , {name.PadRight(8)} & xxxxxxxx , {timeStr}</mspace>";
+        //エンジニアのペアネーム設定
+        string pairName = "--------";
+        if (d_id == pairDriverID)
+        {
+            //エンジニア側処理
+            pairName = PlayerPrefs.GetString("PlayerName");
+        }
+        else if(e_id == pairEngineerID)
+        {
+            //ペアのドライバー側処理
+            PhotonView pv = PhotonView.Find(e_id);
+            if (pv != null) 
+            {
+                pairName = pv.Owner.NickName;
+            }
+        }
+
+        string format = $"<mspace=0.7em>{rankStr} , {name.PadRight(8)} & {pairName.PadRight(8)} , {timeStr}</mspace>";
         Text.text = format;
 
         //誤差の修正　自分より長いタイムがあれば交換する
@@ -282,7 +347,7 @@ public class resultUI : MonoBehaviour
 
         //プレイヤーなら黄色に
         Text = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>();
-        if (name == PlayerPrefs.GetString("PlayerName")) Text.color = Color.yellow;
+        if (name == PlayerPrefs.GetString("PlayerName") || pairName == PlayerPrefs.GetString("PlayerName")) Text.color = Color.yellow;
         //if (name == PhotonNetwork.LocalPlayer.NickName) Text.color = Color.yellow;
     }
 }

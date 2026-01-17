@@ -62,6 +62,7 @@ MonoBehaviour:
   - RPC_UseItem
   - RPC_SetPassiveState
   - RPC_UpdateRankUI
+  - RPC_ReceiveGoalNotif
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

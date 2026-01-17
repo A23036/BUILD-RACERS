@@ -2,6 +2,8 @@ using Photon.Pun;
 using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
+using ExitGames.Client.Photon;
+using UnityEngine.SceneManagement;
 
 public class Engineer : MonoBehaviourPunCallbacks
 {
@@ -11,6 +13,12 @@ public class Engineer : MonoBehaviourPunCallbacks
     private CarController carController;
     private Player pairPlayer = null;
     private int pairViewID = -1;
+
+    private int lapCount = -1;
+    private int maxLaps = 0;
+
+    //リザルトUI ゴールしたら有効化
+    private GameObject resultUI;
 
     void Awake()
     {
@@ -31,6 +39,33 @@ public class Engineer : MonoBehaviourPunCallbacks
         Debug.Log("My ViewID: " + pv.ViewID);
 
         carController = null;
+
+        //シーンマネージャー取得
+        if (SceneManager.GetActiveScene().name == "gamePlay")
+        {
+            var sceneManager = FindObjectOfType<playScene>();
+            if (sceneManager != null)
+            {
+                resultUI = sceneManager.GetResultUI();
+                resultUI.SetActive(false);
+            }
+        }
+        else if (SceneManager.GetActiveScene().name == "singlePlay")
+        {
+            var sceneManager = FindObjectOfType<singlePlayScene>();
+            if (sceneManager != null)
+            {
+                resultUI = sceneManager.GetResultUI();
+                resultUI.SetActive(false);
+            }
+        }
+        else if (SceneManager.GetActiveScene().name == "driverTutorial")
+        {
+            var sceneManager = FindObjectOfType<driverTutorial>();
+            if (sceneManager != null)
+            {
+            }
+        }
     }
 
     private void Start()
@@ -237,6 +272,15 @@ public class Engineer : MonoBehaviourPunCallbacks
         TryPairPlayers();
     }
 
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        //ラップ数の設定　オンラインはカスタムコールバックで取得する
+        if (!PhotonNetwork.IsConnected)
+        {
+            maxLaps = PlayerPrefs.GetInt("lapCnt");
+        }
+    }
+
     // 通信用関数
     [PunRPC]
     public void RPC_SpawnParts(PartsID id)
@@ -267,4 +311,25 @@ public class Engineer : MonoBehaviourPunCallbacks
         panelManager.RemovePlacedPartsByID(id);
     }
 
+    [PunRPC]
+    public void RPC_ReceiveGoalNotif(int id)
+    {
+        //ペア以外の通知は処理なし
+        if (id != pairViewID || !photonView.IsMine) return;
+
+        //リザルトUIを有効化
+        if (resultUI.activeSelf == false)
+        {
+            resultUI.SetActive(true);
+
+            //リザルトUIを表示開始
+            var result = resultUI.GetComponent<resultUI>();
+            result.SetPairDriverID(id);
+
+            result.SetTextColor(Color.white);
+            //result.SetOutLine(0.3f,Color.black);
+
+            result.StartCoroutines();
+        }
+    }
 }
