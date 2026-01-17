@@ -17,7 +17,6 @@ TagManager:
   - RankText
   - Gimmick
   - TimerText
-  - Ground
   layers:
   - Default
   - TransparentFX
@@ -25,7 +24,7 @@ TagManager:
   - 
   - Water
   - UI
-  - Effect
+  - 
   - 
   - 
   - 

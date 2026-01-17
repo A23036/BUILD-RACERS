@@ -76,8 +76,6 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private float boostAccelMultiplier = 2.5f;   // ブースト時の加速倍率
     [SerializeField] private float boostDuration = 2.0f;          // 効果時間（秒）
     private float boostTimer = 0f;  // 残りブースト時間
-    private GameObject boostEffect;  // 集中線エフェクト
-
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
@@ -85,6 +83,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI lapText;  // 周回数表示テキスト
     [SerializeField] private TextMeshProUGUI rankText;  // 順位表示テキスト
     [SerializeField] private TextMeshProUGUI timerText;  // タイム表示テキスト
+
     [Header("保持なアイテムの数")]
     [SerializeField] private int MAXITEMNUM = 5;
 
@@ -239,9 +238,6 @@ public class CarController : MonoBehaviourPunCallbacks
             default:
                 break;
         }
-
-        // エフェクトの表示
-        if(boostEffect != null) boostEffect.SetActive(true);
     }
 
     public void SetStun(StunType type)
@@ -305,13 +301,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         PhotonView pv = GetComponent<PhotonView>();
 
-        if (photonView.IsMine && PlayerPrefs.GetInt("driverNum") != -1)
-        {
-            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
-
-            boostEffect = GameObject.Find("Concentration Line");
-            boostEffect.SetActive(false);
-        }
+        if(photonView.IsMine && PlayerPrefs.GetInt("driverNum") != -1) PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
 
         //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
@@ -689,17 +679,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // 速度表示など残す（rb.linearVelocity -> rb.velocity）
         float speed = rb.linearVelocity.magnitude * 3.6f;
-        if (speedText != null && driver == null) speedText.text = $"{speed:F1} km/h";
-        
-        // 一定速度以上の時エフェクト表示
-        if (boostEffect != null && speed > 90f)
-        {
-            boostEffect.SetActive(true);
-        }
-        else
-        {
-            boostEffect.SetActive(false);
-        }
+        if (speedText != null && driver == null) speedText.text = $"{speed:F1} km/h";   
 
         // 横滑り防止
         Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
