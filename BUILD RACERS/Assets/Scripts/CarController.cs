@@ -572,8 +572,14 @@ public class CarController : MonoBehaviourPunCallbacks
             {
                 if (PhotonNetwork.IsConnected)
                 {
+                    //ペアのエンジニアにゴールを通知
+                    PhotonView target = PhotonView.Find(pairViewID);
+                    target.RPC("RPC_ReceiveGoalNotif", RpcTarget.All, photonView.ViewID);
+
+                    result.SetPairEngineerID(pairViewID);
+
                     Debug.Log($"GOAL TIME : {timer}");
-                    photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, GetName(), timer);
+                    photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, GetName(), timer , photonView.ViewID , pairViewID);
                 }
                 else
                 {
@@ -1170,10 +1176,10 @@ public class CarController : MonoBehaviourPunCallbacks
 
     //確定順位と時間を送信
     [PunRPC]
-    public void RPC_UpdateRankUI(string name, float time)
+    public void RPC_UpdateRankUI(string name, float time , int id , int pairId)
     {
         var result = resultUI.GetComponent<resultUI>();
-        result.UpdateRankUI(name, time);
+        result.UpdateRankUI(name, time , id , pairId);
     }
 
     // アイテムをキューに追加
