@@ -342,12 +342,28 @@ public class resultUI : MonoBehaviour
             rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().text = preCur + suffUI;
             rankingUIObjects[i].GetComponent<TextMeshProUGUI>().text = preUI + suffCur;
 
+            //文字の色も交換が必要なら行う
+            if(rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().color == Color.yellow)
+            {
+                rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().color = Color.white;
+                rankingUIObjects[i].GetComponent<TextMeshProUGUI>().color = Color.yellow;
+            }
+            else if(rankingUIObjects[i].GetComponent<TextMeshProUGUI>().color == Color.yellow)
+            {
+                rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().color = Color.yellow;
+                rankingUIObjects[i].GetComponent<TextMeshProUGUI>().color = Color.white;
+            }
+            
             rank = i + 1;
         }
 
         //プレイヤーなら黄色に
         Text = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>();
-        if (name == PlayerPrefs.GetString("PlayerName") || pairName == PlayerPrefs.GetString("PlayerName")) Text.color = Color.yellow;
+        if (name == PlayerPrefs.GetString("PlayerName") || pairName == PlayerPrefs.GetString("PlayerName"))
+        {
+            Debug.Log($"YELLOW NAME = {name}");
+            Text.color = Color.yellow;
+        }
         //if (name == PhotonNetwork.LocalPlayer.NickName) Text.color = Color.yellow;
     }
 }

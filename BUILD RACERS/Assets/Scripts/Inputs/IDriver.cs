@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 public interface IDriver
 {
     // 0..1 のアクセル、0..1 のブレーキ、-1..1 の横方向ステア
@@ -6,4 +7,7 @@ public interface IDriver
 
     //ウェイポイントの設定
     public void SetWaypointContainer(WaypointContainer container);
+
+    //アイテムの使用選択
+    bool ItemUseDecision() { return false; }
 }

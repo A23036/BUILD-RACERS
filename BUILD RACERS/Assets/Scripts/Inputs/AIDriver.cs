@@ -198,4 +198,9 @@ public class AIDriver : MonoBehaviour, IDriver
         RefreshWaypoints();
         currentIndex = Mathf.Clamp(startIndex, 0, Mathf.Max(0, waypoints.Count - 1));
     }
+
+    public bool ItemUseDecision()
+    {
+        return true;
+    }
 }

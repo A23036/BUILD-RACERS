@@ -222,7 +222,12 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         Debug.Log("PassiveState: Acceleration: " + passiveNumList[0] + " Speed: " + passiveNumList[1] + " AntiStun: " + passiveNumList[2]); 
-        UpdatePassiveUI();
+        
+        //パッシブのUI更新
+        if(isMine)
+        {
+            UpdatePassiveUI();
+        }
     }
 
     private void UpdatePassiveUI()
@@ -574,7 +579,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 {
                     //ペアのエンジニアにゴールを通知
                     PhotonView target = PhotonView.Find(pairViewID);
-                    target.RPC("RPC_ReceiveGoalNotif", RpcTarget.All, photonView.ViewID);
+                    if(target != null) target.RPC("RPC_ReceiveGoalNotif", RpcTarget.All, photonView.ViewID);
 
                     result.SetPairEngineerID(pairViewID);
 
@@ -629,6 +634,12 @@ public class CarController : MonoBehaviourPunCallbacks
             motorInput = throttle;
             brakeInput = brake;
             steerInput = steer;
+
+            //CPUアイテム使用
+            if (itemManager.GetItemNum() > 0 && driver.ItemUseDecision())
+            {
+                RemoveUsedItem();
+            }
         }
         else
         {
@@ -1080,7 +1091,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 target.RPC("RPC_RemoveUsedItem", pairPlayer, usedId);
             }
         }
-        else if(!PhotonNetwork.IsConnected && isMine)
+        else if(!PhotonNetwork.IsConnected)
         {
             RPC_RemoveItem(usedId);
         }
