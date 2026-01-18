@@ -17,6 +17,8 @@ TagManager:
   - RankText
   - Gimmick
   - TimerText
+  - Ground
+  - HideCanvas
   layers:
   - Default
   - TransparentFX

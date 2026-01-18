@@ -90,7 +90,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [Header("Fire Effect")]
     [SerializeField] private ParticleSystem fireEffectPrefab; // ループでも単発でもOK
     [SerializeField] private float fireEffectDuration = 1.5f;  // 出す時間
-    [SerializeField] private Vector3 CaptureFxLocalPos = new Vector3(-0.345f, 0.678f, -1.011f);
+    [SerializeField] private Vector3 FireFxLocalPos = new Vector3(-0.345f, 0.678f, -1.011f);
 
     private ParticleSystem fireFxL;
     private ParticleSystem fireFxR;
@@ -98,11 +98,11 @@ public class CarController : MonoBehaviourPunCallbacks
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
-    [SerializeField] private GameObject coinImage;      //コイン画像
     [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
     [SerializeField] private TextMeshProUGUI lapText;  // 周回数表示テキスト
     [SerializeField] private TextMeshProUGUI rankText;  // 順位表示テキスト
     [SerializeField] private TextMeshProUGUI timerText;  // タイム表示テキスト
+    private GameObject hidenCanvas;
 
     [Header("保持なアイテムの数")]
     [SerializeField] private int MAXITEMNUM = 5;
@@ -307,7 +307,7 @@ public class CarController : MonoBehaviourPunCallbacks
         rankText = InitText(rankText, "RankText");
         timerText = InitText(timerText, "TimerText");
 
-        coinImage = GameObject.Find("coinCounterImage");
+        hidenCanvas = GameObject.FindGameObjectWithTag("HideCanvas");
 
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
@@ -672,7 +672,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // 速度表示など残す（rb.linearVelocity -> rb.velocity）
         float speed = rb.linearVelocity.magnitude * 3.6f;
-        if (speedText != null && driver == null) speedText.text = $"{speed:F1} km/h";
+        if (speedText != null && driver == null) speedText.text = $"{speed:F1}";
 
         UpdateBoostEffect(speed);
 
@@ -1122,8 +1122,8 @@ public class CarController : MonoBehaviourPunCallbacks
         EnsureFireFxInstances();
 
         // 左右ローカル座標（右はX反転）
-        Vector3 leftPos = CaptureFxLocalPos;
-        Vector3 rightPos = new Vector3(-CaptureFxLocalPos.x, CaptureFxLocalPos.y, CaptureFxLocalPos.z);
+        Vector3 leftPos = FireFxLocalPos;
+        Vector3 rightPos = new Vector3(-FireFxLocalPos.x, FireFxLocalPos.y, FireFxLocalPos.z);
 
         fireFxL.transform.localPosition = leftPos;
         fireFxR.transform.localPosition = rightPos;
@@ -1205,13 +1205,7 @@ public class CarController : MonoBehaviourPunCallbacks
     public void HiddenUI()
     {
         //UIの非表示
-        coinText.enabled = false;
-        speedText.enabled = false;
-        lapText.enabled = false;
-        rankText.enabled = false;
-        timerText.enabled = false;
-
-        coinImage.SetActive(false);
+        hidenCanvas.SetActive(false);
     }
 
     // ============================
