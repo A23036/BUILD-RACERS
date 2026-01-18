@@ -52,7 +52,7 @@ public class roomNameButton : MonoBehaviour
             //開始中は参加不可にする
             return;
         }
-        else if (roomStat == "Waiting")
+        else if (roomStat == "待機中")
         {
             //開始前ならセレクトシーンへ
             SceneManager.LoadScene("select");

@@ -2875,7 +2875,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: READY
+  m_text: "\u6E96\u5099OK!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
   m_sharedMaterial: {fileID: 869814548664471009, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
@@ -2884,8 +2884,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4280953386
-  m_fontColor: {r: 0.16352195, g: 0.16352195, b: 0.16352195, a: 1}
+    rgba: 4278190335
+  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3618,9 +3618,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'RoomNam:
-
-    RoomName'
+  m_text: "\u90E8\u5C4B\u306E\u540D\u524D:\nRoomName"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f5f32359b70fbd440b6ff1ba96fd5351, type: 2}
   m_sharedMaterial: {fileID: -2705983476977701222, guid: f5f32359b70fbd440b6ff1ba96fd5351, type: 2}
@@ -4974,7 +4972,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Connecting...
+  m_text: "\u63A5\u7D9A\u4E2D..."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
   m_sharedMaterial: {fileID: 869814548664471009, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
@@ -7090,7 +7088,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Enter text...
+  m_text: "\u540D\u524D\u3092\u6C7A\u3081\u3066\u306D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
   m_sharedMaterial: {fileID: 869814548664471009, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}

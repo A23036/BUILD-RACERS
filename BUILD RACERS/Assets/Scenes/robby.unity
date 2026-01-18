@@ -2673,7 +2673,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CREATE NEW
+  m_text: "\u90E8\u5C4B\u3092\u3064\u304F\u308B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
   m_sharedMaterial: {fileID: 869814548664471009, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
@@ -2700,8 +2700,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 22
+  m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3025,7 +3025,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CREATE
+  m_text: "\u3053\u308C\u3067\u4F5C\u308B\uFF01"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
   m_sharedMaterial: {fileID: 869814548664471009, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
@@ -3052,8 +3052,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 22
+  m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3161,7 +3161,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: NO ROOMS
+  m_text: "\u90E8\u5C4B\u304C\u306A\u3044\u3088"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
   m_sharedMaterial: {fileID: 869814548664471009, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
@@ -4197,7 +4197,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: new room name
+  m_text: "\u90E8\u5C4B\u306E\u540D\u524D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}
   m_sharedMaterial: {fileID: 869814548664471009, guid: 88cb18f726676914e8d55bc784a8dcd6, type: 2}

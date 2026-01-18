@@ -95,17 +95,17 @@ public class selectScene : baseScene
         int selectDriverNum = dn, selectEngineerNum = bn;
         if (selectDriverNum == -1 && selectEngineerNum == -1)
         {
-            debugMessage.text = "NOW SELECT : NONE";
+            debugMessage.text = "選んでいないよ";
         }
         else
         {
             if (selectDriverNum != -1)
             {
-                debugMessage.text = "NOW SELECT : DRIVER" + (selectDriverNum + 1);
+                debugMessage.text = "参加中: ドライバー" + (selectDriverNum + 1);
             }
             else
             {
-                debugMessage.text = "NOW SELECT : ENGINEER" + (selectEngineerNum + 1);
+                debugMessage.text = "参加中: エンジニア" + (selectEngineerNum + 1);
             }
         }
     }
@@ -113,7 +113,7 @@ public class selectScene : baseScene
     //観戦者の更新処理
     private void monitorUpdate()
     {
-        debugMessage.text = "YOU ARE MONITOR";
+        debugMessage.text = "参加中:観戦者";
     }
 
     public void PushStartButton()
@@ -175,11 +175,13 @@ public class selectScene : baseScene
 
         if (ss.IsReady())
         {
-            text.text = "CANCEL";
+            text.text = "キャンセル";
+            text.color = Color.black;
         }
         else
         {
-            text.text = "READY";
+            text.text = "準備OK!";
+            text.color = Color.red;
         }
     }
 
@@ -216,7 +218,7 @@ public class selectScene : baseScene
                 ss.SetReady(false);
 
                 var text = readyButtonText.GetComponent<TextMeshProUGUI>();
-                text.text = "READY";
+                text.text = "準備OK！";
             }
 
             ss.UpdateNameBar();
@@ -249,7 +251,7 @@ public class selectScene : baseScene
         base.OnJoinedRoom();
 
         //ルーム名の表示
-        roomNameText.text = $"RoomName:\n{PhotonNetwork.CurrentRoom.Name}";
+        roomNameText.text = $"部屋の名前:\n{PhotonNetwork.CurrentRoom.Name}";
 
         //マスターならプレイ人数を設定　そうでなければ受信
         if (PhotonNetwork.IsMasterClient)
@@ -314,7 +316,7 @@ public class selectScene : baseScene
         var props = PhotonNetwork.CurrentRoom.CustomProperties;
         if(props.TryGetValue("masterGameScene" , out var scene) && scene is string str && str == "select")
         {
-            nowRoomStat = "Waiting";
+            nowRoomStat = "待機中";
         }
         else
         {
@@ -368,7 +370,7 @@ public class selectScene : baseScene
         Debug.Log("NOW ROOM STAT : " + nowRoomStat);
 
         //ルームの状態がStartingなら処理なし
-        if (nowRoomStat != "Waiting") return;
+        if (nowRoomStat != "待機中") return;
 
         SwitchSide();
     }

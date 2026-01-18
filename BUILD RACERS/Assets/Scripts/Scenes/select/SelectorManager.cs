@@ -68,7 +68,7 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
 
                 //ƒ‹[ƒ€‚Ìó‘Ô‚ğWaiting‚É•ÏX
                 var propsw = new Hashtable();
-                propsw["masterGameScene"] = "Waiting";
+                propsw["masterGameScene"] = "‘Ò‹@’†";
                 PhotonNetwork.CurrentRoom.SetCustomProperties(propsw);
 
                 Debug.Log($"Set {propsw["masterGameScene"]}");

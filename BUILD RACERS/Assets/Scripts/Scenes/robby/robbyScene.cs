@@ -121,8 +121,8 @@ public class robbyScene : baseScene
             //ルーム状態の更新
             if (room.CustomProperties.TryGetValue("masterGameScene", out var s) && s is string stat)
             {
-                if (stat == "gamePlay") stat = "In Game";
-                else if (stat == "select") stat = "Waiting";
+                if (stat == "gamePlay") stat = "レース中";
+                else if (stat == "select") stat = "待機中";
                 roomStat = stat;
             }
             Debug.Log($"Update Room Stat : {roomStat}");
@@ -219,8 +219,8 @@ public class robbyScene : baseScene
         //ボタンのテキスト変更
         GameObject inputField = GameObject.Find("CreateNewText");
         TMP_Text text = inputField.GetComponent<TMP_Text>();
-        if(moveUp) text.text = "CREATE NEW";
-        else text.text = "CANCEL";
+        if(moveUp) text.text = "部屋を作る";
+        else text.text = "作るのをやめる";
     }
 
     public void MoveY()
