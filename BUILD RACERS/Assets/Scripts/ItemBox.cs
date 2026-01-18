@@ -116,24 +116,25 @@ public class ItemBoxController : MonoBehaviour
                     carController.AddPartsNum(); // アイテム数を追加
                 }
             }
-            else if(carController.isMine)
+            else if(!PhotonNetwork.IsConnected)
             {
                 //シングル or チュートリアルならそのままアイテム獲得する
                 if(/*個数制限*/true)
                 {
                     PartsID id = itemManager.GetRandomItem(partsType);
-                    carController.AddPartsNum(); // アイテム数を追加
 
                     //アイテム
                     PartsType itemType = itemManager.GetPartsType(id);
                     if (itemType == PartsType.Item)
                     {
                         itemManager.Enqueue((int)id);
+                        carController.AddPartsNum(); // アイテム数を追加
                     }
                     //パッシブ
                     else if(itemType == PartsType.Passive)
                     {
                         carController.RPC_SetPassiveState(id, true);
+                        //carController.AddPartsNum(); // アイテム数を追加
                     }
                 }
             }

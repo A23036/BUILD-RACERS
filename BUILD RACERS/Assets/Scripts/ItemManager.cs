@@ -77,8 +77,11 @@ public class ItemManager : MonoBehaviour
         nodeMap[itemId].Add(node);
 
         // アイテムUIの更新
-        itemUI.RefreshFromQueue(new List<int>(itemQueue));
-        PrintItemQueue();
+        if(carController.isMine)
+        {
+            itemUI.RefreshFromQueue(new List<int>(itemQueue));
+            PrintItemQueue();
+        }
     }
 
     // 最も古いアイテムを取り出す
@@ -103,7 +106,10 @@ public class ItemManager : MonoBehaviour
         if(isUse) SpawnItem((PartsID)id);
 
         // アイテムUIの更新
-        itemUI.RefreshFromQueue(new List<int>(itemQueue));
+        if (carController.isMine)
+        {
+            itemUI.RefreshFromQueue(new List<int>(itemQueue));
+        }
 
         return id;
     }
@@ -129,7 +135,11 @@ public class ItemManager : MonoBehaviour
                 nodeMap.Remove(itemId);
         }
 
-        itemUI.RefreshFromQueue(new List<int>(itemQueue));
+        // アイテムUIの更新
+        if (carController.isMine)
+        {
+            itemUI.RefreshFromQueue(new List<int>(itemQueue));
+        }
         PrintItemQueue();
         return true;
     }

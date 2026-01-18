@@ -23,6 +23,8 @@ public class singleScene : baseScene
 
         //セレクターの生成
         var selector = Instantiate(Resources.Load("Selector"), new Vector3(-100, -100, -100), Quaternion.identity);
+        var rect = selector.GetComponent<RectTransform>();
+        rect.localScale *= 1.7f;
         ss = selector.GetComponent<selectSystem>();
 
         //観戦者フラグ初期化
