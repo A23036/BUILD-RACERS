@@ -650,6 +650,9 @@ MonoBehaviour:
   boostEffectLocalPosition: {x: 0, y: 0, z: 1.2}
   boostEffectLocalRotation: {x: 0, y: 0, z: 0}
   boostEffectLocalScale: {x: 1, y: 1, z: 1}
+  fireEffectPrefab: {fileID: 1097031286348149302, guid: c2f6a8962aac3814aa56cb9647c93470, type: 3}
+  fireEffectPoint: {fileID: 214700145298401294}
+  fireEffectDuration: 1.5
   speedText: {fileID: 0}
   coinText: {fileID: 0}
   lapText: {fileID: 0}
