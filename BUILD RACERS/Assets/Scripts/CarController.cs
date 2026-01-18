@@ -87,6 +87,14 @@ public class CarController : MonoBehaviourPunCallbacks
     private GameObject boostEffectInstance;
     private ParticleSystem boostEffectParticle;
 
+    [SerializeField] private ParticleSystem fireEffectPrefab; // ループでも単発でもOK
+    [SerializeField] private Transform fireEffectPoint;        // 出したい位置(子Transform)
+    [SerializeField] private float fireEffectDuration = 1.5f;  // 出す時間
+    Vector3 CaptureFxLocalPos = new Vector3(-0.345f, 0.678f, -1.011f);
+    private ParticleSystem fireFxL;
+    private ParticleSystem fireFxR;
+    private Coroutine fireEffectCo;
+
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
     [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
@@ -253,6 +261,7 @@ public class CarController : MonoBehaviourPunCallbacks
             default:
                 break;
         }
+        PlayFireEffect();
     }
 
     public void SetStun(StunType type)
@@ -1164,6 +1173,58 @@ public class CarController : MonoBehaviourPunCallbacks
             boostEffectParticle = null;
         }
     }
+
+    public void PlayFireEffect()
+    {
+        // 自分だけに見せたいなら IsMine 限定
+        // if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+         if (fireEffectPrefab == null) return;
+
+        if (fireEffectCo != null) StopCoroutine(fireEffectCo);
+        fireEffectCo = StartCoroutine(Co_PlayFireEffect());
+    }
+
+    private System.Collections.IEnumerator Co_PlayFireEffect()
+    {
+        // 左右ローカル座標
+        Vector3 leftPos = CaptureFxLocalPos;
+        Vector3 rightPos = new Vector3(-CaptureFxLocalPos.x, CaptureFxLocalPos.y, CaptureFxLocalPos.z);
+
+        // 左右生成
+        var psL = Instantiate(fireEffectPrefab, transform);
+        psL.transform.localPosition = leftPos;
+        psL.transform.localRotation = Quaternion.identity;
+        psL.transform.localScale = Vector3.one;
+
+        var psR = Instantiate(fireEffectPrefab, transform);
+        psR.transform.localPosition = rightPos;
+        psR.transform.localRotation = Quaternion.identity;
+        psR.transform.localScale = Vector3.one;
+
+        // 初期化して再生
+        psL.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        psR.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        psL.Play(true);
+        psR.Play(true);
+
+        // 指定時間だけ出す
+        yield return new WaitForSeconds(fireEffectDuration);
+
+        // 余韻を残して停止
+        psL.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        psR.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+
+        // 破棄（寿命分待つ）
+        float killAfterL = psL.main.duration + psL.main.startLifetime.constantMax + 0.1f;
+        float killAfterR = psR.main.duration + psR.main.startLifetime.constantMax + 0.1f;
+
+        Destroy(psL.gameObject, killAfterL);
+        Destroy(psR.gameObject, killAfterR);
+
+        fireEffectCo = null;
+    }
+
+
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
