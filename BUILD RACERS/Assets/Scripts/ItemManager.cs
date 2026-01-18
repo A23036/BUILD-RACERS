@@ -224,10 +224,12 @@ public class ItemManager : MonoBehaviour
             case PartsID.Energy:
             case PartsID.Rocket:
             case PartsID.RocketHoming:
+            case PartsID.BalloonTrap:
                 type = PartsType.Item;
                 break;
             case PartsID.Speed:
             case PartsID.Acceleration:
+            case PartsID.AntiStun:
                 type = PartsType.Passive;
                 break;
             default:

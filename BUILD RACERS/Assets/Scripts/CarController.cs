@@ -98,6 +98,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
+    [SerializeField] private GameObject coinImage;      //コイン画像
     [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
     [SerializeField] private TextMeshProUGUI lapText;  // 周回数表示テキスト
     [SerializeField] private TextMeshProUGUI rankText;  // 順位表示テキスト
@@ -305,6 +306,8 @@ public class CarController : MonoBehaviourPunCallbacks
         lapText = InitText(lapText, "LapText");
         rankText = InitText(rankText, "RankText");
         timerText = InitText(timerText, "TimerText");
+
+        coinImage = GameObject.Find("coinCounterImage");
 
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);
@@ -1197,6 +1200,18 @@ public class CarController : MonoBehaviourPunCallbacks
 
         StopAndHideParticle(fireFxL);
         StopAndHideParticle(fireFxR);
+    }
+
+    public void HiddenUI()
+    {
+        //UIの非表示
+        coinText.enabled = false;
+        speedText.enabled = false;
+        lapText.enabled = false;
+        rankText.enabled = false;
+        timerText.enabled = false;
+
+        coinImage.SetActive(false);
     }
 
     // ============================

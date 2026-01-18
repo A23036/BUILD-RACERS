@@ -147,6 +147,14 @@ public class resultUI : MonoBehaviour
 
             isResultInitCamera = true;
         }
+
+        //ドライバーのUIを非表示に
+        var cars = FindObjectsOfType<CarController>();
+        foreach(var car in cars)
+        {
+            if(car.isMine == false) continue;
+            car.HiddenUI();
+        }
     }
 
     IEnumerator ShowRankingUI()
