@@ -599,7 +599,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
             //周回数をUIに反映
             //lapText.text = $"Angle : {nowAngle} , Lap : {Mathf.Max(0,lapCount)}";
-            lapText.text = $"Lap : {Mathf.Max(0,lapCount)} / {maxLaps}";
+            lapText.text = $"Lap:{Mathf.Max(0,lapCount)}/{maxLaps}";
 
             //　プレイヤー入力:Update()で取得した入力を使用
             motorInput = inputMotor;
