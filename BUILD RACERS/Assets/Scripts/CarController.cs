@@ -87,10 +87,11 @@ public class CarController : MonoBehaviourPunCallbacks
     private GameObject boostEffectInstance;
     private ParticleSystem boostEffectParticle;
 
+    [Header("Fire Effect")]
     [SerializeField] private ParticleSystem fireEffectPrefab; // ループでも単発でもOK
-    [SerializeField] private Transform fireEffectPoint;        // 出したい位置(子Transform)
     [SerializeField] private float fireEffectDuration = 1.5f;  // 出す時間
-    Vector3 CaptureFxLocalPos = new Vector3(-0.345f, 0.678f, -1.011f);
+    [SerializeField] private Vector3 CaptureFxLocalPos = new Vector3(-0.345f, 0.678f, -1.011f);
+
     private ParticleSystem fireFxL;
     private ParticleSystem fireFxR;
     private Coroutine fireEffectCo;
@@ -175,8 +176,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private float lapBlinkTime = 3f;
     private float blinkTimer = 0f;
     private float nextBlinkTime = 0f;
-    [SerializeField]private float lapBlinkInterval = .25f;
-
+    [SerializeField] private float lapBlinkInterval = .25f;
 
     public void AddPartsNum()
     {
@@ -196,43 +196,22 @@ public class CarController : MonoBehaviourPunCallbacks
         switch (id)
         {
             case PartsID.Acceleration:
-                if (isAdd)
-                {
-                    passiveNumList[0]++;
-                }
-                else
-                {
-                    passiveNumList[0]--;
-                }
+                passiveNumList[0] += isAdd ? 1 : -1;
                 break;
             case PartsID.Speed:
-                if (isAdd)
-                {
-                    passiveNumList[1]++;
-                }
-                else
-                {
-                    passiveNumList[1]--;
-                }
+                passiveNumList[1] += isAdd ? 1 : -1;
                 break;
             case PartsID.AntiStun:
-                if (isAdd)
-                {
-                    passiveNumList[2]++;
-                }
-                else
-                {
-                    passiveNumList[2]--;
-                }
+                passiveNumList[2] += isAdd ? 1 : -1;
                 break;
             default:
                 break;
         }
 
-        Debug.Log("PassiveState: Acceleration: " + passiveNumList[0] + " Speed: " + passiveNumList[1] + " AntiStun: " + passiveNumList[2]); 
-        
+        Debug.Log("PassiveState: Acceleration: " + passiveNumList[0] + " Speed: " + passiveNumList[1] + " AntiStun: " + passiveNumList[2]);
+
         //パッシブのUI更新
-        if(isMine)
+        if (isMine)
         {
             UpdatePassiveUI();
         }
@@ -240,48 +219,42 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void UpdatePassiveUI()
     {
-        if (!shouldUpdatePassiveUI || passiveUI == null)
-        {
-            return;
-        }
-
+        if (!shouldUpdatePassiveUI || passiveUI == null) return;
         passiveUI.RefreshFromCounts(passiveNumList[0], passiveNumList[1], passiveNumList[2]);
     }
 
     public void SetBoost(BoostType boostType)
     {
-        // ブーストの強さに応じてブースト時間をセット
-        switch(boostType) {
+        switch (boostType)
+        {
             case BoostType.Short:
                 boostTimer = ShortBoostTime;
                 break;
             case BoostType.Long:
                 boostTimer = LongBoostTime;
                 break;
-            default:
-                break;
         }
+
+        // ここで火エフェクト再生
         PlayFireEffect();
     }
 
     public void SetStun(StunType type)
     {
-        if(state == State.Stun) return;
+        if (state == State.Stun) return;
 
-        // スタン状態をセット
         state = State.Stun;
         ClearBoostEffect();
 
-        // スタンエフェクト発生
-        var effect = Instantiate(stunEffect, transform); // 親を指定
-        effect.transform.localPosition = new Vector3(0f, 1.0f, 0f); // 親基準でY+1
+        var effect = Instantiate(stunEffect, transform);
+        effect.transform.localPosition = new Vector3(0f, 1.0f, 0f);
         effect.transform.localRotation = Quaternion.identity;
         effect.transform.localScale = Vector3.one;
 
-        // スタンの強さに応じてスタン時間をセット
-        switch (type) {
+        switch (type)
+        {
             case StunType.Light:
-                stunTime = LightStunTime * (1 - passiveNumList[2] * antiStunPower);// パッシブ量に応じて軽減
+                stunTime = LightStunTime * (1 - passiveNumList[2] * antiStunPower);
                 stunSpinAngle = 360f;
                 break;
             case StunType.Midium:
@@ -292,24 +265,20 @@ public class CarController : MonoBehaviourPunCallbacks
                 stunTime = HeavyStunTime * (1 - passiveNumList[2] * antiStunPower);
                 stunSpinAngle = 720f;
                 break;
-            default:
-                break;
         }
 
         Destroy(effect, stunTime + 1.0f);
 
-        // ----- 回転初期化 -----
         stunElapsed = 0f;
         stunStartLocalRotation = bodyMesh.transform.localRotation;
-        
+
         Debug.Log($"SET STAN : {GetName()}");
     }
-    　
+
     private void Awake()
     {
         Debug.Log("AWAKE");
 
-        //初期状態　シーンによって変更
         string nowSceneName = SceneManager.GetActiveScene().name;
         switch (nowSceneName)
         {
@@ -325,14 +294,12 @@ public class CarController : MonoBehaviourPunCallbacks
         driverNum = PlayerPrefs.GetInt("driverNum");
 
         PhotonView pv = GetComponent<PhotonView>();
+        if (photonView.IsMine && PlayerPrefs.GetInt("driverNum") != -1)
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
 
-        if(photonView.IsMine && PlayerPrefs.GetInt("driverNum") != -1) PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
-
-        //ジョイスティック取得
         var joystick = GameObject.Find("Floating Joystick");
-        if(joystick != null) variableJoystick = joystick.GetComponent<Joystick>();
+        if (joystick != null) variableJoystick = joystick.GetComponent<Joystick>();
 
-        // テキストの設定
         speedText = InitText(speedText, "SpeedText");
         coinText = InitText(coinText, "coinText");
         lapText = InitText(lapText, "LapText");
@@ -351,24 +318,16 @@ public class CarController : MonoBehaviourPunCallbacks
         if (shouldUpdatePassiveUI && passiveUI == null)
         {
             GameObject passiveRoot = GameObject.Find("PassiveSlotRoot");
-            if (passiveRoot != null)
-            {
-                passiveUI = passiveRoot.GetComponent<PassiveUIManager>();
-            }
+            if (passiveRoot != null) passiveUI = passiveRoot.GetComponent<PassiveUIManager>();
         }
         UpdatePassiveUI();
 
         lapManager = GameObject.Find("LapManager").GetComponent<LapManager>();
 
-        //仮想的なチェックポイント
         flags = new bool[3];
-        for(int i = 0;i < flags.Length;i++)
-        {
-            flags[i] = true;
-        }
+        for (int i = 0; i < flags.Length; i++) flags[i] = true;
 
-        //シーンマネージャー取得
-        if(SceneManager.GetActiveScene().name == "gamePlay")
+        if (SceneManager.GetActiveScene().name == "gamePlay")
         {
             var sceneManager = FindObjectOfType<playScene>();
             if (sceneManager != null)
@@ -377,7 +336,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 resultUI.SetActive(false);
             }
         }
-        else if(SceneManager.GetActiveScene().name == "singlePlay")
+        else if (SceneManager.GetActiveScene().name == "singlePlay")
         {
             var sceneManager = FindObjectOfType<singlePlayScene>();
             if (sceneManager != null)
@@ -386,19 +345,13 @@ public class CarController : MonoBehaviourPunCallbacks
                 resultUI.SetActive(false);
             }
         }
-        else if(SceneManager.GetActiveScene().name == "driverTutorial")
-        {
-            var sceneManager = FindObjectOfType<driverTutorial>();
-            if (sceneManager != null)
-            {
-            }
-        }
 
-        //ラップ数の設定　オンラインはカスタムコールバックで取得する
         if (!PhotonNetwork.IsConnected)
         {
             maxLaps = PlayerPrefs.GetInt("lapCnt");
         }
+
+        // fireFx は必要になったタイミングで生成(遅延生成)する
     }
 
     private TextMeshProUGUI InitText(TextMeshProUGUI tmpro, string tag)
@@ -406,35 +359,24 @@ public class CarController : MonoBehaviourPunCallbacks
         if (tmpro == null)
         {
             var text = GameObject.FindWithTag(tag);
-            if (text != null)
-            {
-                tmpro = text.GetComponent<TextMeshProUGUI>();
-            }
-            else
-                tmpro = FindObjectOfType<TextMeshProUGUI>();
+            if (text != null) tmpro = text.GetComponent<TextMeshProUGUI>();
+            else tmpro = FindObjectOfType<TextMeshProUGUI>();
         }
-
         return tmpro;
     }
 
     private void TryPairPlayers()
     {
-        // ペアを発見済みの場合、処理を行わない
         if (pairViewID != -1) return;
 
         Player[] players = PhotonNetwork.PlayerList;
-
-        // ネットワークに接続中のplayerを一人ずつ調査
         foreach (var p in players)
         {
-            // ドライバーはcontinue(エンジニアのみ探す)
-            int e = p.CustomProperties["engineerNum"] is int en ? en:-1;
+            int e = p.CustomProperties["engineerNum"] is int en ? en : -1;
             if (e == -1) continue;
-            
-            // 自身と同番号のエンジニアを探す
+
             if (e == PlayerPrefs.GetInt("driverNum"))
             {
-                // PlayerViewID が設定済みならpairViewIDに保存
                 if (p.CustomProperties.ContainsKey("PlayerViewID"))
                 {
                     pairViewID = p.CustomProperties["PlayerViewID"] is int pairViewId ? pairViewId : -1;
@@ -449,13 +391,9 @@ public class CarController : MonoBehaviourPunCallbacks
             }
         }
 
-        if (pairPlayer == null && driver == null)
-        {
-            Debug.Log("Pair is null");
-        }
+        if (pairPlayer == null && driver == null) Debug.Log("Pair is null");
     }
 
-    // 入力設定
     private void OnEnable()
     {
         throttleAction = new InputAction(type: InputActionType.Value);
@@ -499,32 +437,29 @@ public class CarController : MonoBehaviourPunCallbacks
         useItemAction?.Disable();
         ClearBoostEffect();
 
+        // 念のためFireも停止＆非表示（シーン抜け/無効化時の残り対策）
+        StopFireEffectImmediate();
+
         base.OnDisable();
     }
 
     private void Update()
     {
-        // 操作できない状態は入力を取らない
         if (state != State.Drive) return;
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-
-        // AI操作中は入力不要
         if (driver != null) return;
 
-        // --- New Input System ---
         float throttle = throttleAction.ReadValue<float>();
         float brake = brakeAction.ReadValue<float>();
         inputMotor = throttle - brake;
 
         inputSteer = steerAction.ReadValue<float>();
 
-        // ジョイスティック（スマホ）
         if (variableJoystick != null && variableJoystick.Direction != Vector2.zero)
         {
             inputSteer = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1f, 1f);
         }
 
-        // アイテム使用
         if (useItemAction.WasPressedThisFrame())
         {
             inputUseItem = true;
@@ -791,15 +726,14 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         int throughFlags = 0;
-        foreach(var f in flags)
+        foreach (var f in flags)
         {
             if (f) throughFlags++;
         }
 
-        if(throughFlags == flags.Length && cur == 0)
+        if (throughFlags == flags.Length && cur == 0)
         {
             isLapClear = true;
-            //フラグリセット
             for (int i = 0; i < flags.Length; i++)
             {
                 flags[i] = false;
@@ -1174,57 +1108,98 @@ public class CarController : MonoBehaviourPunCallbacks
         }
     }
 
+    // ============================
+    // Fire Effect (左右2個・使い回し版)
+    // ============================
+
     public void PlayFireEffect()
     {
-        // 自分だけに見せたいなら IsMine 限定
-        // if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-         if (fireEffectPrefab == null) return;
+        if (fireEffectPrefab == null) return;
 
-        if (fireEffectCo != null) StopCoroutine(fireEffectCo);
-        fireEffectCo = StartCoroutine(Co_PlayFireEffect());
-    }
+        EnsureFireFxInstances();
 
-    private System.Collections.IEnumerator Co_PlayFireEffect()
-    {
-        // 左右ローカル座標
+        // 左右ローカル座標（右はX反転）
         Vector3 leftPos = CaptureFxLocalPos;
         Vector3 rightPos = new Vector3(-CaptureFxLocalPos.x, CaptureFxLocalPos.y, CaptureFxLocalPos.z);
 
-        // 左右生成
-        var psL = Instantiate(fireEffectPrefab, transform);
-        psL.transform.localPosition = leftPos;
-        psL.transform.localRotation = Quaternion.identity;
-        psL.transform.localScale = Vector3.one;
+        fireFxL.transform.localPosition = leftPos;
+        fireFxR.transform.localPosition = rightPos;
 
-        var psR = Instantiate(fireEffectPrefab, transform);
-        psR.transform.localPosition = rightPos;
-        psR.transform.localRotation = Quaternion.identity;
-        psR.transform.localScale = Vector3.one;
+        RestartParticle(fireFxL);
+        RestartParticle(fireFxR);
 
-        // 初期化して再生
-        psL.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        psR.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        psL.Play(true);
-        psR.Play(true);
+        if (fireEffectCo != null) StopCoroutine(fireEffectCo);
+        fireEffectCo = StartCoroutine(Co_StopFireEffect());
+    }
 
-        // 指定時間だけ出す
+    private void EnsureFireFxInstances()
+    {
+        if (fireFxL == null)
+        {
+            fireFxL = Instantiate(fireEffectPrefab, transform);
+            fireFxL.transform.localRotation = Quaternion.identity;
+            fireFxL.transform.localScale = Vector3.one;
+            fireFxL.gameObject.name = "FireFx_L";
+        }
+
+        if (fireFxR == null)
+        {
+            fireFxR = Instantiate(fireEffectPrefab, transform);
+            fireFxR.transform.localRotation = Quaternion.identity;
+            fireFxR.transform.localScale = Vector3.one;
+            fireFxR.gameObject.name = "FireFx_R";
+        }
+    }
+
+    private void RestartParticle(ParticleSystem ps)
+    {
+        if (ps == null) return;
+
+        // Rendererを必ずON（残像対策）
+        var r = ps.GetComponent<ParticleSystemRenderer>();
+        if (r != null) r.enabled = true;
+
+        // 完全クリアして再生
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        ps.time = 0f;
+        ps.Play(true);
+    }
+
+    private System.Collections.IEnumerator Co_StopFireEffect()
+    {
         yield return new WaitForSeconds(fireEffectDuration);
 
-        // 余韻を残して停止
-        psL.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-        psR.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-
-        // 破棄（寿命分待つ）
-        float killAfterL = psL.main.duration + psL.main.startLifetime.constantMax + 0.1f;
-        float killAfterR = psR.main.duration + psR.main.startLifetime.constantMax + 0.1f;
-
-        Destroy(psL.gameObject, killAfterL);
-        Destroy(psR.gameObject, killAfterR);
+        StopAndHideParticle(fireFxL);
+        StopAndHideParticle(fireFxR);
 
         fireEffectCo = null;
     }
 
+    private void StopAndHideParticle(ParticleSystem ps)
+    {
+        if (ps == null) return;
 
+        // 完全停止＆クリア（「他人だけ残る」対策で最優先）
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        // RendererもOFF（トレイル/サブエミッタ残りの見た目対策）
+        var r = ps.GetComponent<ParticleSystemRenderer>();
+        if (r != null) r.enabled = false;
+    }
+
+    private void StopFireEffectImmediate()
+    {
+        if (fireEffectCo != null)
+        {
+            StopCoroutine(fireEffectCo);
+            fireEffectCo = null;
+        }
+
+        StopAndHideParticle(fireFxL);
+        StopAndHideParticle(fireFxR);
+    }
+
+    // ============================
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
@@ -1235,7 +1210,7 @@ public class CarController : MonoBehaviourPunCallbacks
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
         var prop = PhotonNetwork.CurrentRoom.CustomProperties;
-        if(prop.TryGetValue("lapCnt",out var lapCnt) && lapCnt is int)
+        if (prop.TryGetValue("lapCnt", out var lapCnt) && lapCnt is int)
         {
             lapManager.SetMaxLaps((int)lapCnt);
             maxLaps = (int)lapCnt;
@@ -1244,71 +1219,54 @@ public class CarController : MonoBehaviourPunCallbacks
         }
     }
 
-    // ----- 通信用関数 -----
-
-    //確定順位と時間を送信
     [PunRPC]
-    public void RPC_UpdateRankUI(string name, float time , int id , int pairId)
+    public void RPC_UpdateRankUI(string name, float time, int id, int pairId)
     {
         var result = resultUI.GetComponent<resultUI>();
-        result.UpdateRankUI(name, time , id , pairId);
+        result.UpdateRankUI(name, time, id, pairId);
     }
 
-    // アイテムをキューに追加
     [PunRPC]
     public void RPC_EnqueueItem(PartsID id)
     {
         Debug.Log("Enqueue Item Request");
-
         itemManager.Enqueue((int)id);
     }
 
-    // アイテムをキューから削除
     [PunRPC]
     public void RPC_RemoveItem(PartsID id)
     {
         Debug.Log("Remove Item Request");
-
         itemManager.Remove((int)id);
-
         int? nextItem = itemManager.Dequeue(false);
     }
 
-    // アイテムを使用、キューから削除
     [PunRPC]
     public void RPC_UseItem(PartsID id)
     {
         Debug.Log("Remove Item Request");
-
         itemManager.Remove((int)id);
-
         int? nextItem = itemManager.Dequeue(false);
     }
 
-    // 未設置パーツ数を増やす
     [PunRPC]
     public void RPC_AddPartsNum()
     {
         Debug.Log("Add PartsNum Request");
-
         AddPartsNum();
     }
 
-    // 未設置パーツ数を減らす
     [PunRPC]
     public void RPC_RemovePartsNum()
     {
         Debug.Log("Substract PartsNum Request");
-
         SubstractPartsNum();
     }
 
-    // パッシブパーツの設置通知
     [PunRPC]
-    public void RPC_SetPassiveState(PartsID id,bool isAdd)
+    public void RPC_SetPassiveState(PartsID id, bool isAdd)
     {
         Debug.Log("PassiveState Request");
-
-        SetPassiveState(id,isAdd);
+        SetPassiveState(id, isAdd);
     }
 }
