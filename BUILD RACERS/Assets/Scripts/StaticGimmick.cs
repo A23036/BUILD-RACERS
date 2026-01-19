@@ -127,7 +127,7 @@ public class StaticGimmick : MonoBehaviourPun
     // ----------------------------
     private void DestroySelf()
     {
-        if (PhotonNetwork.IsConnected)
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
              PhotonNetwork.Destroy(gameObject);
         }

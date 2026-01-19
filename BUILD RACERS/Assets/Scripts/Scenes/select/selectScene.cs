@@ -20,6 +20,9 @@ public class selectScene : baseScene
     //ラップ数を設定
     [SerializeField] private GameObject lapSetter;
 
+    //マップを設定
+    [SerializeField] private GameObject mapSelector;
+
     //セレクター関係
     private GameObject selector = null;
     private selectSystem ss = null;
@@ -36,6 +39,9 @@ public class selectScene : baseScene
 
     //現在のルームの状態
     private string nowRoomStat;
+
+    //プレイするシーン名
+    private string playSceneName;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -58,6 +64,8 @@ public class selectScene : baseScene
         monitorsCounter = GameObject.Find("monitorsCounter").transform.Find("Text").GetComponent<TextMeshProUGUI>();
 
         nowRoomStat = "";
+
+        playSceneName = "gamePlay";
     }
 
     private void Awake()
@@ -150,8 +158,7 @@ public class selectScene : baseScene
 
             Debug.Log(hash["driverNum"] + "," + hash["engineerNum"] + "," + PlayerPrefs.GetInt("isMonitor"));
 
-            SceneManager.LoadScene("gamePlay");
-            //StartCoroutine(LoadGameScene());
+            SceneManager.LoadScene(playSceneName);
         }
     }
 
@@ -163,6 +170,9 @@ public class selectScene : baseScene
         //未選択なら処理なし
         ss.GetNums(out int dn, out int bn);
         if (dn == -1 && bn == -1) return;
+
+        //プレイシーン名がNULLなら処理なし
+        if (playSceneName == "") return;
 
         ss.PushedReady();
 
@@ -302,6 +312,9 @@ public class selectScene : baseScene
 
         //ラップ数を決めるオブジェクト　マスター以外は表示しない
         if (PhotonNetwork.IsMasterClient) lapSetter.SetActive(true);
+
+        //マップを選択するオブジェクト　マスター以外は表示しない
+        if (PhotonNetwork.IsConnected) mapSelector.SetActive(true);
     }
 
     //カスタムプロパティのコールバック
@@ -322,6 +335,12 @@ public class selectScene : baseScene
         {
             nowRoomStat = "";
         }
+
+        //プレイするシーン名を取得
+        if(props.TryGetValue("playSceneName" , out var name) && name is string)
+        {
+            playSceneName = (string)name;
+        }
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
@@ -339,6 +358,9 @@ public class selectScene : baseScene
     {
         //ラップ数を決めるオブジェクト　マスター以外は表示しない
         lapSetter.SetActive(PhotonNetwork.IsMasterClient);
+
+        //マップを決めるオブジェクト　マスター以外は表示しない
+        mapSelector.SetActive(PhotonNetwork.IsMasterClient);
     }
 
     //空きがあればセレクターを生成
@@ -420,6 +442,17 @@ public class selectScene : baseScene
         monitor = PhotonNetwork.Instantiate("Monitor", new Vector3(-1000, -1000, -1000), Quaternion.identity);
         ms = monitor.GetComponent<monitorSystem>();
         ms.DecideColor();
+    }
+
+    public void SetPlaySceneNameOnProp(string str)
+    {
+        //ルーム内のメンバーに共有
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var hash = new Hashtable();
+            hash["playSceneName"] = str;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+        }
     }
 
     ~selectScene()

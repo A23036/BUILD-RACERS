@@ -4,7 +4,7 @@ using UnityEngine.Windows;
 
 public class LapSetter : MonoBehaviour
 {
-    private int lapCnt = 0;
+    private int lapCnt = 3;
     [SerializeField] private int minLapCnt = 0;
     [SerializeField] private int maxLapCnt = 9;
 
