@@ -68,7 +68,7 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
 
                 //ƒ‹[ƒ€‚Ìó‘Ô‚ğWaiting‚É•ÏX
                 var propsw = new Hashtable();
-                propsw["masterGameScene"] = "‘Ò‹@’†";
+                propsw["masterGameScene"] = "Waiting";
                 PhotonNetwork.CurrentRoom.SetCustomProperties(propsw);
 
                 Debug.Log($"Set {propsw["masterGameScene"]}");
@@ -129,8 +129,6 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     public void RPC_OnSelectorChanged(bool isReady, int senderID)
     {
-        return;
-
         //Ú‘±”‚Æ“o˜^”
         Debug.Log($"Connect:{PhotonNetwork.PlayerList.Length} , regist:{selectorsStat.Count}");
         foreach (var vk in selectorsStat)

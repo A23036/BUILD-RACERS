@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
@@ -121,12 +122,20 @@ public class robbyScene : baseScene
             //ルーム状態の更新
             if (room.CustomProperties.TryGetValue("masterGameScene", out var s) && s is string stat)
             {
-                if (stat == "gamePlay") stat = "レース中";
-                else if (stat == "select") stat = "待機中";
+                Debug.Log($"Update Room Stat : {stat}");
+                if (stat == "Waiting") stat = "待機中";
+                else if (stat == "Starting") stat = "開始中";
+                else stat = "レース中";
                 roomStat = stat;
             }
             Debug.Log($"Update Room Stat : {roomStat}");
             scr.SetRoomStatText(roomStat);
+
+            //マップを取得
+            if(room.CustomProperties.TryGetValue("playSceneName" , out var str) && str is string)
+            {
+                scr.roomPlaySceneName = (string)str;
+            }
 
             //生成フラグ
             geneFlag[room.Name] = true;
@@ -274,7 +283,8 @@ public class robbyScene : baseScene
             CustomRoomPropertiesForLobby = new string[]
             {
             "limitPlayers",
-            "masterGameScene"
+            "masterGameScene",
+            "playSceneName"
             }
         };
 
