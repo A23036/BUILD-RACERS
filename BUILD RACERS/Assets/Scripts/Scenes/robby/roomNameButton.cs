@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public class roomNameButton : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    public string roomPlaySceneName;
     void Start()
     {
         //コンテントの子供に設定
@@ -63,7 +65,9 @@ public class roomNameButton : MonoBehaviour
             PlayerPrefs.SetInt("driverNum", -1);
             PlayerPrefs.SetInt("engineerNum", -1);
             PlayerPrefs.SetInt("isMonitor", 1);
-            SceneManager.LoadScene("gamePlay");
+
+            Debug.Log($"LOAD SCENE : {roomPlaySceneName}");
+            SceneManager.LoadScene(roomPlaySceneName);
         }
 
         //ルームのオプション設定
