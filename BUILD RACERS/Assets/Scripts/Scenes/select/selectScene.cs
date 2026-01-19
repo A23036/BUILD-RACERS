@@ -314,7 +314,7 @@ public class selectScene : baseScene
         if (PhotonNetwork.IsMasterClient) lapSetter.SetActive(true);
 
         //マップを選択するオブジェクト　マスター以外は表示しない
-        if (PhotonNetwork.IsConnected) mapSelector.SetActive(true);
+        if (PhotonNetwork.IsMasterClient) mapSelector.SetActive(true);
     }
 
     //カスタムプロパティのコールバック
