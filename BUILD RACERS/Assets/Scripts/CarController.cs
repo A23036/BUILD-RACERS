@@ -283,12 +283,11 @@ public class CarController : MonoBehaviourPunCallbacks
         string nowSceneName = SceneManager.GetActiveScene().name;
         switch (nowSceneName)
         {
-            case "singlePlay":
-            case "gamePlay":
-                state = State.Stop;
-                break;
             case "driverTutorial":
                 state = State.Drive;
+                break;
+            default:
+                state = State.Stop;
                 break;
         }
 
@@ -330,23 +329,33 @@ public class CarController : MonoBehaviourPunCallbacks
         flags = new bool[3];
         for (int i = 0; i < flags.Length; i++) flags[i] = true;
 
-        if (SceneManager.GetActiveScene().name == "gamePlay")
+
+        switch (SceneManager.GetActiveScene().name)
         {
-            var sceneManager = FindObjectOfType<playScene>();
-            if (sceneManager != null)
-            {
-                resultUI = sceneManager.GetResultUI();
-                resultUI.SetActive(false);
-            }
-        }
-        else if (SceneManager.GetActiveScene().name == "singlePlay")
-        {
-            var sceneManager = FindObjectOfType<singlePlayScene>();
-            if (sceneManager != null)
-            {
-                resultUI = sceneManager.GetResultUI();
-                resultUI.SetActive(false);
-            }
+            case "gamePlay":
+                var sceneManager = FindObjectOfType<playScene>();
+                if (sceneManager != null)
+                {
+                    resultUI = sceneManager.GetResultUI();
+                    resultUI.SetActive(false);
+                }
+                break;
+            case "singlePlay":
+                sceneManager = FindObjectOfType<playScene>();
+                if (sceneManager != null)
+                {
+                    resultUI = sceneManager.GetResultUI();
+                    resultUI.SetActive(false);
+                }
+                break;
+            case "Map2":
+                sceneManager = FindObjectOfType<map2>();
+                if (sceneManager != null)
+                {
+                    resultUI = sceneManager.GetResultUI();
+                    resultUI.SetActive(false);
+                }
+                break;
         }
 
         if (!PhotonNetwork.IsConnected)
@@ -560,6 +569,9 @@ public class CarController : MonoBehaviourPunCallbacks
                 int milliseconds = (int)((timer * 1000) % 1000);
                 timerText.text = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
                 timerText.enabled = true;
+
+                //ラップUIを更新
+                lapText.text = $"Lap:{Mathf.Max(0, lapCount)}/{maxLaps}";
             }
 
             //タイマー黄色に変更

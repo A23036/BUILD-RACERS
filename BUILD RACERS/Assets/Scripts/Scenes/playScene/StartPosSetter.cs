@@ -122,8 +122,11 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             var karts = FindObjectsOfType<CarController>();
             foreach (var kart in karts)
             {
+                //ワールド座標とのずれを考慮
+                var pos = transform.position;
+
                 //初期位置へセット
-                kart.SetStartPos(startPosList[idx++ % startPosList.Length].position + offsetPos);
+                kart.SetStartPos(startPosList[idx++ % startPosList.Length].position + offsetPos + pos);
             }
             Debug.Log("=== Set StartPos Drivers (Offline) ===");
         }
