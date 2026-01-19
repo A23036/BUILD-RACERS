@@ -333,26 +333,26 @@ public class CarController : MonoBehaviourPunCallbacks
         switch (SceneManager.GetActiveScene().name)
         {
             case "gamePlay":
-                var sceneManager = FindObjectOfType<playScene>();
-                if (sceneManager != null)
+                var smp = FindObjectOfType<playScene>();
+                if (smp != null)
                 {
-                    resultUI = sceneManager.GetResultUI();
+                    resultUI = smp.GetResultUI();
                     resultUI.SetActive(false);
                 }
                 break;
             case "singlePlay":
-                sceneManager = FindObjectOfType<playScene>();
-                if (sceneManager != null)
+                var smsp = FindObjectOfType<singlePlayScene>();
+                if (smsp != null)
                 {
-                    resultUI = sceneManager.GetResultUI();
+                    resultUI = smsp.GetResultUI();
                     resultUI.SetActive(false);
                 }
                 break;
             case "Map2":
-                sceneManager = FindObjectOfType<map2>();
-                if (sceneManager != null)
+                var smm2 = FindObjectOfType<map2>();
+                if (smm2 != null)
                 {
-                    resultUI = sceneManager.GetResultUI();
+                    resultUI = smm2.GetResultUI();
                     resultUI.SetActive(false);
                 }
                 break;
