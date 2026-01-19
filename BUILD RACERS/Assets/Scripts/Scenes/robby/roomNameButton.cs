@@ -49,7 +49,7 @@ public class roomNameButton : MonoBehaviour
         TextMeshProUGUI statText = transform.Find("backImage (1)").
             gameObject.transform.Find("roomStatText").GetComponent<TextMeshProUGUI>();
         string roomStat = statText.text;
-        if (roomStat == "Starting")
+        if (roomStat == "開始中")
         {
             //開始中は参加不可にする
             return;
