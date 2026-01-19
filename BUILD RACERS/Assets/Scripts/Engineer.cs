@@ -40,31 +40,32 @@ public class Engineer : MonoBehaviourPunCallbacks
 
         carController = null;
 
-        //シーンマネージャー取得
-        if (SceneManager.GetActiveScene().name == "gamePlay")
+        switch (SceneManager.GetActiveScene().name)
         {
-            var sceneManager = FindObjectOfType<playScene>();
-            if (sceneManager != null)
-            {
-                resultUI = sceneManager.GetResultUI();
-                resultUI.SetActive(false);
-            }
-        }
-        else if (SceneManager.GetActiveScene().name == "singlePlay")
-        {
-            var sceneManager = FindObjectOfType<singlePlayScene>();
-            if (sceneManager != null)
-            {
-                resultUI = sceneManager.GetResultUI();
-                resultUI.SetActive(false);
-            }
-        }
-        else if (SceneManager.GetActiveScene().name == "driverTutorial")
-        {
-            var sceneManager = FindObjectOfType<driverTutorial>();
-            if (sceneManager != null)
-            {
-            }
+            case "gamePlay":
+                var smp = FindObjectOfType<playScene>();
+                if (smp != null)
+                {
+                    resultUI = smp.GetResultUI();
+                    resultUI.SetActive(false);
+                }
+                break;
+            case "singlePlay":
+                var smsp = FindObjectOfType<singlePlayScene>();
+                if (smsp != null)
+                {
+                    resultUI = smsp.GetResultUI();
+                    resultUI.SetActive(false);
+                }
+                break;
+            case "Map2":
+                var smm2 = FindObjectOfType<map2>();
+                if (smm2 != null)
+                {
+                    resultUI = smm2.GetResultUI();
+                    resultUI.SetActive(false);
+                }
+                break;
         }
     }
 
