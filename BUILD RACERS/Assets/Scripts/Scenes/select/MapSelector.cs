@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using Photon.Pun;
 
 public class MapSelector : MonoBehaviour
 {
@@ -20,7 +21,9 @@ public class MapSelector : MonoBehaviour
     {
         if (dropdown.value == 0)
         {
-            playSceneName = "gamePlay";
+            //オフラインならシーンわける
+            if(PhotonNetwork.IsConnected) playSceneName = "gamePlay";
+            else playSceneName = "singlePlay";
         }
         else if (dropdown.value == 1)
         {
@@ -37,8 +40,17 @@ public class MapSelector : MonoBehaviour
     //ドロップダウンで選択したシーン名を返す
     public void SetSceneNameOnProp()
     {
-        //シーンマネージャーからカスタムプロパティに登録
-        var sceneManager = GameObject.Find("SceneManager").GetComponent<selectScene>();
-        sceneManager.SetPlaySceneNameOnProp(playSceneName);
+        //セレクトシーンなら
+        if(SceneManager.GetActiveScene().name == "select")
+        {
+            //シーンマネージャーからカスタムプロパティに登録
+            var sceneManager = GameObject.Find("SceneManager").GetComponent<selectScene>();
+            sceneManager.SetPlaySceneNameOnProp(playSceneName);
+        }
+    }
+
+    public string GetSceneName()
+    {
+        return playSceneName;
     }
 }

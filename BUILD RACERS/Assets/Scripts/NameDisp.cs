@@ -10,8 +10,6 @@ public class NameDisp : MonoBehaviourPunCallbacks
     {
         var nameLabel = GetComponent<TextMeshPro>();
 
-        var player = photonView.Owner;
-
         if(nameLabel.text.Substring(0,3) != "CPU")
         {
             //シングルプレイと処理を分岐

@@ -300,21 +300,7 @@ public class resultUI : MonoBehaviour
         string timeStr = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
 
         //エンジニアのペアネーム設定
-        string pairName = "--------";
-        if (d_id == pairDriverID)
-        {
-            //エンジニア側処理
-            pairName = PlayerPrefs.GetString("PlayerName");
-        }
-        else if(e_id == pairEngineerID)
-        {
-            //ペアのドライバー側処理
-            PhotonView pv = PhotonView.Find(e_id);
-            if (pv != null) 
-            {
-                pairName = pv.Owner.NickName;
-            }
-        }
+        string pairName = PhotonView.Find(e_id).Owner.NickName;
 
         string format = $"<mspace=0.7em>{rankStr} , {name.PadRight(8)} & {pairName.PadRight(8)} , {timeStr}</mspace>";
         Text.text = format;

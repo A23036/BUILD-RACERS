@@ -1217,7 +1217,7 @@ public class CarController : MonoBehaviourPunCallbacks
     public void HiddenUI()
     {
         //UIの非表示
-        hidenCanvas.SetActive(false);
+        //hidenCanvas.SetActive(false);
     }
 
     // ============================

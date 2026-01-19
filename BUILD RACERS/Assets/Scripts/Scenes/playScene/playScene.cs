@@ -1,8 +1,10 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
+using UnityEngine.SceneManagement;
 
 public class playScene : baseScene
 {
@@ -17,6 +19,9 @@ public class playScene : baseScene
     private bool isNotifyDriverConnected = false;
     private InputAction resultAction;
 
+    private CarController carController;
+    private Engineer engineer;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -24,7 +29,7 @@ public class playScene : baseScene
         
         preSceneName = "select";
 
-        GenerateKarts();
+        GenerateKarts();    
 
         //ロード完了後にメッセージ処理を再開
         PhotonNetwork.IsMessageQueueRunning = true;
@@ -32,6 +37,7 @@ public class playScene : baseScene
 
     private void Awake()
     {
+
         base.Awake();
 
         Debug.Log("=== PLAY SCENE AWAKE ===");
@@ -77,13 +83,52 @@ public class playScene : baseScene
 
     public void GenerateKarts()
     {
-        //オフラインなら処理なし
-        if (!PhotonNetwork.IsConnected) return;
+        //オフラインなら普通のInstantiate
+        if (!PhotonNetwork.IsConnected)
+        {
+            //プレイヤーの生成
+            if (PlayerPrefs.GetInt("driverNum") != -1)
+            {
+                //ドライバーの生成
+                var player = Instantiate(Resources.Load("player"), new Vector3(0, 0, 0), Quaternion.identity);
+                player.GetComponent<CarController>().SetCamera();
+                carController = player.GetComponent<CarController>();
+                carController.isMine = true;
 
-        if(PlayerPrefs.GetInt("driverNum") != -1)
+                //UIの有効化
+                DriverUI.SetActive(true);
+                EngineerUI.SetActive(false);
+            }
+            else if (PlayerPrefs.GetInt("engineerNum") != -1)
+            {
+                //相方ドライバーの生成（CPU）
+                var cpu = Instantiate(Resources.Load("Player"));
+                carController = cpu.GetComponent<CarController>();
+                //carController.SetCamera();
+                carController.SetName(PlayerPrefs.GetString("PlayerName"));
+                var cpuCc = cpu.GetComponent<CarController>();
+                var wpContainer = FindObjectOfType<WaypointContainer>();
+                cpuCc.SetAI<AIDriver>(wpContainer);
+
+                //エンジニアの生成
+                var player = Instantiate(Resources.Load("Engineer"));
+                engineer = player.GetComponent<Engineer>();
+
+                //UIの有効化
+                DriverUI.SetActive(false);
+                EngineerUI.SetActive(true);
+            }
+            else Debug.Log("not select");
+
+            //BOTドライバーの生成
+            GenerateBotDrivers();
+            return;
+        }
+
+        if (PlayerPrefs.GetInt("driverNum") != -1)
         {
             // プレイヤー生成（自分）
-            var position = new Vector3(Random.Range(-3f, 3f), 0f , PhotonNetwork.LocalPlayer.ActorNumber * 5);
+            var position = new Vector3(Random.Range(-3f, 3f), 0f, PhotonNetwork.LocalPlayer.ActorNumber * 5);
             var player = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
             var playerCc = player.GetComponent<CarController>();
             playerCc.SetCamera();
@@ -117,7 +162,7 @@ public class playScene : baseScene
             EngineerUI.SetActive(false);
             MonitorUI.SetActive(false);
         }
-        else if(PlayerPrefs.GetInt("engineerNum") != -1)
+        else if (PlayerPrefs.GetInt("engineerNum") != -1)
         {
             //UIの表示・非表示
             DriverUI.SetActive(false);
@@ -125,10 +170,10 @@ public class playScene : baseScene
             MonitorUI.SetActive(false);
 
             //エンジニア生成
-            var player = PhotonNetwork.Instantiate("Engineer", new Vector3(0,0,0), Quaternion.identity);
+            var player = PhotonNetwork.Instantiate("Engineer", new Vector3(0, 0, 0), Quaternion.identity);
             var playerCc = player.GetComponent<Engineer>();
         }
-        else if(PlayerPrefs.GetInt("isMonitor") == 1)
+        else if (PlayerPrefs.GetInt("isMonitor") == 1)
         {
             //UIの表示・非表示
             DriverUI.SetActive(false);
@@ -160,5 +205,18 @@ public class playScene : baseScene
     public GameObject GetResultUI()
     {
         return ResultUI;
+    }
+
+    public void GenerateBotDrivers()
+    {
+        var wpContainer = FindObjectOfType<WaypointContainer>();
+        for (int i = 0; i < GenerateBotsNum; i++)
+        {
+            var bot = Instantiate(Resources.Load("Player"), new Vector3(0, 0, (i + 1) * -6f), Quaternion.identity);
+            var botCc = bot.GetComponent<CarController>();
+            botCc.SetAI<AIDriver>(wpContainer);
+            //0埋め2桁で名前を設定
+            botCc.SetName("CPU_" + (i + 1).ToString("00"));
+        }
     }
 }
