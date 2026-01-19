@@ -13,10 +13,15 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     private int nowConnectDrivers = 0;
     private bool isSetDrivers = false;
 
-    private string debugText = "waiting for members...";
+    private bool isPlayReady = false;
+    private bool isPlayGo = false;
 
     //スタートまでの時間を設定
     [SerializeField] private int untilStartTime;
+
+    //readyUI
+    [SerializeField] private GameObject readyUIObj;
+    private readyUI readyUI;
 
     private void Awake()
     {
@@ -47,18 +52,20 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
+        readyUI = readyUIObj.GetComponent<readyUI>();
+
         Debug.Log("=== StartPosSetter START ===");
 
+        ///*
         if (!PhotonNetwork.IsConnected)
         {
-            debugText = "LOADING...";
-            
             //ドライバーを初期位置にセット
             Invoke(nameof(SetStartPosDrivers), 3f);
 
             //N秒後にドライバー開始
             Invoke(nameof(DriverStart), untilStartTime);
         }
+        //*/
     }
 
     // Update is called once per frame
@@ -76,12 +83,6 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log(" === WAIT MENBERS === ");
-        }
-
-        //2秒後に消す
-        if (debugText == "GO!")
-        {
-            Invoke(nameof(ResetDebugText), 2f);
         }
     }
 
@@ -148,8 +149,8 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             }
         }
 
-        debugText = "READY";
-        if (PhotonNetwork.IsConnected) photonView.RPC("RPC_UpdateDebugText", RpcTarget.AllBuffered, debugText);
+        if (PhotonNetwork.IsConnected) photonView.RPC("RPC_PlayReadyImage", RpcTarget.AllBuffered);
+        else readyUI.StartReadyImage();
     }
 
     public void DriverStart()
@@ -181,39 +182,24 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             }
         }
 
-        debugText = "GO!";
-        if(PhotonNetwork.IsConnected) photonView.RPC("RPC_UpdateDebugText", RpcTarget.AllBuffered, debugText);
-    }
-
-    private void OnGUI()
-    {
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 80;
-        style.normal.textColor = Color.red;
-        style.alignment = TextAnchor.MiddleCenter;
-        style.fontStyle = FontStyle.Bold;  // Bold追加
-
-        float width = 800;
-        float height = 400;
-        Rect rect = new Rect(
-            (Screen.width - width) / 2,
-            (Screen.height - height) / 2 - Screen.height/4,
-            width,
-            height
-        );
-
-        GUI.Label(rect, debugText, style);
-    }
-
-    void ResetDebugText()
-    {
-        debugText = "";
+        if(PhotonNetwork.IsConnected) photonView.RPC("RPC_PlayGoImage", RpcTarget.AllBuffered);
+        else readyUI.StartGoImage();
     }
 
     [PunRPC]
-    public void RPC_UpdateDebugText(string text)
+    public void RPC_PlayReadyImage()
     {
-        debugText = text;
+        if (isPlayReady) return;
+        readyUI.StartReadyImage();
+        isPlayReady = true;
+    }
+
+    [PunRPC]
+    public void RPC_PlayGoImage()
+    {
+        if(isPlayGo) return;
+        readyUI.StartGoImage();
+        isPlayGo = true;
     }
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)

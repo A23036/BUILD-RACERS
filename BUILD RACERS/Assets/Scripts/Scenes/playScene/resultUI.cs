@@ -300,7 +300,12 @@ public class resultUI : MonoBehaviour
         string timeStr = string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
 
         //エンジニアのペアネーム設定
-        string pairName = PhotonView.Find(e_id).Owner.NickName;
+        var pairPv = PhotonView.Find(e_id);
+        string pairName = "--------";
+        if(pairPv != null)
+        {
+            pairName = pairPv.Owner.NickName    ;
+        }
 
         string format = $"<mspace=0.7em>{rankStr} , {name.PadRight(8)} & {pairName.PadRight(8)} , {timeStr}</mspace>";
         Text.text = format;

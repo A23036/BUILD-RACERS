@@ -63,6 +63,8 @@ MonoBehaviour:
   - RPC_SetPassiveState
   - RPC_UpdateRankUI
   - RPC_ReceiveGoalNotif
+  - RPC_PlayGoImage
+  - RPC_PlayReadyImage
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
