@@ -10,6 +10,9 @@ public class singleScene : baseScene
     //ラップ数設定
     [SerializeField] GameObject lapSetter;
 
+    //マップ設定
+    [SerializeField] GameObject mapSelector;
+
     //セレクター関係
     private selectSystem ss;
 
@@ -57,7 +60,8 @@ public class singleScene : baseScene
         PlayerPrefs.SetInt("lapCnt",ls.GetLapCnt());
 
         //シングルプレイへ
-        SceneManager.LoadScene("singlePlay");
+        var ms = mapSelector.GetComponent<MapSelector>();
+        SceneManager.LoadScene(ms.GetSceneName());
     }
 
     public void InputText()

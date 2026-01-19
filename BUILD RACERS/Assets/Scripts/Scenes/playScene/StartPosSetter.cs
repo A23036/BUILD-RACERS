@@ -1,7 +1,7 @@
-using UnityEngine;
-using Photon.Pun;
-using Fusion;
 using ExitGames.Client.Photon;
+using Fusion;
+using Photon.Pun;
+using UnityEngine;
 
 public class StartPosSetter : MonoBehaviourPunCallbacks
 {
@@ -122,13 +122,11 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             var karts = FindObjectsOfType<CarController>();
             foreach (var kart in karts)
             {
-                //ワールド座標とのずれを考慮
-                var pos = transform.position;
-
                 //初期位置へセット
-                kart.SetStartPos(startPosList[idx++ % startPosList.Length].position + offsetPos + pos);
+                kart.SetStartPos(startPosList[idx++ % startPosList.Length].position + offsetPos);
+
+                Debug.Log($"=== Set StartPos Drivers (Offline) {kart.transform.position} ===");
             }
-            Debug.Log("=== Set StartPos Drivers (Offline) ===");
         }
 
         else if (PhotonNetwork.IsMasterClient)

@@ -16,11 +16,14 @@ public class map2 : playScene
         GenerateKarts();
 
         //ロード完了後にメッセージ処理を再開
-        PhotonNetwork.IsMessageQueueRunning = true;
+        if(PhotonNetwork.IsConnected) PhotonNetwork.IsMessageQueueRunning = true;
     }
 
     private void Awake()
     {
+        //シングルプレイなら処理なし
+        if (!PhotonNetwork.IsConnected) return;
+
         base.Awake();
     }
 
