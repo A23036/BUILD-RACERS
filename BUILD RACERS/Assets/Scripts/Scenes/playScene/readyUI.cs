@@ -66,7 +66,9 @@ public class readyUI : MonoBehaviour
 
     public void StartReadyImage()
     {
+        if (isPlayReady) return;
         StartCoroutine(PlayReadyImage());
+        isPlayReady = true;
     }
 
     public IEnumerator PlayReadyImage()
@@ -90,7 +92,9 @@ public class readyUI : MonoBehaviour
 
     public void StartGoImage()
     {
+        if(isPlayGo) return;
         StartCoroutine(PlayGoImage());
+        isPlayGo = true;
     }
 
     public IEnumerator PlayGoImage()
