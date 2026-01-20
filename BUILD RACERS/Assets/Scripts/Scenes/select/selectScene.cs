@@ -81,6 +81,7 @@ public class selectScene : baseScene
         {
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("masterGameScene", out var stat);
             if (stat is string) nowRoomStat = (string)stat;
+            Debug.Log($"REC STAT ===> {stat}");
         }
 
         //人数表示の更新
@@ -392,7 +393,7 @@ public class selectScene : baseScene
         Debug.Log("NOW ROOM STAT : " + nowRoomStat);
 
         //ルームの状態がStartingなら処理なし
-        if (nowRoomStat != "待機中") return;
+        if (nowRoomStat == "Starting") return;
 
         SwitchSide();
     }
