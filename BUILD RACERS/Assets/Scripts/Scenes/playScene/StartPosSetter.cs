@@ -25,14 +25,6 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        //観戦者の時に作動しないように　RPCはバッファされるため関数先で処理を止める　＝＞　途中参加でREADY GO!が表示されないように
-        //マスターなら途中参加でない　＋　カートの初期位置セットを実行したいので false にしない
-        if(!photonView.IsMine && PlayerPrefs.GetInt("isMonitor") == 1)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
-
         //ドライバーのスタート地点を取得
         startPosList = new Transform[transform.childCount];
         isSet = new bool[transform.childCount];
@@ -128,6 +120,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
 
                 Debug.Log($"=== Set StartPos Drivers (Offline) {kart.transform.position} ===");
             }
+            readyUI.StartReadyImage();
         }
 
         else if (PhotonNetwork.IsMasterClient)
@@ -147,10 +140,8 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                     photonView.RPC("RPC_UpdateRank", RpcTarget.AllBuffered);
                 }
             }
+            photonView.RPC("RPC_PlayReadyImage", RpcTarget.All);
         }
-
-        if (PhotonNetwork.IsConnected) photonView.RPC("RPC_PlayReadyImage", RpcTarget.AllBuffered);
-        else readyUI.StartReadyImage();
     }
 
     public void DriverStart()
@@ -164,6 +155,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 //状態を運転へ
                 kart.StateToDrive();
             }
+            readyUI.StartGoImage();
         }
         else if(PhotonNetwork.IsMasterClient)
         {
@@ -180,10 +172,8 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                     photonView.RPC("RPC_StateToDrive", RpcTarget.AllBuffered);
                 }
             }
+            photonView.RPC("RPC_PlayGoImage", RpcTarget.All);
         }
-
-        if(PhotonNetwork.IsConnected) photonView.RPC("RPC_PlayGoImage", RpcTarget.AllBuffered);
-        else readyUI.StartGoImage();
     }
 
     [PunRPC]

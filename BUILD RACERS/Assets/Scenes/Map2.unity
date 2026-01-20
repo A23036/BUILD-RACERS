@@ -10831,9 +10831,9 @@ MonoBehaviour:
   rotateSmooth: 8
   mouseSensitivity: 3
   monitorDistance: 10
-  scrollSpeed: 2
+  scrollSpeed: 3
   monitorMinDistance: 3
-  monitorMaxDistance: 30
+  monitorMaxDistance: 50
 --- !u!114 &1602641356
 MonoBehaviour:
   m_ObjectHideFlags: 0

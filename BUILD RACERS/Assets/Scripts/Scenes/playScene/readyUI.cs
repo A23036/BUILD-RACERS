@@ -40,7 +40,10 @@ public class readyUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        //ŠÏíÒ‚È‚ç“Ç‚İ‚İ‚ğ”ñ•\¦‚É
+        Color temp = loadingImage.color;
+        temp.a = 0f;
+        loadingImage.color = temp;
     }
 
     void OnEnable()

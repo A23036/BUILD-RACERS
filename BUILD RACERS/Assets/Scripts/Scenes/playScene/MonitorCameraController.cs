@@ -4,6 +4,8 @@ using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
 {
@@ -14,9 +16,9 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
     [Header("Spectator")]
     [SerializeField] private float mouseSensitivity = 3f;
     [SerializeField] private float monitorDistance;
-    [SerializeField] private float scrollSpeed = 2f;
+    [SerializeField] private float scrollSpeed = 3f;
     [SerializeField] private float monitorMinDistance = 3;
-    [SerializeField] private float monitorMaxDistance = 30;
+    [SerializeField] private float monitorMaxDistance = 50;
 
     private Transform target;
 
@@ -40,6 +42,9 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
 
     // ピンチ用
     private float previousPinchDistance;
+
+    //初期設定フラグ
+    private bool isInit = false;
 
     void Awake()
     {
@@ -107,6 +112,20 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
         backViewAction?.Disable();
         scrollAction?.Disable();
         base.OnDisable();
+    }
+
+    void Update()
+    {
+        //1回のみ実行　初期化　適当なカートに追従
+        if(isInit == false)
+        {
+            var karts = FindObjectsOfType<CarController>();
+            if(karts.Length > 0)
+            {
+                SetNextTarget(1);
+                isInit = true;
+            }
+        }
     }
 
     void LateUpdate()
@@ -177,7 +196,7 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
             Vector2 delta = pointerDeltaAction.ReadValue<Vector2>();
             yaw += delta.x * mouseSensitivity * 0.1f;
             pitch -= delta.y * mouseSensitivity * 0.1f;
-            pitch = Mathf.Clamp(pitch, -30f, 60f);
+            pitch = Mathf.Clamp(pitch, 0f, 80f);
         }
 
         // --- 位置計算 ---
@@ -224,6 +243,12 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
                 return;
             }
         }
+
+        //Pがドライバーじゃなかったら再度呼び出し
+        if (cars.Length > 1 && step != 0)
+        {
+            SetNextTarget(step);
+        }
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
@@ -243,7 +268,10 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        UpdateCaches();
+        SetNextTarget(1);
+
+        //観戦対象が０ならメニューへ戻る 直後の実行だとカートが抜けても残っているので少し待つ
+        Invoke("CheckAndGoRobby", 1f);
     }
 
     public void UpdateCaches()
@@ -253,5 +281,18 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
 
         cachedPlayers = PhotonNetwork.PlayerList;
         watchIndex = Mathf.Clamp(watchIndex, 0, cachedPlayers.Length - 1);
+    }
+
+    public void CheckAndGoRobby()
+    {
+        var cars = FindObjectsByType<CarController>(FindObjectsSortMode.None);
+        if (cars.Length <= 0)
+        {
+            SceneManager.LoadScene("robby");
+        }
+        else
+        {
+            Debug.Log("残りのカート数：" + cars.Length);
+        }
     }
 }
