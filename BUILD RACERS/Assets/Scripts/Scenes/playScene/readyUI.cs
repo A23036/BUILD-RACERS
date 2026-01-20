@@ -9,6 +9,10 @@ using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class readyUI : MonoBehaviour
 {
+    //ローディングの画像
+    [SerializeField] private GameObject loadingImageObj;
+    private Image loadingImage;
+
     //レディーの画像
     [SerializeField] private GameObject readyImageObj;
     private Image readyImage;
@@ -28,6 +32,7 @@ public class readyUI : MonoBehaviour
 
     private void Awake()
     {
+        loadingImage = loadingImageObj.GetComponent<Image>();
         readyImage = readyImageObj.GetComponent<Image>();
         goImage = goImageObj.GetComponent<Image>();
     }
@@ -67,6 +72,7 @@ public class readyUI : MonoBehaviour
     public void StartReadyImage()
     {
         if (isPlayReady) return;
+        loadingImage.enabled = false;
         StartCoroutine(PlayReadyImage());
         isPlayReady = true;
     }

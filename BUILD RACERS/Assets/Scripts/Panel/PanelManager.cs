@@ -5,9 +5,6 @@ using System.Runtime.Serialization.Formatters;
 
 public class PanelManager : MonoBehaviour
 {
-    // デバッグ用テキスト
-    [SerializeField] private TextMeshProUGUI debugText;
-
     private const int PanelWidth = 5;
     private const int PanelHeight = 5;
     private bool[,] panelState = new bool[PanelWidth, PanelHeight];
@@ -58,7 +55,6 @@ public class PanelManager : MonoBehaviour
         }
 
         Debug.Log($"PanelManager: {allGrids.Length}個のグリッドを登録しました");
-        SetDebugText($"GridSet({allGrids.Length})");
     }
 
     // 個別のグリッドを登録
@@ -105,8 +101,6 @@ public class PanelManager : MonoBehaviour
     public bool CanPlaceParts(PartsBase partsData, int originX, int originY)
     {
         if (partsData == null) return false;
-
-        SetDebugText($"PartsData:width " +  partsData.width + " height " + partsData.height);
 
         for (int y = 0; y < partsData.height; y++)
         {
@@ -359,7 +353,7 @@ public class PanelManager : MonoBehaviour
     {
         if (previewPartsData == null)
         {
-            SetDebugText("Cant Set");
+            Debug.Log("Cant Set");
             return false;
         }
         return CanPlaceParts(previewPartsData, previewOriginX, previewOriginY);
@@ -376,14 +370,6 @@ public class PanelManager : MonoBehaviour
         if (x < 0 || y < 0 || x >= PanelWidth || y >= PanelHeight)
             return PartsType.Passive; // デフォルト
         return placedPartsTypes[x, y];
-    }
-    public void SetDebugText(string s)
-    {
-        debugText.text = s;
-    }
-    public void AddDebugText(string s)
-    {
-        debugText.text = debugText.text + "\n" + s;
     }
 
     public Vector3 GetPanelPos(int gridX, int gridY)

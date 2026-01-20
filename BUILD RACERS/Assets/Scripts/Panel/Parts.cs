@@ -304,8 +304,6 @@ public class Parts : MonoBehaviour
                 {
                     // 配置失敗：元の位置に戻す or 落下
                     Debug.Log("配置できません！");
-                    // デバッグテキスト
-                    panelManager.SetDebugText("Cant Set");
                     ReturnToOriginalPosition();
                 }
             }
@@ -392,9 +390,6 @@ public class Parts : MonoBehaviour
         //int coreGridY = gridY + (partsData.height - 1 - partsData.coreY);
 
         Debug.Log($"[SnapToGrid] 原点: ({gridX},{gridY}), コア位置: パーツ内({partsData.coreX},{partsData.coreY}), グリッド上({coreGridX},{coreGridY})");
-
-        // デバッグテキスト
-        panelManager.SetDebugText($"[SnapToGrid] origin: ({gridX},{gridY}), core:({partsData.coreX},{partsData.coreY}), grid({coreGridX},{coreGridY})");
         
         // コアのグリッド座標をワールド座標に変換
         Vector3 worldPos = GridToWorld(coreGridX, coreGridY);
