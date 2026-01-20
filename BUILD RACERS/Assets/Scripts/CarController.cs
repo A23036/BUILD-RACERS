@@ -437,7 +437,6 @@ public class CarController : MonoBehaviourPunCallbacks
         useItemAction.AddBinding("<Keyboard>/space");
         useItemAction.AddBinding("<Gamepad>/leftShoulder");
         useItemAction.AddBinding("<Gamepad>/leftTrigger");
-        useItemAction.AddBinding("<Touchscreen>/primaryTouch/tap");
         useItemAction.Enable();
 
         base.OnEnable();
@@ -478,6 +477,26 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             inputUseItem = true;
             Debug.Log("[INPUT] Use Item");
+        }
+
+        // スマホでのアイテム使用
+        if (!inputUseItem && Touchscreen.current != null)
+        {
+            foreach (var touch in Touchscreen.current.touches)
+            {
+                if (!touch.press.wasPressedThisFrame)
+                {
+                    continue;
+                }
+
+                Vector2 touchPosition = touch.position.ReadValue();
+                if (touchPosition.x >= Screen.width * 0.5f)
+                {
+                    inputUseItem = true;
+                    Debug.Log("[INPUT] Use Item (Right Tap)");
+                    break;
+                }
+            }
         }
 
         Debug.Log("パーツ数:" + partsNum);
