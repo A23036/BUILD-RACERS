@@ -157,6 +157,8 @@ public class CarController : MonoBehaviourPunCallbacks
     private bool[] flags;
     private bool isLapClear = false;
 
+    public bool isRaceClear = false;
+
     //オフライン用のフラグ　BOTとの区別用
     public bool isMine = false;
 
@@ -524,6 +526,8 @@ public class CarController : MonoBehaviourPunCallbacks
         //ゴール判定
         if(lapCount == maxLaps)
         {
+            isRaceClear = true;
+
             //リザルトUIを有効化
             if(resultUI.activeSelf == false) resultUI.SetActive(true);
 
@@ -1217,7 +1221,7 @@ public class CarController : MonoBehaviourPunCallbacks
     public void HiddenUI()
     {
         //UIの非表示
-        //hidenCanvas.SetActive(false);
+        hidenCanvas.SetActive(false);
     }
 
     // ============================

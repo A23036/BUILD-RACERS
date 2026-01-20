@@ -77,7 +77,7 @@ public class ItemManager : MonoBehaviour
         nodeMap[itemId].Add(node);
 
         // アイテムUIの更新
-        if(carController.isMine)
+        if(carController.isMine && carController.isRaceClear == false)
         {
             itemUI.RefreshFromQueue(new List<int>(itemQueue));
             PrintItemQueue();
@@ -106,7 +106,7 @@ public class ItemManager : MonoBehaviour
         if(isUse) SpawnItem((PartsID)id);
 
         // アイテムUIの更新
-        if (carController.isMine)
+        if (carController.isMine && carController.isRaceClear == false)
         {
             itemUI.RefreshFromQueue(new List<int>(itemQueue));
         }
@@ -136,7 +136,7 @@ public class ItemManager : MonoBehaviour
         }
 
         // アイテムUIの更新
-        if (carController.isMine)
+        if (carController.isMine && carController.isRaceClear == false)
         {
             itemUI.RefreshFromQueue(new List<int>(itemQueue));
         }
