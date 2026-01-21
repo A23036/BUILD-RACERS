@@ -41,9 +41,12 @@ public class readyUI : MonoBehaviour
     void Start()
     {
         //ŠÏíÒ‚È‚ç“Ç‚İ‚İ‚ğ”ñ•\¦‚É
-        Color temp = loadingImage.color;
-        temp.a = 0f;
-        loadingImage.color = temp;
+        if(PlayerPrefs.GetInt("isMonitor") == 1)
+        {
+            Color temp = loadingImage.color;
+            temp.a = 0f;
+            loadingImage.color = temp;
+        }
     }
 
     void OnEnable()

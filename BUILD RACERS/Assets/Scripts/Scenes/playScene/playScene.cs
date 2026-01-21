@@ -16,7 +16,6 @@ public class playScene : baseScene
     [SerializeField] private GameObject MonitorUI;
     [SerializeField] private GameObject ResultUI;
 
-    private bool isNotifyDriverConnected = false;
     private InputAction resultAction;
 
     private CarController carController;
@@ -194,13 +193,7 @@ public class playScene : baseScene
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
-        if(!isNotifyDriverConnected && PlayerPrefs.GetInt("driverNum") != -1 && photonView != null)
-        {
-            //マスタークライアントへカートの生成を通知する
-            photonView.RPC("RPC_NotifyDriverConnected", RpcTarget.All);
-
-            isNotifyDriverConnected = true;
-        }
+        
     }
     public GameObject GetResultUI()
     {

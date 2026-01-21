@@ -181,6 +181,11 @@ public class CarController : MonoBehaviourPunCallbacks
     private float nextBlinkTime = 0f;
     [SerializeField] private float lapBlinkInterval = .25f;
 
+    //開始までの準備段階かフラグ
+    private bool isLoading = true;
+
+    private bool isNotifyDriverConnected = false;
+
     public void AddPartsNum()
     {
         partsNum++;
@@ -280,7 +285,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        Debug.Log("AWAKE");
+        Debug.Log("=== AWAKE ===");
 
         string nowSceneName = SceneManager.GetActiveScene().name;
         switch (nowSceneName)
@@ -294,10 +299,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         driverNum = PlayerPrefs.GetInt("driverNum");
-
-        PhotonView pv = GetComponent<PhotonView>();
-        if (photonView.IsMine && PlayerPrefs.GetInt("driverNum") != -1)
-            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
+        Debug.Log(driverNum);
 
         var joystick = GameObject.Find("Floating Joystick");
         if (joystick != null) variableJoystick = joystick.GetComponent<Joystick>();
@@ -387,15 +389,41 @@ public class CarController : MonoBehaviourPunCallbacks
         foreach (var p in players)
         {
             int e = p.CustomProperties["engineerNum"] is int en ? en : -1;
+            Debug.Log($"{e} == {PlayerPrefs.GetInt("engineerNum")}");
             if (e == -1) continue;
 
-            if (e == PlayerPrefs.GetInt("driverNum"))
+            //どこかで１多く設定されてるので泣く泣くのー１；； 2026.1.22 U.Hiroto
+            if (e == PlayerPrefs.GetInt("driverNum") - 1)
             {
                 if (p.CustomProperties.ContainsKey("PlayerViewID"))
                 {
                     pairViewID = p.CustomProperties["PlayerViewID"] is int pairViewId ? pairViewId : -1;
                     pairPlayer = p;
                     Debug.Log("FOUND PAIR! pairID:" + pairViewID);
+
+                    //PhotonViewの有効性を確認
+                    PhotonView pairPhotonView = PhotonView.Find(pairViewID);
+                    if (pairPhotonView == null)
+                    {
+                        Debug.Log($"無効なID：{pairViewID}");
+                        pairViewID = -1;
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log($"有効なID：{pairViewID}");
+                    }
+
+                    //ペアの検索が完了で通知をする　１回のみ実行
+                    if (!isNotifyDriverConnected && PlayerPrefs.GetInt("driverNum") != -1 && photonView != null)
+                    {
+                        //マスタークライアントへカートの生成を通知する
+                        PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
+
+                        startPosPv.RPC("RPC_NotifyDriverConnected", RpcTarget.AllBuffered);
+
+                        isNotifyDriverConnected = true;
+                    }
                 }
                 else
                 {
@@ -458,6 +486,13 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void Update()
     {
+        //読み込み中ならペア検索
+        if(isLoading && photonView.IsMine)
+        {
+            Debug.Log("ドライバー：ペア検索中！");
+            TryPairPlayers();
+        }
+
         if (state != State.Drive) return;
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
         if (driver != null) return;
@@ -823,6 +858,8 @@ public class CarController : MonoBehaviourPunCallbacks
         //観戦者の時に作動しないように RPCがバッファされてるのでここで処理止める
         if (PlayerPrefs.GetInt("isMonitor") == 1) return;
 
+        if(rankText == null) return;
+
         //全カートの角度とラップ数を取得　比較して順位を決定
         CarController[] cars = FindObjectsOfType<CarController>();
         currentRank = 1;
@@ -868,8 +905,6 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void UpdateTimerUI()
     {
-        Debug.Log($"UpdateTimerUI:{DateTime.Now}");
-
         //点滅
         if(blinkTimer > 0f)
         {
@@ -1253,6 +1288,14 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
+        //自身のViewIDを登録
+        PhotonView pv = GetComponent<PhotonView>();
+        if (photonView.IsMine)
+        {
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
+            Debug.Log($"ID登録：{pv.ViewID}");
+        }
+
         var prop = PhotonNetwork.CurrentRoom.CustomProperties;
         if (prop.TryGetValue("lapCnt", out var lapCnt) && lapCnt is int)
         {
@@ -1312,5 +1355,11 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         Debug.Log("PassiveState Request");
         SetPassiveState(id, isAdd);
+    }
+
+    [PunRPC]
+    public void RPC_NotifLoadFinish()
+    {
+        if(photonView.IsMine) isLoading = false;
     }
 }
