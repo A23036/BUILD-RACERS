@@ -64,6 +64,11 @@ public class singleScene : baseScene
         SceneManager.LoadScene(ms.GetSceneName());
     }
 
+    public void PushBackButton()
+    {
+        SceneManager.LoadScene("menu");
+    }
+
     public void InputText()
     {
         GameObject inputField = GameObject.Find("InputFieldLegacy");
