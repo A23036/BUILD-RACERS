@@ -405,6 +405,10 @@ public class selectScene : baseScene
 
         if (monitor != null)
         {
+            //l”‚É‹ó‚«‚ª‚È‚¯‚ê‚Îˆ—‚È‚µ
+            var selectors = FindObjectsOfType<selectSystem>();
+            if (selectors.Length >= limitPlayers) return;
+
             SpawnSelector();
         }
         else if(selector != null)
