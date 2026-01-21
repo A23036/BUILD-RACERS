@@ -100,6 +100,8 @@ public class selectScene : baseScene
     //セレクターの更新処理
     private void selectorUpdate()
     {
+        var props = new Hashtable();
+
         ss.GetNums(out int dn, out int bn);
         int selectDriverNum = dn, selectEngineerNum = bn;
         if (selectDriverNum == -1 && selectEngineerNum == -1)
@@ -117,6 +119,10 @@ public class selectScene : baseScene
                 debugMessage.text = "参加中: エンジニア" + (selectEngineerNum + 1);
             }
         }
+
+        props["driverNum"] = dn;
+        props["engineerNum"] = bn;
+        if(ss != null && ss.photonView.IsMine) PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
 
     //観戦者の更新処理

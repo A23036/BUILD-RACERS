@@ -65,6 +65,8 @@ MonoBehaviour:
   - RPC_ReceiveGoalNotif
   - RPC_PlayGoImage
   - RPC_PlayReadyImage
+  - RPC_NotifyEngineerConnected
+  - RPC_NotifLoadFinish
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

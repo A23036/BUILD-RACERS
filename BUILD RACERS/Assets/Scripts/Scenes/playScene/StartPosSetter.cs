@@ -9,8 +9,12 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     public Transform[] startPosList;
     private bool[] isSet;
 
-    private int driversSum = 0;
+    private int driversSum = 99;
     private int nowConnectDrivers = 0;
+
+    private int engineersSum = 99;
+    private int nowConnectEngineers = 0;
+
     private bool isSetDrivers = false;
 
     private bool isPlayReady = false;
@@ -52,7 +56,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.IsConnected)
         {
             //ドライバーを初期位置にセット
-            Invoke(nameof(SetStartPosDrivers), 3f);
+            Invoke(nameof(SetStartPosDrivers), 1f);
 
             //N秒後にドライバー開始
             Invoke(nameof(DriverStart), untilStartTime);
@@ -63,7 +67,24 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if(!isSetDrivers && driversSum <= nowConnectDrivers)
+        if(driversSum == 99 || engineersSum == 99)
+        {
+            //総ドライバー数を取得
+            var props = PhotonNetwork.CurrentRoom.CustomProperties;
+            if (props.TryGetValue("DriversCount", out var dc) && dc is int)
+            {
+                driversSum = (int)dc;
+            }
+
+            //総エンジニア数を取得
+            if (props.TryGetValue("EngineersCount", out var ec) && ec is int)
+            {
+                engineersSum = (int)ec;
+            }
+        }
+
+        //エンジニアとドライバーの接続を待つ
+        if(!isSetDrivers && driversSum <= nowConnectDrivers && engineersSum <= nowConnectEngineers)
         {
             //全ドライバーが接続されたら初期位置へセット
             Invoke(nameof(SetStartPosDrivers), 1f);
@@ -75,6 +96,10 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log(" === WAIT MENBERS === ");
+            if(PhotonNetwork.IsMasterClient)
+            {
+                Debug.Log($"DRIVER:{nowConnectDrivers}/{driversSum} , ENGINEER:{nowConnectEngineers}/{engineersSum}");
+            }
         }
     }
 
@@ -96,8 +121,15 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     [PunRPC]
     public void RPC_NotifyDriverConnected()
     {
-        //マスターより先に呼ばれる可能性があるため、OnRoomPropertiesUpdateで処理する
-        PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "newnowConnectDrivers", nowConnectDrivers + 1 } });
+        //マスターがカウントする
+        if (PhotonNetwork.IsMasterClient) nowConnectDrivers++;
+    }
+
+    [PunRPC]
+    public void RPC_NotifyEngineerConnected()
+    {
+        //マスターがカウントする
+        if (PhotonNetwork.IsMasterClient) nowConnectEngineers++;
     }
 
     [PunRPC]
@@ -115,6 +147,8 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             var karts = FindObjectsOfType<CarController>();
             foreach (var kart in karts)
             {
+
+
                 //初期位置へセット
                 kart.SetStartPos(startPosList[idx++ % startPosList.Length].position + offsetPos);
 
@@ -133,6 +167,9 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 PhotonView photonView = kart.GetComponent<PhotonView>();
                 if (photonView != null)
                 {
+                    //ペア検索を終了させる
+                    photonView.RPC("RPC_NotifLoadFinish", RpcTarget.AllBuffered);
+
                     //初期位置へセット
                     photonView.RPC("RPC_SetStartPos", RpcTarget.AllBuffered, startPosList[idx++ % startPosList.Length].position + offsetPos);
 
@@ -194,19 +231,5 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
-        /*
-        //総ドライバー数を取得
-        driversSum = (int)PhotonNetwork.CurrentRoom.CustomProperties["DriversCount"];
-
-        //接続済みドライバー数を取得
-        if (propertiesThatChanged.TryGetValue("newnowConnectDrivers", out var v) && v is int ncd)
-        {
-            nowConnectDrivers = ncd;
-        }
-        */
-
-        //別方法で接続済みドライバー数を取得
-        var drivers = FindObjectsOfType<CarController>();
-        nowConnectDrivers = drivers.Length;
     }
 }

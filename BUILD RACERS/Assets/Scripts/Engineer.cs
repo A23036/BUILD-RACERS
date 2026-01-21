@@ -20,6 +20,11 @@ public class Engineer : MonoBehaviourPunCallbacks
     //リザルトUI ゴールしたら有効化
     private GameObject resultUI;
 
+    //開始までの準備段階かフラグ
+    private bool isLoading = true;
+
+    private bool isNotifyEngineerConnected = false;
+
     void Awake()
     {
         if (!photonView.IsMine)
@@ -33,8 +38,6 @@ public class Engineer : MonoBehaviourPunCallbacks
         panelManager.SetEngineer(this);
 
         PhotonView pv = GetComponent<PhotonView>();
-
-        if (PlayerPrefs.GetInt("engineerNum") != -1) PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
 
         Debug.Log("My ViewID: " + pv.ViewID);
 
@@ -88,7 +91,12 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        
+        //読み込み中ならペア検索
+        if (isLoading && photonView.IsMine)
+        {
+            Debug.Log("エンジニア：ペア検索中！");
+            TryPairPlayers();
+        }
     }
 
     private void TryPairPlayers()
@@ -110,8 +118,10 @@ public class Engineer : MonoBehaviourPunCallbacks
             int d = p.CustomProperties["driverNum"] is int dn ? dn:-1;
             if (d == -1) continue;
 
+            //どこかで１多く設定されてるので泣く泣くのー１；； 2026.1.22 U.Hiroto
+            Debug.Log($"{d} == {PlayerPrefs.GetInt("engineerNum")}");
             // 自身と同番号のドライバーを探す
-            if (d == PlayerPrefs.GetInt("engineerNum"))
+            if (d == PlayerPrefs.GetInt("engineerNum") - 1)
             {
                 // PlayerViewID が設定済みならpairViewIDに保存
                 if (p.CustomProperties.ContainsKey("PlayerViewID"))
@@ -120,8 +130,32 @@ public class Engineer : MonoBehaviourPunCallbacks
                     pairPlayer = p;
                     Debug.Log("FOUND PAIR! pairID:" + pairViewID);
 
+                    //PhotonViewの有効性を確認
+                    PhotonView pairPhotonView = PhotonView.Find(pairViewID);
+                    if (pairPhotonView == null)
+                    {
+                        Debug.Log($"無効なID：{pairViewID}");
+                        pairViewID = -1;
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log($"有効なID：{pairViewID}");
+                    }
+
                     //カメラの追従
                     SetCamera();
+
+                    //ペアの検索が完了で通知をする　１回のみ実行
+                    if (!isNotifyEngineerConnected && PlayerPrefs.GetInt("engineerNum") != -1 && photonView != null)
+                    {
+                        //マスタークライアントへエンジニアの生成を通知する
+                        PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
+
+                        startPosPv.RPC("RPC_NotifyEngineerConnected", RpcTarget.AllBuffered);
+
+                        isNotifyEngineerConnected = true;
+                    }
                 }
                 else
                 {
@@ -140,6 +174,31 @@ public class Engineer : MonoBehaviourPunCallbacks
     //カメラの設定
     public void SetCamera()
     {
+        Debug.Log($"=== SetCamera Debug ===");
+        Debug.Log($"現在のシーン: {SceneManager.GetActiveScene().name}");
+        Debug.Log($"pairViewID: {pairViewID}");
+        Debug.Log($"pairPlayer: {pairPlayer?.NickName}");
+
+        // シーン内の全PhotonViewを列挙
+        PhotonView[] allViews = FindObjectsOfType<PhotonView>();
+        Debug.Log($"シーン内のPhotonView数: {allViews.Length}");
+        foreach (var pv in allViews)
+        {
+            Debug.Log($"  ViewID={pv.ViewID}, Owner={pv.Owner?.NickName}, Name={pv.gameObject.name}, Scene={pv.gameObject.scene.name}");
+        }
+
+        // 目的のPhotonViewを検索
+        PhotonView pairPhotonView = PhotonView.Find(pairViewID);
+        Debug.Log($"PhotonView.Find({pairViewID}) の結果: {(pairPhotonView != null ? "見つかった" : "null")}");
+
+        if (pairPhotonView == null)
+        {
+            Debug.LogError($"ViewID={pairViewID}が見つかりません");
+            return;
+        }
+
+        Debug.Log($"Set Camera to {pairViewID}");
+
         //シングルプレイ時の処理
         if (!PhotonNetwork.IsConnected)
         {
@@ -154,7 +213,15 @@ public class Engineer : MonoBehaviourPunCallbacks
 
         var cameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
         if (cameraController != null)
+        {
+            pairPhotonView = PhotonView.Find(pairViewID);
+            if (pairPhotonView == null)
+            {
+                Debug.LogError($"ViewID={pairViewID}のPhotonViewが見つかりません");
+                return;
+            }
             cameraController.SetTarget(PhotonView.Find(pairViewID).transform);
+        }
         else
             Debug.Log("cameraController is null");
     }
@@ -275,6 +342,14 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
+        //自身のViewIDを登録
+        var pv = GetComponent<PhotonView>();
+        if(pv.IsMine)
+        {
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
+            Debug.Log($"ID登録：{pv.ViewID}");
+        }
+
         //ラップ数の設定　オンラインはカスタムコールバックで取得する
         if (!PhotonNetwork.IsConnected)
         {
@@ -332,5 +407,11 @@ public class Engineer : MonoBehaviourPunCallbacks
 
             result.StartCoroutines();
         }
+    }
+
+    [PunRPC]
+    public void RPC_NotifLoadFinish()
+    {
+        if (photonView.IsMine) isLoading = false;
     }
 }
