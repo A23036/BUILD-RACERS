@@ -145,7 +145,9 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private AnimationCurve stunEaseCurve;
     [SerializeField] private float stunMinSpeed = 2.0f;
     [SerializeField] private GameObject stunEffect;
+    [SerializeField] private Vector3 stunEffectOffset = new Vector3(0f, 1.0f, 0f);
     private float stunSpinAngle = 360f; // 回転量
+    private GameObject stunEffectInstance;
 
     private bool isSetStartPos = false;
 
@@ -249,10 +251,13 @@ public class CarController : MonoBehaviourPunCallbacks
         state = State.Stun;
         ClearBoostEffect();
 
-        var effect = Instantiate(stunEffect, transform);
-        effect.transform.localPosition = new Vector3(0f, 1.0f, 0f);
-        effect.transform.localRotation = Quaternion.identity;
-        effect.transform.localScale = Vector3.one;
+        if (stunEffectInstance != null)
+        {
+            Destroy(stunEffectInstance);
+        }
+
+        stunEffectInstance = Instantiate(stunEffect);
+        UpdateStunEffectTransform();
 
         switch (type)
         {
@@ -270,7 +275,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 break;
         }
 
-        Destroy(effect, stunTime + 1.0f);
+        Destroy(stunEffectInstance, stunTime + 1.0f);
 
         stunElapsed = 0f;
         stunStartLocalRotation = bodyMesh.transform.localRotation;
@@ -947,6 +952,22 @@ public class CarController : MonoBehaviourPunCallbacks
             bodyMesh.transform.localRotation = stunStartLocalRotation;
             state = State.Drive;
         }
+    }
+
+    private void LateUpdate()
+    {
+        if (stunEffectInstance == null) return;
+        UpdateStunEffectTransform();
+    }
+
+    private void UpdateStunEffectTransform()
+    {
+        if (stunEffectInstance == null) return;
+
+        Vector3 horizontalOffset = transform.TransformVector(new Vector3(stunEffectOffset.x, 0f, stunEffectOffset.z));
+        stunEffectInstance.transform.position = transform.position + horizontalOffset + Vector3.up * stunEffectOffset.y;
+        stunEffectInstance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        stunEffectInstance.transform.localScale = Vector3.one;
     }
 
 
