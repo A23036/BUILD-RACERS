@@ -2,6 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class singleScene : baseScene
 {
@@ -20,8 +21,8 @@ public class singleScene : baseScene
     {
         preSceneName = "menu";
 
-        GameObject inputField = GameObject.Find("InputFieldLegacy");
-        InputField input = inputField.GetComponent<InputField>();
+        GameObject inputField = GameObject.Find("InputField (TMP)");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
         input.text = PlayerPrefs.GetString("PlayerName");
 
         //セレクターの生成
@@ -70,8 +71,8 @@ public class singleScene : baseScene
 
     public void InputText()
     {
-        GameObject inputField = GameObject.Find("InputFieldLegacy");
-        InputField input = inputField.GetComponent<InputField>();
+        GameObject inputField = GameObject.Find("InputField (TMP)");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
 
         //ネームバーの文字数制限
         if (input.text.Length > 8) input.text = input.text.Substring(0, 8);
