@@ -62,7 +62,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         //キャンバスの子供に設定
-        Canvas canvas = GameObject.FindObjectOfType<Canvas>();
+        GameObject canvas = GameObject.Find("Canvas");
         transform.SetParent(canvas.transform, false);
 
         //セレクターの色をプレイヤーの数で分割
