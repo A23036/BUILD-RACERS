@@ -609,11 +609,11 @@ public class CarController : MonoBehaviourPunCallbacks
                     result.SetPairEngineerID(pairViewID);
 
                     Debug.Log($"GOAL TIME : {timer}");
-                    photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, GetName(), timer , photonView.ViewID , pairViewID);
+                    photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, photonView.Owner.NickName, timer , photonView.ViewID , pairViewID);
                 }
                 else
                 {
-                    result.UpdateRankUI(GetName(), timer);
+                    result.UpdateRankUI(PlayerPrefs.GetString("PlayerName"), timer);
                 }
             }
 
