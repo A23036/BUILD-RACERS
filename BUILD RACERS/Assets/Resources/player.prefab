@@ -688,6 +688,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   stunMinSpeed: 2
   stunEffect: {fileID: 7410733377263439432, guid: a0f0fcd586123a946acfbb15a0578f38, type: 3}
+  stunEffectOffset: {x: 0, y: 1, z: 0}
   isRaceClear: 0
   isMine: 0
   passiveUI: {fileID: 0}

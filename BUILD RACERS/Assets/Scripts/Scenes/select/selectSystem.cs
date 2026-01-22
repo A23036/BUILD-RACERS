@@ -176,14 +176,14 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             if (selectDriverNum != -1)
             {
                 transform.position = driverIcons[selectDriverNum].position + offset;
-                PlayerPrefs.SetInt("driverNum", selectDriverNum + 1);
+                PlayerPrefs.SetInt("driverNum", selectDriverNum);
                 PlayerPrefs.SetInt("engineerNum", -1);
             }
             else
             {
                 transform.position = engineerIcons[selectEngineerNum].position + offset;
                 PlayerPrefs.SetInt("driverNum", -1);
-                PlayerPrefs.SetInt("engineerNum", selectEngineerNum + 1);
+                PlayerPrefs.SetInt("engineerNum", selectEngineerNum);
             }
         }
     }

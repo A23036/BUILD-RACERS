@@ -107,21 +107,33 @@ public class Engineer : MonoBehaviourPunCallbacks
         }
 
         // ペアを発見済みの場合、処理を行わない
-        if (pairViewID != -1 || !photonView.IsMine) return;
+        if (!photonView.IsMine) return;
+        if (pairViewID != -1)
+        {
+            Debug.Log($"ペア発見済み：{pairViewID}");
+            return;
+        }
 
+        /*
         Player[] players = PhotonNetwork.PlayerList;
 
         // ネットワークに接続中のplayerを一人ずつ調査
         foreach (var p in players)
         {
+            Debug.Log($"{players.Length}人の中からペアを検索");
+
+            //自分は処理なし
+            if (PhotonNetwork.LocalPlayer == p) continue;
+
             // エンジニアはcontinue(ドライバーのみ探す)
             int d = p.CustomProperties["driverNum"] is int dn ? dn:-1;
             if (d == -1) continue;
 
             //どこかで１多く設定されてるので泣く泣くのー１；； 2026.1.22 U.Hiroto
+            //selectSystem::Updateで+1を発見&修正 2026.1.22 U.Hiroto
             Debug.Log($"{d} == {PlayerPrefs.GetInt("engineerNum")}");
             // 自身と同番号のドライバーを探す
-            if (d == PlayerPrefs.GetInt("engineerNum") - 1)
+            if (d == PlayerPrefs.GetInt("engineerNum"))
             {
                 // PlayerViewID が設定済みならpairViewIDに保存
                 if (p.CustomProperties.ContainsKey("PlayerViewID"))
@@ -140,7 +152,7 @@ public class Engineer : MonoBehaviourPunCallbacks
                     }
                     else
                     {
-                        Debug.Log($"有効なID：{pairViewID}");
+                        Debug.Log($"有効なID：{pairViewID} , {players.Length}人の中からペアを発見");
                     }
 
                     //カメラの追従
@@ -162,6 +174,55 @@ public class Engineer : MonoBehaviourPunCallbacks
                     Debug.Log("FOUND PAIR BUT PlayerViewID is not set.");
                 }
                 break;
+            }
+        }
+        */
+
+        CarController[] cars = FindObjectsOfType<CarController>();
+
+        Debug.Log($"{cars.Length}人の中からペアを検索");
+
+        foreach (var car in cars)
+        {
+            var carPv = car.GetComponent<PhotonView>();
+            Player searchPlayer = carPv.Owner;
+            if(searchPlayer.CustomProperties.TryGetValue("driverNum",out var propDn) && propDn is int)
+            {
+                //チーム番号の照合
+                if((int)propDn == PlayerPrefs.GetInt("engineerNum"))
+                {
+                    pairViewID = carPv.ViewID;
+                    pairPlayer = searchPlayer;
+
+                    Debug.Log("FOUND PAIR! pairID:" + pairViewID);
+
+                    //PhotonViewの有効性を確認
+                    PhotonView pairPhotonView = PhotonView.Find(pairViewID);
+                    if (pairPhotonView == null)
+                    {
+                        Debug.Log($"無効なID：{pairViewID}");
+                        pairViewID = -1;
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log($"有効なID：{pairViewID} , {cars.Length}人の中からペアを発見");
+                    }
+
+                    //カメラの追従
+                    SetCamera();
+
+                    //ペアの検索が完了で通知をする　１回のみ実行
+                    if (!isNotifyEngineerConnected && PlayerPrefs.GetInt("engineerNum") != -1 && photonView != null)
+                    {
+                        //マスタークライアントへエンジニアの生成を通知する
+                        PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
+
+                        startPosPv.RPC("RPC_NotifyEngineerConnected", RpcTarget.AllBuffered);
+
+                        isNotifyEngineerConnected = true;
+                    }
+                }
             }
         }
 
