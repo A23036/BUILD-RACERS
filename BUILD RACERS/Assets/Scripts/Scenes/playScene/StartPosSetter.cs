@@ -67,24 +67,31 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if(driversSum == 99 || engineersSum == 99)
+        //総ドライバー数を取得
+        var props = PhotonNetwork.CurrentRoom.CustomProperties;
+        if (props.TryGetValue("DriversCount", out var dc) && dc is int)
         {
-            //総ドライバー数を取得
-            var props = PhotonNetwork.CurrentRoom.CustomProperties;
-            if (props.TryGetValue("DriversCount", out var dc) && dc is int)
-            {
-                driversSum = (int)dc;
-            }
+            driversSum = (int)dc;
+            Debug.Log($"総ドライバー数受信：{dc}");
+        }
+        else
+        {
+            Debug.Log("総ドライバー数受信失敗");
+        }
 
-            //総エンジニア数を取得
-            if (props.TryGetValue("EngineersCount", out var ec) && ec is int)
-            {
-                engineersSum = (int)ec;
-            }
+        //総エンジニア数を取得
+        if (props.TryGetValue("EngineersCount", out var ec) && ec is int)
+        {
+            engineersSum = (int)ec;
+            Debug.Log($"総エンジニア数受信：{ec}");
+        }
+        else
+        {
+            Debug.Log("総エンジニア数受信失敗");
         }
 
         //エンジニアとドライバーの接続を待つ
-        if(!isSetDrivers && driversSum <= nowConnectDrivers && engineersSum <= nowConnectEngineers)
+        if (!isSetDrivers && driversSum <= nowConnectDrivers && engineersSum <= nowConnectEngineers)
         {
             //全ドライバーが接続されたら初期位置へセット
             Invoke(nameof(SetStartPosDrivers), 1f);
@@ -96,7 +103,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log(" === WAIT MENBERS === ");
-            if(PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient)
             {
                 Debug.Log($"DRIVER:{nowConnectDrivers}/{driversSum} , ENGINEER:{nowConnectEngineers}/{engineersSum}");
             }
