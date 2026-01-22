@@ -146,15 +146,6 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
 
         Debug.Log("準備状態の配列数：" + selectorsStat.Count);
 
-        /*
-        //全員分の状態が登録されていなければ準備まだ判定
-        if (PhotonNetwork.PlayerList.Length != selectorsStat.Count)
-        {
-            isEveryoneReady = false;
-            return;
-        }
-        */
-
         selectSystem[] selectors = FindObjectsOfType<selectSystem>();
         foreach (var ss in selectors)
         {
@@ -163,23 +154,6 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
             if (pv != null && pv.Owner != null)
             {
                 actor = pv.Owner.ActorNumber;
-
-                /*
-                if (!selectorsStat.TryGetValue(actor, out bool b) || !b)
-                {
-                    Debug.Log(actor + " is not ready");
-                    isEveryoneReady = false;
-
-                    //ルームの状態をWaitingに変更
-                    var propsw = new Hashtable();
-                    propsw["masterGameScene"] = "Waiting";
-                    PhotonNetwork.CurrentRoom.SetCustomProperties(propsw);
-
-                    Debug.Log($"Set {propsw["masterGameScene"]}");
-
-                    break;
-                }
-                */
             }
 
             ///*
