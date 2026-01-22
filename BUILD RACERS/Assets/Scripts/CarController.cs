@@ -396,62 +396,6 @@ public class CarController : MonoBehaviourPunCallbacks
             return;
         }
 
-        /*
-        Player[] players = PhotonNetwork.PlayerList;
-        foreach (var p in players)
-        {
-            Debug.Log($"{players.Length}人の中からペアを検索");
-
-            //自分は処理なし
-            if (PhotonNetwork.LocalPlayer == p) continue;
-
-            int e = p.CustomProperties["engineerNum"] is int en ? en : -1;
-            Debug.Log($"{e} == {PlayerPrefs.GetInt("engineerNum")}");
-            if (e == -1) continue;
-
-            //どこかで１多く設定されてるので泣く泣くのー１；； 2026.1.22 U.Hiroto
-            //selectSystem::Updateで+1を発見&修正 2026.1.22 U.Hiroto
-            if (e == PlayerPrefs.GetInt("driverNum"))
-            {
-                if (p.CustomProperties.ContainsKey("PlayerViewID"))
-                {
-                    pairViewID = p.CustomProperties["PlayerViewID"] is int pairViewId ? pairViewId : -1;
-                    pairPlayer = p;
-                    Debug.Log("FOUND PAIR! pairID:" + pairViewID);
-
-                    //PhotonViewの有効性を確認
-                    PhotonView pairPhotonView = PhotonView.Find(pairViewID);
-                    if (pairPhotonView == null)
-                    {
-                        Debug.Log($"無効なID：{pairViewID}");
-                        pairViewID = -1;
-                        return;
-                    }
-                    else
-                    {
-                        Debug.Log($"有効なID：{pairViewID} , {players.Length}人の中からペアを発見");
-                    }
-
-                    //ペアの検索が完了で通知をする　１回のみ実行
-                    if (!isNotifyDriverConnected && PlayerPrefs.GetInt("driverNum") != -1 && photonView != null)
-                    {
-                        //マスタークライアントへカートの生成を通知する
-                        PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
-
-                        startPosPv.RPC("RPC_NotifyDriverConnected", RpcTarget.AllBuffered);
-
-                        isNotifyDriverConnected = true;
-                    }
-                }
-                else
-                {
-                    Debug.Log("FOUND PAIR BUT PlayerViewID is not set.");
-                }
-                break;
-            }
-        }
-        */
-
         Engineer[] engineers = FindObjectsOfType<Engineer>();
 
         Debug.Log($"{engineers.Length}人の中からペアを検索");
@@ -732,7 +676,27 @@ public class CarController : MonoBehaviourPunCallbacks
             steerInput = steerAction.ReadValue<float>();
             //if (Input.GetMouseButton(0)) motorInput = 1;
             if (variableJoystick != null && variableJoystick.Direction != Vector2.zero)
-                steerInput = Mathf.Clamp(variableJoystick.Direction.x / 0.9f, -1, 1);
+            {
+                //右タッチは反応しないように
+                if (Touchscreen.current != null)
+                {
+                    foreach (var touch in Touchscreen.current.touches)
+                    {
+                        if (!touch.press.wasPressedThisFrame)
+                        {
+                            continue;
+                        }
+
+                        //右ならアクセルいれない
+                        Vector2 touchPosition = touch.position.ReadValue();
+                        if (touchPosition.x >= Screen.width * 0.5f)
+                        {
+                            motorInput = 0f;
+                            break;
+                        }
+                    }
+                }
+            }
 
             //周回数をUIに反映
             //lapText.text = $"Angle : {nowAngle} , Lap : {Mathf.Max(0,lapCount)}";

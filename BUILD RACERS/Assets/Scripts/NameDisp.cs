@@ -26,7 +26,7 @@ public class NameDisp : MonoBehaviourPunCallbacks
         //自分は非表示
         var parent = transform.parent;
         var cc = parent.gameObject.GetComponent<CarController>();
-        if (cc.isMine) gameObject.SetActive(false);
+        if (cc.isMine) nameLabel.text = "";
     }
 
     private void Update()
@@ -34,4 +34,10 @@ public class NameDisp : MonoBehaviourPunCallbacks
         //名前のビルボード
         transform.forward = Camera.main.transform.forward;
     }
+
+    public void SetNameDisp(string s)
+    {
+
+    }
+
 }

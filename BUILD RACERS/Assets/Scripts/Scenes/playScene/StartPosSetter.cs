@@ -67,31 +67,34 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        //総ドライバー数を取得
-        var props = PhotonNetwork.CurrentRoom.CustomProperties;
-        if (props.TryGetValue("DriversCount", out var dc) && dc is int)
+        if(PhotonNetwork.IsConnected)
         {
-            driversSum = (int)dc;
-            Debug.Log($"総ドライバー数受信：{dc}");
-        }
-        else
-        {
-            Debug.Log("総ドライバー数受信失敗");
-            driversSum = PlayerPrefs.GetInt("DriversCount");
-            Debug.Log($"{driversSum} をPlayerPrefsから取得！");
-        }
+            //総ドライバー数を取得
+            var props = PhotonNetwork.CurrentRoom.CustomProperties;
+            if (props.TryGetValue("DriversCount", out var dc) && dc is int)
+            {
+                driversSum = (int)dc;
+                Debug.Log($"総ドライバー数受信：{dc}");
+            }
+            else
+            {
+                Debug.Log("総ドライバー数受信失敗");
+                driversSum = PlayerPrefs.GetInt("DriversCount");
+                Debug.Log($"{driversSum} をPlayerPrefsから取得！");
+            }
 
-        //総エンジニア数を取得
-        if (props.TryGetValue("EngineersCount", out var ec) && ec is int)
-        {
-            engineersSum = (int)ec;
-            Debug.Log($"総エンジニア数受信：{ec}");
-        }
-        else
-        {
-            Debug.Log("総エンジニア数受信失敗");
-            engineersSum = PlayerPrefs.GetInt("EngineersCount");
-            Debug.Log($"{engineersSum} をPlayerPrefsから取得！");
+            //総エンジニア数を取得
+            if (props.TryGetValue("EngineersCount", out var ec) && ec is int)
+            {
+                engineersSum = (int)ec;
+                Debug.Log($"総エンジニア数受信：{ec}");
+            }
+            else
+            {
+                Debug.Log("総エンジニア数受信失敗");
+                engineersSum = PlayerPrefs.GetInt("EngineersCount");
+                Debug.Log($"{engineersSum} をPlayerPrefsから取得！");
+            }
         }
 
         //エンジニアとドライバーの接続を待つ
