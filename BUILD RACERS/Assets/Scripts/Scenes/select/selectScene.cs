@@ -150,6 +150,36 @@ public class selectScene : baseScene
             PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
         }
 
+        //ドライバー　エンジニア　観戦者の人数を記録
+        int drivers = 0;
+        int engineers = 0;
+        int monitors = 0;
+
+        foreach (var p in PhotonNetwork.PlayerList)
+        {
+            if (p.CustomProperties.TryGetValue("driverNum", out var d) && (int)d != -1) drivers++;
+            if (p.CustomProperties.TryGetValue("engineerNum", out var e) && (int)e != -1) engineers++;
+            if (p.CustomProperties.TryGetValue("isMonitor", out var m) && (int)m == 1) monitors++;
+        }
+
+        Debug.Log("人数カウント完了");
+        Debug.Log($"Drivers:{drivers} , Engineers:{engineers} , Monitors:{monitors}");
+
+        //ルームプロパティに保存
+        hash = new Hashtable
+        {
+            {"DriversCount",drivers },
+            {"EngineersCount",engineers },
+            {"MonitorsCount",monitors }
+        };
+
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+
+        //カスタムプロパティが取得できない問題対策
+        PlayerPrefs.SetInt("DriversCount", drivers);
+        PlayerPrefs.SetInt("EngineersCount", engineers);
+        PlayerPrefs.SetInt("MonitorsCount", monitors);
+
         //名前が一文字以上でシーン遷移
         if (PlayerPrefs.GetString("PlayerName").Length > 0)
         {

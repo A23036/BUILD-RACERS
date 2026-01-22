@@ -77,6 +77,8 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log("総ドライバー数受信失敗");
+            driversSum = PlayerPrefs.GetInt("DriversCount");
+            Debug.Log($"{driversSum} をPlayerPrefsから取得！");
         }
 
         //総エンジニア数を取得
@@ -88,6 +90,8 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log("総エンジニア数受信失敗");
+            engineersSum = PlayerPrefs.GetInt("EngineersCount");
+            Debug.Log($"{engineersSum} をPlayerPrefsから取得！");
         }
 
         //エンジニアとドライバーの接続を待つ

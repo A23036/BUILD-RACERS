@@ -209,6 +209,11 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
             };
 
             PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+
+            //カスタムプロパティが取得できない問題対策
+            PlayerPrefs.SetInt("DriversCount", drivers);
+            PlayerPrefs.SetInt("EngineersCount", engineers);
+            PlayerPrefs.SetInt("MonitorsCount", monitors);
         }
     }
 
