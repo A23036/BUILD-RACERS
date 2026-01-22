@@ -32,6 +32,10 @@ public class Parts : MonoBehaviour
     [SerializeField] private Image cooldownGauge; // 子オブジェクトの円形ゲージ
     private float cooldownTimer = 0f; // 再配置クールタイム
 
+    [SerializeField] private float lifeTimeDuration = 5f; // 効果持続時間（秒）
+    [SerializeField] private Image lifeTimeGauge; // 子オブジェクトの円形ゲージ
+    private float lifeTimeTimer; // 進行効果時間
+
     [SerializeField] private Transform rotationGuide;
     [SerializeField] private float clickThreshold = 0.2f; // 短押し判定秒数
     [SerializeField] private bool isRotate = false; // 短押し判定秒数
@@ -59,6 +63,10 @@ public class Parts : MonoBehaviour
         {
             cooldownGauge.enabled = false;
         }
+
+        // 効果時間とゲージの初期化
+        if (lifeTimeGauge != null) lifeTimeGauge.enabled = false;
+        lifeTimeTimer = lifeTimeDuration;
 
         // Resourcesからロードして partsData が null を回避
         if (partsData == null && !string.IsNullOrEmpty(partsResourceName))
@@ -164,6 +172,9 @@ public class Parts : MonoBehaviour
 
         // クールダウンタイマー
         if(partsType != PartsType.Gimmick) CooldownTimer();
+
+        // ライフタイム
+        if (partsType == PartsType.Passive) LifeTimeTimer();
     }
 
     // 画面外判定
@@ -204,6 +215,50 @@ public class Parts : MonoBehaviour
             Color color = spriteRenderer.color;
             color.a = 1.0f;
             spriteRenderer.color = color;
+        }
+    }
+
+    private void LifeTimeTimer()
+    {
+        // 配置中だけ進行（ドラッグで外してる間は止める）
+        if (!isPlaced)
+        {
+            if (lifeTimeGauge != null && lifeTimeGauge.enabled) lifeTimeGauge.enabled = false;
+            return;
+        }
+
+        // 初回（配置直後）にスタートしていないなら何もしない
+        if (lifeTimeTimer <= 0f) return;
+
+        // ゲージ表示
+        if (lifeTimeGauge != null && !lifeTimeGauge.enabled) lifeTimeGauge.enabled = true;
+
+        // 減少
+        lifeTimeTimer -= Time.deltaTime;
+        Debug.Log("減少中");
+        Debug.Log("lifetimer:" + lifeTimeTimer);
+
+        // fillAmount（1→0）
+        if (lifeTimeGauge != null)
+        {
+            lifeTimeGauge.fillAmount = lifeTimeTimer / lifeTimeDuration;
+        }
+
+        // 0になったら消滅
+        if (lifeTimeTimer <= 0f)
+        {
+            lifeTimeTimer = 0f;
+
+            if (lifeTimeGauge != null) lifeTimeGauge.enabled = false;
+
+            // パネル管理から外す（配置済み扱いなら）
+            if (panelManager != null && isPlaced)
+            {
+                panelManager.RemoveParts(this);
+            }
+
+            panelManager.itemUsed(); // 必要なら（仕様に合わせて）
+            Destroy(gameObject);
         }
     }
 
