@@ -102,6 +102,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI lapText;  // 周回数表示テキスト
     [SerializeField] private TextMeshProUGUI rankText;  // 順位表示テキスト
     [SerializeField] private TextMeshProUGUI timerText;  // タイム表示テキスト
+    [SerializeField] private GameObject miniMapFrame;   // 園児に画面での強調表示用UI
     private GameObject hidenCanvas;
 
     [Header("保持なアイテムの数")]
@@ -199,6 +200,11 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             partsNum--;
         }
+    }
+
+    public void SetMapFrame()
+    {
+        miniMapFrame.SetActive(true);
     }
 
     public void SetPassiveState(PartsID id, bool isAdd)
@@ -316,6 +322,7 @@ public class CarController : MonoBehaviourPunCallbacks
         timerText = InitText(timerText, "TimerText");
 
         hidenCanvas = GameObject.FindGameObjectWithTag("HideCanvas");
+        miniMapFrame.SetActive(false);
 
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0f, -1.0f, 0f);

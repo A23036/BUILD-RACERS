@@ -221,6 +221,9 @@ public class Engineer : MonoBehaviourPunCallbacks
                         startPosPv.RPC("RPC_NotifyEngineerConnected", RpcTarget.AllBuffered);
 
                         isNotifyEngineerConnected = true;
+
+                        // ペアのドライバーのミニマップ上強調UIを有効化
+                        car.SetMapFrame();
                     }
                 }
             }
@@ -267,6 +270,9 @@ public class Engineer : MonoBehaviourPunCallbacks
 
             //シングルプレイ時の相方取得
             carController = FindObjectOfType<CarController>();
+
+            // ペアのドライバーのミニマップ上強調UIを有効化
+            carController.SetMapFrame();
             if (singleCameraController != null)
                 singleCameraController.SetTarget(carController.transform);
             return;
