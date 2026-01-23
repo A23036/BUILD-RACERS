@@ -659,6 +659,7 @@ MonoBehaviour:
   lapText: {fileID: 0}
   rankText: {fileID: 0}
   timerText: {fileID: 0}
+  miniMapFrame: {fileID: 8889516211707318824}
   MAXITEMNUM: 5
   accelerationPower: 0.5
   speedPower: 0.05
@@ -798,7 +799,7 @@ GameObject:
   - component: {fileID: 3660126501941779268}
   - component: {fileID: 6470898375055049610}
   m_Layer: 6
-  m_Name: CarCursor
+  m_Name: CarFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -814,7 +815,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 1, z: -0.029}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 214700145298401294}

@@ -133,29 +133,6 @@ public class playScene : baseScene
             playerCc.SetCamera();
             playerCc.isMine = true;
 
-            float geneX = 0, geneZ = 0;
-            for (int i = 0; i < GenerateBotsNum; i++)
-            {
-                // CPUの生成　テスト
-                position = new Vector3(geneX, 0f, -i * geneZ);
-                var cpu = PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
-                var cpuCc = cpu.GetComponent<CarController>();
-
-                // cpu に AI を設定する。WaypointContainer を渡す（シーンに複数ある場合は適切に選択）
-                var wpContainer = FindObjectOfType<WaypointContainer>(); // 単一ならこれでOK
-
-                //AIをクラス指定で選択して生成　引数はウェイポイント
-                cpuCc.SetAI<AIDriver>(wpContainer);
-                //cpuCc.SetAI<AIDriver_v2>();
-
-                geneX++;
-                if (geneX >= 3)
-                {
-                    geneX = 0;
-                    geneZ += .1f;
-                }
-            }
-
             //UIの表示・非表示
             DriverUI.SetActive(true);
             EngineerUI.SetActive(false);

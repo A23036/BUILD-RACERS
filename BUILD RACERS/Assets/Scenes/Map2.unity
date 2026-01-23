@@ -7687,7 +7687,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isConnect: 1
-  GenerateBotsNum: 0
+  GenerateBotsNum: 7
   DriverUI: {fileID: 2054822040}
   EngineerUI: {fileID: 1168548688}
   MonitorUI: {fileID: 520514691}
@@ -12816,7 +12816,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
