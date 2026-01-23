@@ -109,6 +109,7 @@ public class CarController : MonoBehaviourPunCallbacks
     [SerializeField] private int MAXITEMNUM = 5;
 
     private CameraController cameraController;
+    private Engineer engineer;
     private Rigidbody rb;
     private InputAction throttleAction;
     private InputAction brakeAction;
@@ -620,7 +621,15 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
                 else
                 {
-                    result.UpdateRankUI(PlayerPrefs.GetString("PlayerName"), timer);
+                    if (PlayerPrefs.GetInt("drivreNum") != -1)
+                    {
+                        result.UpdateRankUI(PlayerPrefs.GetString("PlayerName"), timer);
+                        result.UpdateRankUI(GetName(), timer);
+                    }
+                    else
+                    {
+                        //engineer.RPC_ReceiveGoalNotif();
+                    }
                 }
             }
 
@@ -673,7 +682,7 @@ public class CarController : MonoBehaviourPunCallbacks
             //CPUアイテム使用
             if (itemManager.GetItemNum() > 0 && driver.ItemUseDecision())
             {
-                RemoveUsedItem();
+               RemoveUsedItem();
             }
         }
         else
@@ -1113,6 +1122,16 @@ public class CarController : MonoBehaviourPunCallbacks
         return ret;
     }
 
+    public void SetEngineer(Engineer en)
+    {
+        engineer = en;
+    }
+
+    public Engineer GetEngineer()
+    {
+        return engineer;
+    }
+
     public void SendParts(PartsID id)
     {
         //ゴール後は処理なし
@@ -1122,10 +1141,17 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //シングルプレイ時の操作
-        if (!PhotonNetwork.IsConnected)
+        if (!PhotonNetwork.IsConnected && isMine)
         {
-            itemManager.SpawnItem(id);
-            return;
+            if(PlayerPrefs.GetInt("driverNum") != -1) // ドライバーの時
+            {
+                itemManager.SpawnItem(id);
+            }
+            else // エンジニアの時
+            {
+                engineer.RPC_SpawnParts(id); // パーツ生成
+            }
+                return;
         }
 
         if (!photonView.IsMine) return;

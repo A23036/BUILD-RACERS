@@ -119,12 +119,13 @@ public class ItemBoxController : MonoBehaviour
             else if(!PhotonNetwork.IsConnected)
             {
                 //シングル or チュートリアルならそのままアイテム獲得する
-                if(/*個数制限*/true)
+                if(PlayerPrefs.GetInt("driverNum") != -1) // ドライバーの時
                 {
                     PartsID id = itemManager.GetRandomItem(partsType);
 
                     //アイテム
                     PartsType itemType = itemManager.GetPartsType(id);
+                    
                     if (itemType == PartsType.Item)
                     {
                         itemManager.Enqueue((int)id);
@@ -134,8 +135,12 @@ public class ItemBoxController : MonoBehaviour
                     else if(itemType == PartsType.Passive)
                     {
                         carController.RPC_SetPassiveState(id, true);
-                        //carController.AddPartsNum(); // アイテム数を追加
                     }
+                }
+                else // エンジニアの時
+                {
+                    carController.SendParts(itemManager.GetRandomItem(partsType));
+                    carController.AddPartsNum();
                 }
             }
 

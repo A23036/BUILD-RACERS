@@ -42,7 +42,11 @@ public class ItemManager : MonoBehaviour
 
         carController = GetComponent<CarController>();
 
-        itemUI = GameObject.Find("ItemSlotRoot").GetComponent<ItemUIManager>();
+        var itemSlot = GameObject.Find("ItemSlotRoot");
+        if(itemSlot != null)
+        {
+            itemUI = itemSlot.GetComponent<ItemUIManager>();
+        }
 
         //重みの設定
         itemWeightMap = new Dictionary<PartsID, int>();
@@ -77,7 +81,7 @@ public class ItemManager : MonoBehaviour
         nodeMap[itemId].Add(node);
 
         // アイテムUIの更新
-        if(carController.isMine && carController.isRaceClear == false)
+        if(carController.isMine && carController.isRaceClear == false && itemUI != null)
         {
             itemUI.RefreshFromQueue(new List<int>(itemQueue));
             PrintItemQueue();
@@ -106,7 +110,7 @@ public class ItemManager : MonoBehaviour
         if(isUse) SpawnItem((PartsID)id);
 
         // アイテムUIの更新
-        if (carController.isMine && carController.isRaceClear == false)
+        if (carController.isMine && carController.isRaceClear == false && itemUI != null)
         {
             itemUI.RefreshFromQueue(new List<int>(itemQueue));
         }
@@ -136,7 +140,7 @@ public class ItemManager : MonoBehaviour
         }
 
         // アイテムUIの更新
-        if (carController.isMine && carController.isRaceClear == false)
+        if (carController.isMine && carController.isRaceClear == false && itemUI != null)
         {
             itemUI.RefreshFromQueue(new List<int>(itemQueue));
         }

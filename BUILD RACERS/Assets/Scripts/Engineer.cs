@@ -25,6 +25,12 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     private bool isNotifyEngineerConnected = false;
 
+    public void SetPairDriver(CarController car)
+    {
+        carController = car;
+        car.SetEngineer(this);
+    }
+
     void Awake()
     {
         if (!photonView.IsMine)
@@ -74,12 +80,19 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        if(!PhotonNetwork.IsConnected)
+        {
+            partsManager = GetComponentInChildren<PartsManager>();
+
+            panelManager = GameObject.Find("PanelManager").GetComponent<PanelManager>();
+            panelManager.SetEngineer(this);
+            return;
+        }
+
         if (!photonView.IsMine)
         {
             return;
         }
-
-        carController = FindObjectOfType<CarController>();
 
         partsManager = GetComponentInChildren<PartsManager>();
 
@@ -239,6 +252,20 @@ public class Engineer : MonoBehaviourPunCallbacks
     public void SetCamera()
     {
         Debug.Log($"=== SetCamera Debug ===");
+
+        //シングルプレイ時の処理
+        if (!PhotonNetwork.IsConnected)
+        {
+            var singleCameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
+
+            // ペアのドライバーのミニマップ上強調UIを有効化
+            carController.SetMapFrame();
+
+            if (singleCameraController != null)
+                singleCameraController.SetTarget(carController.transform);
+            return;
+        }
+
         Debug.Log($"現在のシーン: {SceneManager.GetActiveScene().name}");
         Debug.Log($"pairViewID: {pairViewID}");
         Debug.Log($"pairPlayer: {pairPlayer?.NickName}");
@@ -258,25 +285,10 @@ public class Engineer : MonoBehaviourPunCallbacks
         if (pairPhotonView == null)
         {
             Debug.LogError($"ViewID={pairViewID}が見つかりません");
-            return;
+            //return;
         }
 
         Debug.Log($"Set Camera to {pairViewID}");
-
-        //シングルプレイ時の処理
-        if (!PhotonNetwork.IsConnected)
-        {
-            var singleCameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
-
-            //シングルプレイ時の相方取得
-            carController = FindObjectOfType<CarController>();
-
-            // ペアのドライバーのミニマップ上強調UIを有効化
-            carController.SetMapFrame();
-            if (singleCameraController != null)
-                singleCameraController.SetTarget(carController.transform);
-            return;
-        }
 
         var cameraController = GameObject.Find("MiniMapCamera").GetComponent<MiniMapCamera>();
         if (cameraController != null)
@@ -298,8 +310,11 @@ public class Engineer : MonoBehaviourPunCallbacks
         //シングルプレイの処理
         if (!PhotonNetwork.IsConnected)
         {
-            var carController = FindObjectOfType<CarController>();
+            // キューに追加
             carController.RPC_EnqueueItem(id);
+            RPC_RemoveUsedItem(id);
+            // 即座に生成
+            carController.RemoveUsedItem();
             return;
         }
 
