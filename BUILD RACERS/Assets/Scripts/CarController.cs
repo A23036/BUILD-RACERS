@@ -177,7 +177,8 @@ public class CarController : MonoBehaviourPunCallbacks
     private int currentRank = 1;
 
     //スタートからの経過秒数
-    private float timer;
+    private double startTime;
+    private double timer;
 
     //ラップタイムが点滅する時間
     [SerializeField] private float lapBlinkTime = 3f;
@@ -380,6 +381,9 @@ public class CarController : MonoBehaviourPunCallbacks
             maxLaps = PlayerPrefs.GetInt("lapCnt");
         }
 
+        startTime = 0;
+        timer = 0;
+
         // fireFx は必要になったタイミングで生成(遅延生成)する
     }
 
@@ -562,7 +566,8 @@ public class CarController : MonoBehaviourPunCallbacks
         //時間計測
         if (state == State.Drive)
         {
-            timer += Time.deltaTime;
+            //タイム計測
+            UpdateTimer();
         }
 
         if (PhotonNetwork.IsConnected && !isMine) return;
@@ -603,6 +608,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
             //リザルトUIを有効化
             if(resultUI.activeSelf == false) resultUI.SetActive(true);
+            resultUI.SetActive(true);
 
             //ランキングUIを更新
             var result = resultUI.GetComponent<resultUI>();
@@ -623,12 +629,8 @@ public class CarController : MonoBehaviourPunCallbacks
                 {
                     if (PlayerPrefs.GetInt("drivreNum") != -1)
                     {
-                        result.UpdateRankUI(PlayerPrefs.GetString("PlayerName"), timer);
-                        result.UpdateRankUI(GetName(), timer);
-                    }
-                    else
-                    {
-                        //engineer.RPC_ReceiveGoalNotif();
+                        if(isMine) result.UpdateRankUI(PlayerPrefs.GetString("PlayerName"), timer);
+                        else result.UpdateRankUI(GetName(), timer);
                     }
                 }
             }
@@ -865,10 +867,37 @@ public class CarController : MonoBehaviourPunCallbacks
         }
     }
 
+    public void DecideStartTime()
+    {
+        if(!PhotonNetwork.IsMasterClient) return;
+
+        //開始時刻をマスターが決定、カスタムプロパティに登録
+        startTime = PhotonNetwork.Time;
+        var prop = new Hashtable();
+        prop["raceStartTime"] = startTime;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(prop);
+    }
+
+    public void UpdateTimer()
+    {
+        //オンラインならサーバー基準で計測
+        if (PhotonNetwork.IsConnected && PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("raceStartTime", out object startTimeObj))
+        {
+            double startTime = (double)startTimeObj;
+            timer = PhotonNetwork.Time - startTime;
+        }
+        else if(!PhotonNetwork.IsConnected)
+        {
+            timer += Time.deltaTime;
+        }
+    }
+
     [PunRPC]
     public void RPC_StateToDrive()
     {
         StateToDrive();
+
+        DecideStartTime();
     }
 
     //状態を運転に
@@ -1387,7 +1416,7 @@ public class CarController : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RPC_UpdateRankUI(string name, float time, int id, int pairId)
+    public void RPC_UpdateRankUI(string name, double time, int id, int pairId)
     {
         var result = resultUI.GetComponent<resultUI>();
         result.UpdateRankUI(name, time, id, pairId);

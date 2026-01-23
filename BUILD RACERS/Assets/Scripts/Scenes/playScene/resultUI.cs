@@ -45,6 +45,7 @@ public class resultUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
     }
 
     void OnEnable()
@@ -55,6 +56,12 @@ public class resultUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        for (int i = 0; i < rankUIupdateFlags.Length; i++)
+        {
+            //１位のフラグがTRUEにならない 2026.1.23 23:56 => Startの初期化消したらいけた！謎！
+            bool b = rankUIupdateFlags[i];
+            Debug.Log($"{i}番目は{b}\n");
+        }
     }
 
     public void SetPairDriverID(int id)
@@ -271,7 +278,7 @@ public class resultUI : MonoBehaviour
     }
 
     //ランキング表の更新
-    public void UpdateRankUI(string name , float time , int d_id = -1 , int e_id = -1)
+    public void UpdateRankUI(string name , double time , int d_id = -1 , int e_id = -1)
     {
         int rank = 0;
         for (int i = 0; i < rankUIupdateFlags.Length; i++)
@@ -280,13 +287,18 @@ public class resultUI : MonoBehaviour
             else
             {
                 rankUIupdateFlags[i] = true;
+                Debug.Log($"{i}番目を{rankUIupdateFlags[i]}に");
                 rank = i + 1;
                 break;
             }
         }
 
+        Debug.Log($"RANK = {rank}");
         var Text = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>();
-        if (Text == null) return;
+        if (Text == null)
+        {
+            return;
+        }
         
         string rankStr = rank.ToString();
         if (rank == 1) rankStr += " st";

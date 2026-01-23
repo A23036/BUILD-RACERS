@@ -266,6 +266,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
     //カスタムプロパティのコールバック
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable changed)
     {
+        ///*
         if (!photonView.IsMine) return;
 
         Debug.Log($"[Custom CallBack] changed keys: {changed.Count}");
@@ -276,6 +277,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
             SendToMaster(false);
             Debug.Log("準備状態の初期化");
         }
+        //*/
 
         //シーン遷移
         if (changed.ContainsKey("isEveryoneReady") && changed["isEveryoneReady"] is bool isEveryoneReady && isEveryoneReady)

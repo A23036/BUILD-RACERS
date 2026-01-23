@@ -2461,7 +2461,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4506,7 +4506,7 @@ MonoBehaviour:
   DriverUI: {fileID: 1684157463}
   EngineerUI: {fileID: 638005463}
   ResultUI: {fileID: 1650928732}
-  botsNum: 7
+  botsNum: 1
 --- !u!1 &458937789
 GameObject:
   m_ObjectHideFlags: 0
@@ -6258,6 +6258,11 @@ SpriteRenderer:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5191127672243601461, guid: dd2998b6d230cfb499f131d89d16de9f, type: 3}
   m_PrefabInstance: {fileID: 227013018}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &579036895 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2741126012356242500, guid: 3727f03d56777704ab071cf1b85161f8, type: 3}
+  m_PrefabInstance: {fileID: 2111065981}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &580117759
 GameObject:
@@ -12785,7 +12790,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -14640,9 +14645,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1328623285}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.3456263, y: -52.707424, z: 79.74024}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.6048748, y: -11.641485, z: 13.27035}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 719257546}
@@ -14691,7 +14696,7 @@ Transform:
   - {fileID: 876438408}
   - {fileID: 26153990}
   - {fileID: 434709481}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 579036895}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1331053003
 GameObject:
@@ -23660,7 +23665,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 2741126012356242500, guid: 3727f03d56777704ab071cf1b85161f8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1328623286}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3727f03d56777704ab071cf1b85161f8, type: 3}
 --- !u!1 &2117482255
@@ -23957,7 +23965,6 @@ SceneRoots:
   - {fileID: 2041170821}
   - {fileID: 733177736}
   - {fileID: 1101864405}
-  - {fileID: 1328623286}
   - {fileID: 2111065981}
   - {fileID: 1304151683}
   - {fileID: 1148945715}
