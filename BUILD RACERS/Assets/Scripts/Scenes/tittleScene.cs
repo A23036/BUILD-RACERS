@@ -37,6 +37,9 @@ public class tittleScene : baseScene
     [SerializeField] private float minAlpha = 0.15f;    // 最小アルファ
     [SerializeField] private float maxAlpha = 1.0f;     // 最大アルファ
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip clickSound; // クリック音
+
     private CanvasGroup pressStartCanvasGroup;
     private Coroutine animationSequenceCoroutine;
     private Coroutine blinkCoroutine;
@@ -75,14 +78,17 @@ public class tittleScene : baseScene
         // 新InputSystem：マウス左クリックまたはタッチ開始でメニュー画面に遷移
         bool clicked = false;
 
-        if (Mouse.current != null)
-            clicked |= Mouse.current.leftButton.wasPressedThisFrame;
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+            clicked = true;
 
-        if (Touchscreen.current != null)
-            clicked |= Touchscreen.current.primaryTouch.press.wasPressedThisFrame;
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+            clicked = true;
 
         if (clicked)
         {
+            // クリック音を再生
+            PlayClickSound();
+
             if (state != AnimationState.Finish) // アニメーション中にクリックでスキップ
             {
                 state = AnimationState.Finish;
@@ -110,6 +116,24 @@ public class tittleScene : baseScene
         }
 
         base.Update();
+    }
+
+    private void PlayClickSound()
+    {
+        if (clickSound != null)
+        {
+            // シーン切り替え時も音を継続させるため、専用のGameObjectを作成
+            GameObject soundObject = new GameObject("ClickSound");
+            AudioSource audioSource = soundObject.AddComponent<AudioSource>();
+            audioSource.clip = clickSound;
+            audioSource.Play();
+
+            // シーン切り替えで破棄されないようにする
+            DontDestroyOnLoad(soundObject);
+
+            // 音の再生が終わったら自動的に削除
+            Destroy(soundObject, clickSound.length);
+        }
     }
 
     private IEnumerator AnimationSequence()
