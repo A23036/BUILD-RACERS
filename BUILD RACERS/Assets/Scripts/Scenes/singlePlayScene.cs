@@ -26,14 +26,14 @@ public class singlePlayScene : baseScene
         if(PlayerPrefs.GetInt("engineerNum") != -1)
         {
             //エンジニアのカメラ追従設定
-            engineer.SetCamera();
+            //engineer.SetCamera();
         }
     }
 
     private void Awake()
     {
-         carController = null;
-         engineer = null;
+        carController = null;
+        engineer = null;
 
         //プレイヤーの生成
         if (PlayerPrefs.GetInt("driverNum") != -1)
@@ -42,7 +42,6 @@ public class singlePlayScene : baseScene
             var player = Instantiate(Resources.Load("player") , new Vector3(0,0,0),Quaternion.identity);
             player.GetComponent<CarController>().SetCamera();
             carController = player.GetComponent<CarController>();
-            carController.isMine = true;
 
             //UIの有効化
             DriverUI.SetActive(true);
@@ -50,6 +49,10 @@ public class singlePlayScene : baseScene
         }
         else if (PlayerPrefs.GetInt("engineerNum") != -1)
         {
+            //UIの有効化
+            DriverUI.SetActive(false);
+            EngineerUI.SetActive(true);
+
             //相方ドライバーの生成（CPU）
             var cpu = Instantiate(Resources.Load("Player"));
             carController = cpu.GetComponent<CarController>();
@@ -62,12 +65,12 @@ public class singlePlayScene : baseScene
             //エンジニアの生成
             var player = Instantiate(Resources.Load("Engineer"));
             engineer = player.GetComponent<Engineer>();
-
-            //UIの有効化
-            DriverUI.SetActive(false);
-            EngineerUI.SetActive(true);
+            engineer.SetPairDriver(cpuCc);
+            engineer.SetCamera();
         }
         else Debug.Log("not select");
+
+        carController.isMine = true;
 
         //BOTドライバーの生成
         GenerateBotDrivers();

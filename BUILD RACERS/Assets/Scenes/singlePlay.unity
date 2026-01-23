@@ -447,7 +447,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -471,6 +471,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (9)
@@ -1395,6 +1399,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (6)
@@ -1512,7 +1520,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -1891,6 +1899,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (4)
@@ -2382,7 +2394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -3861,6 +3873,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red
@@ -3961,6 +3977,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (12)
@@ -4163,7 +4183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -4262,6 +4282,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (11)
@@ -4371,6 +4395,10 @@ PrefabInstance:
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4781,6 +4809,10 @@ PrefabInstance:
       propertyPath: partsType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4799,6 +4831,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (17)
@@ -5102,7 +5138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &475989392
 Transform:
   m_ObjectHideFlags: 0
@@ -5136,6 +5172,8 @@ MonoBehaviour:
   partsResourceName: Parts_Energy
   cooldownDuration: 1
   cooldownGauge: {fileID: 0}
+  lifeTimeDuration: 5
+  lifeTimeGauge: {fileID: 0}
   rotationGuide: {fileID: 0}
   clickThreshold: 0.2
   isRotate: 0
@@ -5486,6 +5524,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (2)
@@ -6079,6 +6121,8 @@ MonoBehaviour:
   partsResourceName: Parts01
   cooldownDuration: 1
   cooldownGauge: {fileID: 0}
+  lifeTimeDuration: 5
+  lifeTimeGauge: {fileID: 0}
   rotationGuide: {fileID: 0}
   clickThreshold: 0.2
   isRotate: 0
@@ -6465,6 +6509,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (13)
@@ -6635,6 +6683,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (8)
@@ -6700,6 +6752,10 @@ PrefabInstance:
     - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
@@ -7039,7 +7095,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &650069236
 Transform:
   m_ObjectHideFlags: 0
@@ -7073,6 +7129,8 @@ MonoBehaviour:
   partsResourceName: Parts_Rocket
   cooldownDuration: 1
   cooldownGauge: {fileID: 0}
+  lifeTimeDuration: 5
+  lifeTimeGauge: {fileID: 0}
   rotationGuide: {fileID: 0}
   clickThreshold: 0.2
   isRotate: 0
@@ -7409,6 +7467,10 @@ PrefabInstance:
       propertyPath: partsType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7671,6 +7733,10 @@ PrefabInstance:
       propertyPath: partsType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7879,7 +7945,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -7950,6 +8016,10 @@ PrefabInstance:
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9156,6 +9226,10 @@ PrefabInstance:
       propertyPath: partsType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9216,7 +9290,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88527dc3173016d4a806fac2f46769b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  miniMapCamera: {fileID: 0}
+  miniMapCamera: {fileID: 1448708586}
   miniMapUI: {fileID: 770728468}
   spawnPrefab: {fileID: 7011438752912030972, guid: e360199485970a84e91b12b19963a585, type: 3}
   groundTags:
@@ -9362,6 +9436,10 @@ PrefabInstance:
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9634,6 +9712,10 @@ PrefabInstance:
       propertyPath: partsType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9792,6 +9874,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (5)
@@ -9854,6 +9940,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (3)
@@ -11058,6 +11148,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (16)
@@ -11167,6 +11261,10 @@ PrefabInstance:
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11746,7 +11844,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1060470646
 Transform:
   m_ObjectHideFlags: 0
@@ -11780,6 +11878,8 @@ MonoBehaviour:
   partsResourceName: Parts_Rocket
   cooldownDuration: 1
   cooldownGauge: {fileID: 0}
+  lifeTimeDuration: 5
+  lifeTimeGauge: {fileID: 0}
   rotationGuide: {fileID: 0}
   clickThreshold: 0.2
   isRotate: 0
@@ -12102,6 +12202,10 @@ PrefabInstance:
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13373,7 +13477,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -13764,6 +13868,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (10)
@@ -14149,7 +14257,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -14701,6 +14809,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (15)
@@ -15599,6 +15711,10 @@ PrefabInstance:
       propertyPath: partsType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15667,7 +15783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -15924,7 +16040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniMapCamera: {fileID: 1448708586}
-  zoomSpeed: 50
+  zoomSpeed: 500
   minSize: 10
   maxSize: 80
   offset: {x: 0, y: 50, z: 0}
@@ -15939,6 +16055,10 @@ PrefabInstance:
     - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
@@ -16276,6 +16396,10 @@ PrefabInstance:
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16839,7 +16963,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -17000,6 +17124,10 @@ PrefabInstance:
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17334,7 +17462,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: respawnTime
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
       propertyPath: breakEffectPrefab
@@ -17659,6 +17787,10 @@ PrefabInstance:
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18830,6 +18962,10 @@ PrefabInstance:
       propertyPath: partsType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18859,7 +18995,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1756007313
 Transform:
   m_ObjectHideFlags: 0
@@ -18893,6 +19029,8 @@ MonoBehaviour:
   partsResourceName: Parts_Flask
   cooldownDuration: 1
   cooldownGauge: {fileID: 0}
+  lifeTimeDuration: 5
+  lifeTimeGauge: {fileID: 0}
   rotationGuide: {fileID: 0}
   clickThreshold: 0.2
   isRotate: 0
@@ -19356,6 +19494,10 @@ PrefabInstance:
       propertyPath: partsType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19788,6 +19930,10 @@ PrefabInstance:
       propertyPath: partsType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20065,6 +20211,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1328623286}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (7)
@@ -22540,6 +22690,10 @@ PrefabInstance:
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: partsType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: respawnTime
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
