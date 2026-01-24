@@ -131,6 +131,8 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 PhotonNetwork.CurrentRoom.SetCustomProperties(props);
             }
         }
+
+        Debug.Log($"GOAL DRIVERS:{raceClearDriversSum} / {driversSum}");
     }
 
     public Transform GetStartPos()
@@ -203,6 +205,12 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             driversSum--;
             PlayerPrefs.SetInt("DriversCount",driversSum);
             Debug.Log(" === Disconnect Driver === ");
+
+            //ゴール済みだったらゴールカウントも減らす
+            if(otherPlayer.CustomProperties.TryGetValue("isRaceClear", out var flag) && (bool)flag)
+            {
+                raceClearDriversSum--;
+            }
 
             //マスターのみカスタムプロパティに反映させる
             if (PhotonNetwork.IsMasterClient)

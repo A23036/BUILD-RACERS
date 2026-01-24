@@ -307,6 +307,9 @@ public class selectScene : baseScene
             Debug.Log("INITIALIZE limitPlayers TO " + limitPlayers);
 
             PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "limitPlayers", limitPlayers } });
+
+            //パスワードの設定
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "roomPassCode", PlayerPrefs.GetString("roomPassCode") } });
         }
         else
         {

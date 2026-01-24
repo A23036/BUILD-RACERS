@@ -9,11 +9,18 @@ public class roomNameButton : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     public string roomPlaySceneName;
+
+    private string roomPassCode = "";
+
+    private robbyScene sceneManager;
+
     void Start()
     {
         //コンテントの子供に設定
         GameObject content = GameObject.Find("Content");
         transform.SetParent(content.transform, false);
+
+        sceneManager = GameObject.Find("SceneManager").GetComponent<robbyScene>();
     }
 
     // Update is called once per frame
@@ -42,6 +49,19 @@ public class roomNameButton : MonoBehaviour
         Text.text = text;
     }
 
+    public void SetRoomPassCode(string pass)
+    {
+        //マスターのパスワードを受け取る
+        roomPassCode = pass;
+
+        //パスワードなければロック画像非表示
+        if(roomPassCode == "")
+        {
+            var lockImage = transform.Find("lockImage").gameObject;
+            lockImage.SetActive(false);
+        }
+    }
+
     //ルームへ接続
     public void PushRoomNameButton()
     {
@@ -51,7 +71,15 @@ public class roomNameButton : MonoBehaviour
         string roomStat = statText.text;
         if (roomStat == "開始中")
         {
-            //開始中は参加不可にする
+            //開始中 or パスワード不一致で参加不可
+            return;
+        }
+        else if(roomPassCode != PlayerPrefs.GetString("roomPassCode"))
+        {
+            //パスワード入力UIを表示
+            sceneManager.ShowPassInputer();
+            //入力前にリセット
+            PlayerPrefs.SetString("roomPassCode", "");
             return;
         }
         else if (roomStat == "待機中")
@@ -80,7 +108,9 @@ public class roomNameButton : MonoBehaviour
             CustomRoomPropertiesForLobby = new string[]
             {
                 "limitPlayers",
-                "masterGameScene"
+                "masterGameScene",
+                "playSceneName",
+                "roomPassCode"
             }
         };
 

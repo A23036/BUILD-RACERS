@@ -641,7 +641,15 @@ public class CarController : MonoBehaviourPunCallbacks
                     result.SetPairEngineerID(pairViewID);
 
                     Debug.Log($"GOAL TIME : {timer}");
-                    if(photonView.IsMine) photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, photonView.Owner.NickName, timer , photonView.ViewID , pairViewID);
+                    if (photonView.IsMine)
+                    {
+                        photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, photonView.Owner.NickName, timer, photonView.ViewID, pairViewID);
+
+                        //ゴール済みフラグをプロパティに登録
+                        Hashtable hash = new Hashtable();
+                        hash["isRaceClear"] = true;
+                        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+                    }
 
                     //ゴールしたドライバー数を送信して各クライアントで記録
                     PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
@@ -1410,6 +1418,17 @@ public class CarController : MonoBehaviourPunCallbacks
     }
 
     // ============================
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        //切断がペアならメニューへ戻る
+        if (otherPlayer.CustomProperties.TryGetValue("engineerNum", out var en) && (int)en == PlayerPrefs.GetInt("driverNum")
+            && otherPlayer.CustomProperties.TryGetValue("isRaceClear", out var flag) && (bool)flag == false)
+        {
+            Debug.Log("ペアが切断したのでメニューへ戻ります");
+            SceneManager.LoadScene("menu");
+        }
+    }
 
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
