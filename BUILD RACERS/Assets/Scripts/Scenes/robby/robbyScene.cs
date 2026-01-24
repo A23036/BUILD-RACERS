@@ -138,6 +138,7 @@ public class robbyScene : baseScene
                 Debug.Log($"Update Room Stat : {stat}");
                 if (stat == "Waiting") stat = "待機中";
                 else if (stat == "Starting") stat = "開始中";
+                else if (stat == "Finished") stat = "終了済み";
                 else stat = "レース中";
                 roomStat = stat;
             }
@@ -152,6 +153,9 @@ public class robbyScene : baseScene
 
             //生成フラグ
             geneFlag[room.Name] = true;
+
+            //ボタンの削除
+            if(roomStat == "終了済み") geneFlag[room.Name] = false;
         }
 
         //古い部屋があれば削除する

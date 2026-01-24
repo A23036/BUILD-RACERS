@@ -22,7 +22,7 @@ public class resultUI : MonoBehaviour
     private bool isResultInitCamera = false;
 
     //順位表の画像
-    [SerializeField] private GameObject[] rankingUIObjects = new GameObject[8]; // 8つのUIプレハブ
+    [SerializeField] private GameObject[] rankingUIObjects = new GameObject[8 + 1]; // 8つのUIプレハブ + 1つの背景
     [SerializeField] private float moveInterval = 0.2f; // 各UIの表示間隔(秒)
     [SerializeField] private float moveDuration = 0.5f; // 移動時間
     [SerializeField] private Vector3 rankUIstartOffset = new Vector3(-1000, 0, 0); // 初期オフセット位置
@@ -77,8 +77,10 @@ public class resultUI : MonoBehaviour
     //ランキングの文字の色を指定
     public void SetTextColor(Color color)
     {
-        foreach(var obj in rankingUIObjects)
+        //0番目の画像にはアクセスしない
+        for (int i = 1; i < rankingUIObjects.Length; i++)
         {
+            var obj = rankingUIObjects[i];
             var text = obj.GetComponent<TextMeshProUGUI>();
             text.color = color;
         }
@@ -294,7 +296,7 @@ public class resultUI : MonoBehaviour
         }
 
         Debug.Log($"RANK = {rank}");
-        var Text = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>();
+        var Text = rankingUIObjects[rank].GetComponent<TextMeshProUGUI>();
         if (Text == null)
         {
             return;
@@ -326,9 +328,9 @@ public class resultUI : MonoBehaviour
         for (int i = rankUIupdateFlags.Length - 1; i >= 0; i--)
         {
             //未登録 or 自分自身なら処理なし
-            if (rankUIupdateFlags[i] == false || i == rank - 1) continue;
+            if (rankUIupdateFlags[i] == false || i + 1 == rank) continue;
 
-            var text = rankingUIObjects[i].GetComponent<TextMeshProUGUI>();
+            var text = rankingUIObjects[i + 1].GetComponent<TextMeshProUGUI>();
             Debug.Log(text.text);
             string uiTimeStr = text.text.Substring(text.text.Length - 9 - 9);
             int uiMinute = int.Parse(uiTimeStr.Substring(0, 2));
@@ -342,39 +344,38 @@ public class resultUI : MonoBehaviour
             Debug.Log(" *** SWAP RANK *** ");
 
             //登録済みのタイムより短ければ入れ替え　順位以降を入れ替え
-            var tempUIStr = rankingUIObjects[i].GetComponent<TextMeshProUGUI>().text;
-            var tempCurStr = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().text;
+            var tempUIStr = rankingUIObjects[i + 1].GetComponent<TextMeshProUGUI>().text;
+            var tempCurStr = rankingUIObjects[rank].GetComponent<TextMeshProUGUI>().text;
             //文字列を切る場所の添え字
             int cutIdx = 4;
             var preUI = tempUIStr.Substring(0, cutIdx + 14);
             var preCur = tempCurStr.Substring(0, cutIdx + 14);
             var suffUI = tempUIStr.Substring(cutIdx + 14);
             var suffCur = tempCurStr.Substring(cutIdx + 14);
-            rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().text = preCur + suffUI;
-            rankingUIObjects[i].GetComponent<TextMeshProUGUI>().text = preUI + suffCur;
+            rankingUIObjects[rank].GetComponent<TextMeshProUGUI>().text = preCur + suffUI;
+            rankingUIObjects[i + 1].GetComponent<TextMeshProUGUI>().text = preUI + suffCur;
 
             //文字の色も交換が必要なら行う
-            if(rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().color == Color.yellow)
+            if(rankingUIObjects[rank].GetComponent<TextMeshProUGUI>().color == Color.yellow)
             {
-                rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().color = Color.white;
-                rankingUIObjects[i].GetComponent<TextMeshProUGUI>().color = Color.yellow;
+                rankingUIObjects[rank].GetComponent<TextMeshProUGUI>().color = Color.white;
+                rankingUIObjects[i + 1].GetComponent<TextMeshProUGUI>().color = Color.yellow;
             }
-            else if(rankingUIObjects[i].GetComponent<TextMeshProUGUI>().color == Color.yellow)
+            else if(rankingUIObjects[i + 1].GetComponent<TextMeshProUGUI>().color == Color.yellow)
             {
-                rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>().color = Color.yellow;
-                rankingUIObjects[i].GetComponent<TextMeshProUGUI>().color = Color.white;
+                rankingUIObjects[rank].GetComponent<TextMeshProUGUI>().color = Color.yellow;
+                rankingUIObjects[i + 1].GetComponent<TextMeshProUGUI>().color = Color.white;
             }
             
             rank = i + 1;
         }
 
         //プレイヤーなら黄色に
-        Text = rankingUIObjects[rank - 1].GetComponent<TextMeshProUGUI>();
+        Text = rankingUIObjects[rank].GetComponent<TextMeshProUGUI>();
         if (name == PlayerPrefs.GetString("PlayerName") || pairName == PlayerPrefs.GetString("PlayerName"))
         {
             Debug.Log($"YELLOW NAME = {name}");
             Text.color = Color.yellow;
         }
-        //if (name == PhotonNetwork.LocalPlayer.NickName) Text.color = Color.yellow;
     }
 }

@@ -67,6 +67,7 @@ MonoBehaviour:
   - RPC_PlayReadyImage
   - RPC_NotifyEngineerConnected
   - RPC_NotifLoadFinish
+  - RPC_NotifyDriverGoal
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

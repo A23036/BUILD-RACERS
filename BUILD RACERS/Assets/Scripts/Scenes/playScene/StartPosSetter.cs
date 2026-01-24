@@ -3,6 +3,7 @@ using Fusion;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StartPosSetter : MonoBehaviourPunCallbacks
 {
@@ -10,21 +11,28 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     public Transform[] startPosList;
     private bool[] isSet;
 
+    //接続される人数と現在の接続数　ドライバー
     private int driversSum = 99;
     private int nowConnectDrivers = 0;
 
+    //接続される人数と現在の接続数　エンジニア
     private int engineersSum = 99;
     private int nowConnectEngineers = 0;
 
+    //ゴールしたドライバーの数
+    private int raceClearDriversSum = 0;
+
+    //ドライバーがスタート位置についているか
     private bool isSetDrivers = false;
 
+    //スタート時に再生する画像を再生したか
     private bool isPlayReady = false;
     private bool isPlayGo = false;
 
     //スタートまでの時間を設定
     [SerializeField] private int untilStartTime;
 
-    //readyUI
+    //スタート時に再生する画像を制御するスクリプト
     [SerializeField] private GameObject readyUIObj;
     private readyUI readyUI;
 
@@ -112,6 +120,17 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             Debug.Log(" === WAIT MENBERS === ");
             Debug.Log($"DRIVER:{nowConnectDrivers}/{driversSum} , ENGINEER:{nowConnectEngineers}/{engineersSum}");
         }
+
+        //ルームの状態をレース終了へ
+        if(PhotonNetwork.IsMasterClient)
+        {
+            if(raceClearDriversSum >= driversSum)
+            {
+                props = new Hashtable();
+                props["masterGameScene"] = "Finished";
+                PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+            }
+        }
     }
 
     public Transform GetStartPos()
@@ -165,6 +184,12 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 eng.RPC_NotifLoadFinish();
             }
         }
+    }
+
+    [PunRPC]
+    public void RPC_NotifyDriverGoal()
+    {
+        raceClearDriversSum++;
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)

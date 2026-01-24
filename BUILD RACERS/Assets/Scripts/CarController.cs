@@ -641,7 +641,11 @@ public class CarController : MonoBehaviourPunCallbacks
                     result.SetPairEngineerID(pairViewID);
 
                     Debug.Log($"GOAL TIME : {timer}");
-                    photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, photonView.Owner.NickName, timer , photonView.ViewID , pairViewID);
+                    if(photonView.IsMine) photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, photonView.Owner.NickName, timer , photonView.ViewID , pairViewID);
+
+                    //ゴールしたドライバー数を送信して各クライアントで記録
+                    PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
+                    startPosPv.RPC("RPC_NotifyDriverGoal", RpcTarget.All);
                 }
                 else
                 {
@@ -1424,7 +1428,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         var prop = PhotonNetwork.CurrentRoom.CustomProperties;
-        if (prop.TryGetValue("lapCnt", out var lapCnt) && lapCnt is int)
+        if (maxLaps != -1 && prop.TryGetValue("lapCnt", out var lapCnt) && lapCnt is int)
         {
             lapManager.SetMaxLaps((int)lapCnt);
             maxLaps = (int)lapCnt;
