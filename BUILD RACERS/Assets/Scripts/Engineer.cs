@@ -25,6 +25,11 @@ public class Engineer : MonoBehaviourPunCallbacks
 
     private bool isNotifyEngineerConnected = false;
 
+    //検索時間　計測用とタイムアウト制限時間
+    [Tooltip("検索時間の制限(秒)")]
+    [SerializeField] private float searchLimitTime = 20f;
+    private float searchTimer = 0f;
+
     public void SetPairDriver(CarController car)
     {
         carController = car;
@@ -109,6 +114,19 @@ public class Engineer : MonoBehaviourPunCallbacks
         {
             Debug.Log("エンジニア：ペア検索中！");
             TryPairPlayers();
+
+            //タイムアウト処理
+            searchTimer += Time.deltaTime;
+            if (searchTimer >= searchLimitTime)
+            {
+                Debug.Log("タイムアウト：ペア検索に時間がかかりすぎています");
+                PhotonNetwork.Disconnect();
+                SceneManager.LoadScene("menu");
+            }
+        }
+        else if(!isLoading && photonView.IsMine)
+        {
+            Debug.Log("エンジニア：ペア発見済み！");
         }
     }
 
@@ -231,7 +249,7 @@ public class Engineer : MonoBehaviourPunCallbacks
                         //マスタークライアントへエンジニアの生成を通知する
                         PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
 
-                        startPosPv.RPC("RPC_NotifyEngineerConnected", RpcTarget.AllBuffered);
+                        startPosPv.RPC("RPC_NotifyEngineerConnected", RpcTarget.AllBuffered , photonView.ViewID);
 
                         isNotifyEngineerConnected = true;
 

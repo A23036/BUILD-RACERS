@@ -419,7 +419,7 @@ public class selectScene : baseScene
 
     public void PushBackButton()
     {
-        ss.DeleteMyStat();
+        if(ss != null) ss.DeleteMyStat();
 
         base.PushBackButton();
     }

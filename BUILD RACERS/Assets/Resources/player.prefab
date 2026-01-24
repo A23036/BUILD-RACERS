@@ -696,6 +696,7 @@ MonoBehaviour:
   passiveUI: {fileID: 0}
   lapBlinkTime: 3
   lapBlinkInterval: 0.3
+  searchLimitTime: 20
 --- !u!114 &2777997212412123024
 MonoBehaviour:
   m_ObjectHideFlags: 0

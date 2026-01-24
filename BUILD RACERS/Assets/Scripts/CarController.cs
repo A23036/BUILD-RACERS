@@ -191,6 +191,11 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private bool isNotifyDriverConnected = false;
 
+    //検索時間　計測用とタイムアウト制限時間
+    [Tooltip("検索時間の制限(秒)")]
+    [SerializeField] private float searchLimitTime = 20f;
+    private float searchTimer = 0f;
+
     public void AddPartsNum()
     {
         partsNum++;
@@ -448,7 +453,7 @@ public class CarController : MonoBehaviourPunCallbacks
                         //マスタークライアントへエンジニアの生成を通知する
                         PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
 
-                        startPosPv.RPC("RPC_NotifyDriverConnected", RpcTarget.AllBuffered);
+                        startPosPv.RPC("RPC_NotifyDriverConnected", RpcTarget.AllBuffered , photonView.ViewID);
 
                         isNotifyDriverConnected = true;
                     }
@@ -514,6 +519,19 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             Debug.Log("ドライバー：ペア検索中！");
             TryPairPlayers();
+
+            //タイムアウト処理
+            searchTimer += Time.deltaTime;
+            if(searchTimer >= searchLimitTime)
+            {
+                Debug.Log("タイムアウト：ペア検索に時間がかかりすぎています");
+                PhotonNetwork.Disconnect();
+                SceneManager.LoadScene("menu");
+            }
+        }
+        else if(!isLoading && photonView.IsMine)
+        {
+            Debug.Log("ドライバー：ペア発見済み！");
         }
 
         if (state != State.Drive) return;

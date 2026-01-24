@@ -1,6 +1,7 @@
 using ExitGames.Client.Photon;
 using Fusion;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
 public class StartPosSetter : MonoBehaviourPunCallbacks
@@ -67,38 +68,37 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if(PhotonNetwork.IsConnected)
-        {
-            //総ドライバー数を取得
-            var props = PhotonNetwork.CurrentRoom.CustomProperties;
-            if (props.TryGetValue("DriversCount", out var dc) && dc is int)
-            {
-                driversSum = (int)dc;
-                Debug.Log($"総ドライバー数受信：{dc}");
-            }
-            else
-            {
-                Debug.Log("総ドライバー数受信失敗");
-                driversSum = PlayerPrefs.GetInt("DriversCount");
-                Debug.Log($"{driversSum} をPlayerPrefsから取得！");
-            }
+        if(!PhotonNetwork.IsConnected) return;
 
-            //総エンジニア数を取得
-            if (props.TryGetValue("EngineersCount", out var ec) && ec is int)
-            {
-                engineersSum = (int)ec;
-                Debug.Log($"総エンジニア数受信：{ec}");
-            }
-            else
-            {
-                Debug.Log("総エンジニア数受信失敗");
-                engineersSum = PlayerPrefs.GetInt("EngineersCount");
-                Debug.Log($"{engineersSum} をPlayerPrefsから取得！");
-            }
+        //総ドライバー数を取得
+        var props = PhotonNetwork.CurrentRoom.CustomProperties;
+        if (props.TryGetValue("DriversCount", out var dc) && dc is int)
+        {
+            driversSum = (int)dc;
+            Debug.Log($"総ドライバー数受信：{dc}");
+        }
+        else
+        {
+            Debug.Log("総ドライバー数受信失敗");
+            driversSum = PlayerPrefs.GetInt("DriversCount");
+            Debug.Log($"{driversSum} をPlayerPrefsから取得！");
+        }
+
+        //総エンジニア数を取得
+        if (props.TryGetValue("EngineersCount", out var ec) && ec is int)
+        {
+            engineersSum = (int)ec;
+            Debug.Log($"総エンジニア数受信：{ec}");
+        }
+        else
+        {
+            Debug.Log("総エンジニア数受信失敗");
+            engineersSum = PlayerPrefs.GetInt("EngineersCount");
+            Debug.Log($"{engineersSum} をPlayerPrefsから取得！");
         }
 
         //エンジニアとドライバーの接続を待つ
-        if (!isSetDrivers && driversSum <= nowConnectDrivers && engineersSum <= nowConnectEngineers)
+        if (PhotonNetwork.IsMasterClient && !isSetDrivers && driversSum <= nowConnectDrivers && engineersSum <= nowConnectEngineers)
         {
             //全ドライバーが接続されたら初期位置へセット
             Invoke(nameof(SetStartPosDrivers), 1f);
@@ -110,10 +110,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         else
         {
             Debug.Log(" === WAIT MENBERS === ");
-            if (PhotonNetwork.IsMasterClient)
-            {
-                Debug.Log($"DRIVER:{nowConnectDrivers}/{driversSum} , ENGINEER:{nowConnectEngineers}/{engineersSum}");
-            }
+            Debug.Log($"DRIVER:{nowConnectDrivers}/{driversSum} , ENGINEER:{nowConnectEngineers}/{engineersSum}");
         }
     }
 
@@ -133,17 +130,77 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RPC_NotifyDriverConnected()
+    public void RPC_NotifyDriverConnected(int d_id)
     {
-        //マスターがカウントする
-        if (PhotonNetwork.IsMasterClient) nowConnectDrivers++;
+        //途中切断等に対応するために　カウントは全員、スタート判定のみマスターが行う
+        nowConnectDrivers++;
+
+        //自分のドライバーならペア検索フラグをオフにする
+        var karts = FindObjectsOfType<CarController>();
+        foreach(var cc in karts)
+        {
+            if(!cc.isMine) continue;
+            var pv = cc.GetComponent<PhotonView>();
+            if(pv.ViewID == d_id)
+            {
+                cc.RPC_NotifLoadFinish();
+            }
+        }
     }
 
     [PunRPC]
-    public void RPC_NotifyEngineerConnected()
+    public void RPC_NotifyEngineerConnected(int e_id)
     {
-        //マスターがカウントする
-        if (PhotonNetwork.IsMasterClient) nowConnectEngineers++;
+        //途中切断等に対応するために　カウントは全員、スタート判定のみマスターが行う
+        nowConnectEngineers++;
+
+        //自分のエンジニアならペア検索フラグをオフにする
+        var engineers = FindObjectsOfType<Engineer>();
+        foreach (var eng in engineers)
+        {
+            var pv = eng.GetComponent<PhotonView>();
+            if (!pv.IsMine) continue;
+            if (pv.ViewID == e_id)
+            {
+                eng.RPC_NotifLoadFinish();
+            }
+        }
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        Hashtable hash = new Hashtable();
+
+        // 退室したプレイヤーのカスタムプロパティを確認
+        if (otherPlayer.CustomProperties.TryGetValue("driverNum" , out var dnObj) && dnObj is int dn && dn != -1)
+        {
+            //対応する総数を減らす
+            driversSum--;
+            PlayerPrefs.SetInt("DriversCount",driversSum);
+            Debug.Log(" === Disconnect Driver === ");
+
+            //マスターのみカスタムプロパティに反映させる
+            if (PhotonNetwork.IsMasterClient)
+            {
+                hash["DriversCount"] = driversSum;
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+            }
+
+        }
+        else if (otherPlayer.CustomProperties.TryGetValue("engineerNum", out var enObj) && enObj is int en && en != -1)
+        {
+            //対応する総数を減らす
+            engineersSum--;
+            PlayerPrefs.SetInt("EngineersCount",engineersSum);
+            Debug.Log(" === Disconnect Engineer === ");
+
+            //マスターのみカスタムプロパティに反映させる
+            if(PhotonNetwork.IsMasterClient)
+            {
+                hash["EngineersCount"] = engineersSum;
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+            }
+        }
     }
 
     [PunRPC]

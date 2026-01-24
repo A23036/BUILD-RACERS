@@ -28,6 +28,10 @@ public class robbyScene : baseScene
     private bool isMoving = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    private const int MAX_CCU = 20;
+
+
     void Start()
     {
         preSceneName = "menu";
@@ -72,6 +76,15 @@ public class robbyScene : baseScene
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
+        //人数制限の確認
+        int totalInRooms = CalculateTotalPlayers(roomList);
+        if(totalInRooms >= MAX_CCU)
+        {
+            Debug.Log($"サーバーが満員です {totalInRooms} / {MAX_CCU}");
+            Debug.Log("メニューに戻ります");
+            SceneManager.LoadScene("menu");
+        }
+
         Dictionary<string, bool> geneFlag = new Dictionary<string, bool>();
 
         foreach (var room in roomList)
@@ -155,6 +168,22 @@ public class robbyScene : baseScene
         //部屋が１つもなければその旨を表示
         if (roomButtons.Count == 0) noRoomsText.SetActive(true);
         else noRoomsText.SetActive(false);
+    }
+    private int CalculateTotalPlayers(List<RoomInfo> roomList)
+    {
+        int total = 0;
+
+        foreach (RoomInfo room in roomList)
+        {
+            if (!room.RemovedFromList)
+            {
+                total += room.PlayerCount;
+                Debug.Log($"  Room [{room.Name}]: {room.PlayerCount}/{room.MaxPlayers}人");
+            }
+        }
+        Debug.Log($"接続人数 : {total} / {MAX_CCU}");
+
+        return total;
     }
 
     public void InputText()
