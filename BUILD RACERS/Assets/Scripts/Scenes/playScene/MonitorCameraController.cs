@@ -18,7 +18,7 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
     [SerializeField] private float monitorDistance;
     [SerializeField] private float scrollSpeed = 3f;
     [SerializeField] private float monitorMinDistance = 3;
-    [SerializeField] private float monitorMaxDistance = 50;
+    [SerializeField] private float monitorMaxDistance = 200;
 
     private Transform target;
 

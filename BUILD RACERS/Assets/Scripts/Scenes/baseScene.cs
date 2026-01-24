@@ -88,7 +88,9 @@ public class baseScene : MonoBehaviourPunCallbacks
             CustomRoomPropertiesForLobby = new string[]
             {
                 "limitPlayers",
-                "masterGameScene"
+                "masterGameScene",
+                "playSceneName",
+                "roomPassCode"
             }
         };
 

@@ -13,6 +13,9 @@ using static System.Net.Mime.MediaTypeNames;
 public class robbyScene : baseScene
 {
     [SerializeField] private GameObject CreateUI;
+    [SerializeField] private GameObject PassInputer;
+
+    Dictionary<GameObject,bool> upFlags = new Dictionary<GameObject,bool>();
 
     private Dictionary<string, GameObject> roomButtons = new Dictionary<string, GameObject>();
 
@@ -24,19 +27,20 @@ public class robbyScene : baseScene
     private int maxPlayers;
 
     [SerializeField]private float duration = 0.2f;
-    private bool moveUp = true;
     private bool isMoving = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     private const int MAX_CCU = 20;
 
-
     void Start()
     {
         preSceneName = "menu";
 
         maxPlayers = 0;
+
+        upFlags[CreateUI] = true;
+        upFlags[PassInputer] = true;
     }
 
     private void Awake()
@@ -151,6 +155,12 @@ public class robbyScene : baseScene
                 scr.roomPlaySceneName = (string)str;
             }
 
+            //パスワード取得
+            if (room.CustomProperties.TryGetValue("roomPassCode", out var pass) && pass is string)
+            {
+                scr.SetRoomPassCode((string)pass);
+            }
+
             //生成フラグ
             geneFlag[room.Name] = true;
 
@@ -224,6 +234,16 @@ public class robbyScene : baseScene
         input.text = maxPlayers.ToString();
     }
 
+    public void InputPass()
+    {
+        GameObject inputField = GameObject.Find("PassInputField");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
+
+        //パスワード設定
+        string pass = input.text;
+        PlayerPrefs.SetString("roomPassCode", pass);
+    }
+
     public void PushPlusButton()
     {
         maxPlayers++;
@@ -256,31 +276,60 @@ public class robbyScene : baseScene
     {
         //移動中は処理なし
         if (isMoving) return;
-        MoveY();
+        MoveY(CreateUI);
 
         //ボタンのテキスト変更
         GameObject inputField = GameObject.Find("CreateNewText");
         TMP_Text text = inputField.GetComponent<TMP_Text>();
-        if(moveUp) text.text = "部屋を作る";
+        if (upFlags[CreateUI]) text.text = "部屋を作る";
         else text.text = "作るのをやめる";
     }
 
-    public void MoveY()
+    public void PushCreateCancelButton()
     {
-        StartCoroutine(Move());
-        moveUp = !moveUp;
+        if (isMoving || upFlags[CreateUI]) return;
+        MoveY(CreateUI);
+
+        //ボタンのテキスト変更
+        GameObject inputField = GameObject.Find("CreateNewText");
+        TMP_Text text = inputField.GetComponent<TMP_Text>();
+        text.text = "部屋を作る";
     }
 
-    IEnumerator Move()
+    public void PushPassInputCancelButton()
+    {
+        if (isMoving || upFlags[PassInputer]) return;
+        MoveY(PassInputer);
+    }
+
+    //部屋に入る用のパスワード入力UIを出す
+    public void ShowPassInputer()
+    {
+        //移動中は処理なし
+        if (isMoving) return;
+
+        MoveY(PassInputer);
+    }
+
+    public void MoveY(GameObject obj)
+    {
+        //入力前にリセット
+        PlayerPrefs.SetString("roomPassCode", "");
+
+        StartCoroutine(Move(obj));
+        upFlags[obj] = !upFlags[obj];
+    }
+
+    IEnumerator Move(GameObject obj)
     {
         isMoving = true;
 
-        var rectTransform = CreateUI.GetComponent<RectTransform>();
+        var rectTransform = obj.GetComponent<RectTransform>();
+
+        if (rectTransform == null) yield break;
 
         Vector2 start = rectTransform.anchoredPosition;
-        Vector2 end = start + new Vector2(0, moveUp ? 1000 : -1000);
-        //Vector3 start = CreateUI.transform.position;
-        //Vector3 end = start + new Vector3(0, moveUp ? 100 : -100, 0);
+        Vector2 end = start + new Vector2(0, upFlags[obj] ? 1000 : -1000);
         float t = 0;
 
         while (t < 1)
@@ -315,9 +364,10 @@ public class robbyScene : baseScene
             //部屋のカスタムプロパティをロビーから確認できる設定
             CustomRoomPropertiesForLobby = new string[]
             {
-            "limitPlayers",
-            "masterGameScene",
-            "playSceneName"
+                "limitPlayers",
+                "masterGameScene",
+                "playSceneName",
+                "roomPassCode"
             }
         };
 
