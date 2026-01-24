@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class optionScene : baseScene
 {
@@ -12,5 +13,10 @@ public class optionScene : baseScene
     void Update()
     {
         base.Update();
+    }
+
+    public void PushBackButton()
+    {
+        SceneManager.LoadScene("menu");
     }
 }
