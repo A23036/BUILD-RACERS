@@ -14,6 +14,8 @@ public class roomNameButton : MonoBehaviour
 
     private robbyScene sceneManager;
 
+    private string roomName;
+
     void Start()
     {
         //コンテントの子供に設定
@@ -33,6 +35,8 @@ public class roomNameButton : MonoBehaviour
     {
         TextMeshProUGUI Text = transform.Find("Text").GetComponent<TextMeshProUGUI>();
         Text.text = text;
+
+        roomName = text;
     }
 
     public void SetCounterText(string text)
@@ -40,6 +44,13 @@ public class roomNameButton : MonoBehaviour
         TextMeshProUGUI Text = transform.Find("backImage").
             gameObject.transform.Find("counterText").GetComponent<TextMeshProUGUI>();
         Text.text = text;
+    }
+
+    public string GetCounterText()
+    {
+        TextMeshProUGUI Text = transform.Find("backImage").
+            gameObject.transform.Find("counterText").GetComponent<TextMeshProUGUI>();
+        return Text.text;
     }
 
     public void SetRoomStatText(string text)
@@ -62,6 +73,16 @@ public class roomNameButton : MonoBehaviour
         }
     }
 
+    public string GetRoomPassCode()
+    {
+        return roomPassCode;
+    }
+
+    public string GetRoomName()
+    {
+        return roomName;
+    }
+
     //ルームへ接続
     public void PushRoomNameButton()
     {
@@ -78,8 +99,13 @@ public class roomNameButton : MonoBehaviour
         {
             //パスワード入力UIを表示
             sceneManager.ShowPassInputer();
+
             //入力前にリセット
             PlayerPrefs.SetString("roomPassCode", "");
+
+            //選択ルーム名を登録
+            sceneManager.SetSelectRoomName(roomName);
+
             return;
         }
         else if (roomStat == "待機中")

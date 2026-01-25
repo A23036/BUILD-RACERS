@@ -13,6 +13,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class selectScene : baseScene
 {
     [SerializeField] private GameObject readyButtonText;
+    [SerializeField] private GameObject passUI;
 
     //セレクターの上限数　これ以上の接続は観戦者にまわす
     [SerializeField] private int limitPlayers;
@@ -36,12 +37,18 @@ public class selectScene : baseScene
     private TextMeshProUGUI playersCountText;
     private TextMeshProUGUI monitorsCounter;
     private TextMeshProUGUI roomNameText;
+    private TextMeshProUGUI roomPassText;
 
     //現在のルームの状態
     private string nowRoomStat;
 
     //プレイするシーン名
     private string playSceneName;
+
+    //ロビーに何秒ごとにルーム人数情報送るか
+    [SerializeField]
+    private float updateRoomInfoInterval = 1f;
+    private float updateRoomInfoTimer = 0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -60,6 +67,9 @@ public class selectScene : baseScene
 
         roomNameText = GameObject.Find("RoomNameText").GetComponent<TextMeshProUGUI>();
         roomNameText.color = Color.black;
+
+        roomPassText = GameObject.Find("RoomPassText").GetComponent<TextMeshProUGUI>();
+        roomPassText.color = Color.black;
 
         monitorsCounter = GameObject.Find("monitorsCounter").transform.Find("Text").GetComponent<TextMeshProUGUI>();
 
@@ -91,6 +101,17 @@ public class selectScene : baseScene
 
         //観戦者数の更新　超過人数を観戦者としてカウント
         monitorsCounter.text = FindObjectsOfType<monitorSystem>().Length.ToString();
+
+        //ロビーでコールバックが定期的に走るようにする
+        if (PhotonNetwork.IsMasterClient)
+        {
+            updateRoomInfoTimer += Time.deltaTime;
+            if (updateRoomInfoTimer >= updateRoomInfoInterval)
+            {
+                PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "limitPlayers", limitPlayers } });
+                updateRoomInfoTimer = 0f;
+            }
+        }
 
         //プレイヤーか観戦者かによって処理を分岐
         if (ss != null) selectorUpdate();
@@ -351,10 +372,25 @@ public class selectScene : baseScene
         }
 
         //ラップ数を決めるオブジェクト　マスター以外は表示しない
-        if (PhotonNetwork.IsMasterClient) lapSetter.SetActive(true);
+        lapSetter.SetActive(PhotonNetwork.IsMasterClient);
 
         //マップを選択するオブジェクト　マスター以外は表示しない
-        if (PhotonNetwork.IsMasterClient) mapSelector.SetActive(true);
+        mapSelector.SetActive(PhotonNetwork.IsMasterClient);
+
+        //パスコードの表示
+        if (PlayerPrefs.GetString("roomPassCode") != "")
+        {
+            passUI.SetActive(PhotonNetwork.IsMasterClient);
+            if(passUI.activeSelf)
+            {
+                roomPassText.text = "パスワード：" +  PlayerPrefs.GetString("roomPassCode");
+                Debug.Log($"ROOM PASS : {roomPassText.text}");
+            }
+        }
+        else
+        {
+            passUI.SetActive(false);
+        }
     }
 
     //カスタムプロパティのコールバック
@@ -394,6 +430,11 @@ public class selectScene : baseScene
         }
     }
 
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        if(PhotonNetwork.IsMasterClient) PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "limitPlayers", limitPlayers } });
+    }
+
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         //ラップ数を決めるオブジェクト　マスター以外は表示しない
@@ -401,6 +442,8 @@ public class selectScene : baseScene
 
         //マップを決めるオブジェクト　マスター以外は表示しない
         mapSelector.SetActive(PhotonNetwork.IsMasterClient);
+
+        if(PhotonNetwork.IsMasterClient) PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { "limitPlayers", limitPlayers } });
     }
 
     //空きがあればセレクターを生成

@@ -33,6 +33,8 @@ public class robbyScene : baseScene
 
     private const int MAX_CCU = 20;
 
+    private string selectRoomName = "";
+
     void Start()
     {
         preSceneName = "menu";
@@ -41,6 +43,9 @@ public class robbyScene : baseScene
 
         upFlags[CreateUI] = true;
         upFlags[PassInputer] = true;
+
+        //パスワード情報をリセット
+        PlayerPrefs.SetString("roomPassCode", "");
     }
 
     private void Awake()
@@ -95,21 +100,6 @@ public class robbyScene : baseScene
         {
             if (room.RemovedFromList) continue;
 
-            int maxPlayres = -99;
-            if(room.CustomProperties.TryGetValue("limitPlayers", out var v) && v is int mp)
-            {
-                maxPlayres = mp;
-            }
-            else
-            {
-                Debug.Log("limitPlayresが取得できません");
-            }
-
-            Debug.Log(
-                $"Room: {room.Name} " +
-                $"Players: {room.PlayerCount}/{maxPlayres}"
-            );
-
             //ボタンのスクリプト
             roomNameButton scr = null;
 
@@ -133,8 +123,31 @@ public class robbyScene : baseScene
                 scr = roomButtons[room.Name].GetComponent<roomNameButton>();
             }
 
-            //人数表示の更新
-            scr.SetCounterText($"{ room.PlayerCount}/{ maxPlayres}");
+            int maxPlayres = 00;
+            if (room.CustomProperties.TryGetValue("limitPlayers", out var v) && v is int mp)
+            {
+                maxPlayres = mp;
+                //人数表示の更新
+                scr.SetCounterText($"{room.PlayerCount}/{maxPlayres}");
+            }
+            else
+            {
+                Debug.Log("limitPlayresが取得できません");
+                string temp = scr.GetCounterText();
+                int cutidx = 0;
+                foreach(char c in temp)
+                {
+                    if(c == '/') break;
+                    cutidx++;
+                }
+                //人数表示の更新
+                scr.SetCounterText($"{room.PlayerCount}/{temp.Substring(temp.Length - cutidx)}");
+            }
+
+            Debug.Log(
+                $"Room: {room.Name} " +
+                $"Players: {room.PlayerCount}/{maxPlayres}"
+            );
 
             //ルーム状態の更新
             if (room.CustomProperties.TryGetValue("masterGameScene", out var s) && s is string stat)
@@ -234,7 +247,7 @@ public class robbyScene : baseScene
         input.text = maxPlayers.ToString();
     }
 
-    public void InputPass()
+    public void SetPass()
     {
         GameObject inputField = GameObject.Find("PassInputField");
         TMP_InputField input = inputField.GetComponent<TMP_InputField>();
@@ -242,6 +255,38 @@ public class robbyScene : baseScene
         //パスワード設定
         string pass = input.text;
         PlayerPrefs.SetString("roomPassCode", pass);
+    }
+
+    public void InputPass()
+    {
+        GameObject inputField = GameObject.Find("PassInputer");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
+
+        //パスワード照合
+        var roomButtonList = GameObject.FindObjectsOfType<roomNameButton>();
+        foreach (var roomButton in roomButtonList)
+        {
+            if (roomButton.GetRoomName() == selectRoomName)
+            {
+                string correctPass = roomButton.GetRoomPassCode();
+                if (input.text == correctPass)
+                {
+                    Debug.Log("パスワード一致");
+                    PlayerPrefs.SetString("roomPassCode", input.text);
+                    roomButton.PushRoomNameButton();
+                }
+                else
+                {
+                    Debug.Log("パスワード不一致");
+                }
+                break;
+            }
+        }
+    }
+
+    public void SetSelectRoomName(string name)
+    {
+        selectRoomName = name;
     }
 
     public void PushPlusButton()
@@ -278,6 +323,9 @@ public class robbyScene : baseScene
         if (isMoving) return;
         MoveY(CreateUI);
 
+        //パスワードUI出てれば閉じる
+        if (!upFlags[PassInputer]) MoveY(PassInputer);
+
         //ボタンのテキスト変更
         GameObject inputField = GameObject.Find("CreateNewText");
         TMP_Text text = inputField.GetComponent<TMP_Text>();
@@ -313,7 +361,7 @@ public class robbyScene : baseScene
 
     public void MoveY(GameObject obj)
     {
-        //入力前にリセット
+        //パスワードをリセット
         PlayerPrefs.SetString("roomPassCode", "");
 
         StartCoroutine(Move(obj));
