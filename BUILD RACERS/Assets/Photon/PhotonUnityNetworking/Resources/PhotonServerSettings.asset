@@ -68,6 +68,7 @@ MonoBehaviour:
   - RPC_NotifyEngineerConnected
   - RPC_NotifLoadFinish
   - RPC_NotifyDriverGoal
+  - RPC_SyncLapCount
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

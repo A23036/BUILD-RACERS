@@ -613,6 +613,9 @@ public class CarController : MonoBehaviourPunCallbacks
             lapCount++;
             nowAngle = 0f;
 
+            //ラップ数を同期
+            photonView.RPC("RPC_SyncLapCount", RpcTarget.All, lapCount, photonView.ViewID); 
+
             //タイマーを点滅　スタート直後を除いて実行
             if(lapCount > 0) blinkTimer = lapBlinkTime;
 
@@ -1511,5 +1514,12 @@ public class CarController : MonoBehaviourPunCallbacks
     public void RPC_NotifLoadFinish()
     {
         if(photonView.IsMine) isLoading = false;
+    }
+
+    [PunRPC]
+    public void RPC_SyncLapCount(int lapCnt , int id)
+    {
+        if (photonView.ViewID != id) return;
+        lapCount = lapCnt;
     }
 }
