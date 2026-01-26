@@ -28,6 +28,12 @@ public enum BoostType // ブースとの長さ
     Short,
     Long,
 }
+public enum LastInputDevice
+{ 
+    KeyboardWASD, 
+    KeyboardArrow, 
+    Gamepad 
+}
 
 public class CarController : MonoBehaviourPunCallbacks
 {
@@ -196,6 +202,18 @@ public class CarController : MonoBehaviourPunCallbacks
     [Tooltip("検索時間の制限(秒)")]
     [SerializeField] private float searchLimitTime = 20f;
     private float searchTimer = 0f;
+
+    // ガイドUI
+    [Tooltip("ガイドUIが自動で消えるまでの時間")]
+    [SerializeField] private float guideResetDelay = 2.0f;
+    private GameObject WASDGuide;
+    private GameObject arrowGuide;
+    private GameObject controllerGuide;
+    private GameObject keyboardItemGuide;
+    private GameObject controllerItemGuide;
+
+    private LastInputDevice lastDevice = LastInputDevice.KeyboardWASD;
+    private float lastInputTime = -999f;
 
     public void AddPartsNum()
     {
@@ -399,6 +417,33 @@ public class CarController : MonoBehaviourPunCallbacks
         startTime = 0;
         timer = 0;
 
+        // ガイド初期表示
+        ApplyGuideUI(LastInputDevice.KeyboardWASD);
+
+        WASDGuide = GameObject.Find("WASDGuideImage");
+        arrowGuide = GameObject.Find("AllowGuideImage");
+        controllerGuide = GameObject.Find("ControllerGuideImage");
+        keyboardItemGuide = GameObject.Find("ItemGuideKeyboardImage");
+        controllerItemGuide = GameObject.Find("ItemGuideControllerImage");
+        
+        WASDGuide.SetActive(false);
+        arrowGuide.SetActive(false);
+        controllerGuide.SetActive(false);
+        keyboardItemGuide.SetActive(false);
+        controllerItemGuide.SetActive(false);
+
+        // ガイド表示フラグの初期化（無ければON）
+        if (!PlayerPrefs.HasKey(OptionPrefs.GUIDE_ENABLED))
+        {
+            PlayerPrefs.SetInt(OptionPrefs.GUIDE_ENABLED, 1); // デフォルトON
+            PlayerPrefs.Save();
+            WASDGuide.SetActive(true);
+        }
+        else if(PlayerPrefs.GetInt(OptionPrefs.GUIDE_ENABLED) == 1)
+        {
+            WASDGuide.SetActive(true);
+        }
+
         // fireFx は必要になったタイミングで生成(遅延生成)する
     }
 
@@ -564,7 +609,7 @@ public class CarController : MonoBehaviourPunCallbacks
             inputUseItem = true;
             Debug.Log("[INPUT] Use Item");
         }
-
+ 
         // スマホでのアイテム使用
         if (!inputUseItem && Touchscreen.current != null)
         {
@@ -584,6 +629,9 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
             }
         }
+        
+        // ガイドUI表示
+        if(PlayerPrefs.GetInt(OptionPrefs.GUIDE_ENABLED,1) == 1) DetectAndUpdateGuideUI();
 
         Debug.Log("パーツ数:" + partsNum);
     }
@@ -915,6 +963,121 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             isLapClear = false;
         }
+    }
+
+    private void DetectAndUpdateGuideUI()
+    {
+        if (!isMine) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+
+        bool keyboardWASDPressed =
+            Keyboard.current != null &&
+            (Keyboard.current.wKey.isPressed || Keyboard.current.aKey.isPressed ||
+             Keyboard.current.sKey.isPressed || Keyboard.current.dKey.isPressed);
+
+        bool keyboardArrowPressed =
+            Keyboard.current != null &&
+            (Keyboard.current.upArrowKey.isPressed || Keyboard.current.downArrowKey.isPressed ||
+             Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed);
+
+        bool gamepadUsed = false;
+        if (Gamepad.current != null)
+        {
+            // スティック/十字キー/ボタン どれか動いたらGamepad扱い
+            Vector2 ls = Gamepad.current.leftStick.ReadValue();
+            Vector2 dp = Gamepad.current.dpad.ReadValue();
+            gamepadUsed =
+                ls.sqrMagnitude > 0.01f ||
+                dp.sqrMagnitude > 0.01f ||
+                Gamepad.current.buttonSouth.isPressed ||
+                Gamepad.current.buttonEast.isPressed ||
+                Gamepad.current.buttonWest.isPressed ||
+                Gamepad.current.buttonNorth.isPressed ||
+                Gamepad.current.leftShoulder.isPressed ||
+                Gamepad.current.rightShoulder.isPressed ||
+                Gamepad.current.leftTrigger.ReadValue() > 0.1f ||
+                Gamepad.current.rightTrigger.ReadValue() > 0.1f;
+        }
+
+        // 優先順位：Gamepad > Arrow > WASD（好みで変更OK）
+        if (gamepadUsed)
+        {
+            SetLastDevice(LastInputDevice.Gamepad);
+        }
+        else if (keyboardArrowPressed)
+        {
+            SetLastDevice(LastInputDevice.KeyboardArrow);
+        }
+        else if (keyboardWASDPressed)
+        {
+            SetLastDevice(LastInputDevice.KeyboardWASD);
+        }
+
+        // 入力が一定時間ないならデフォルトに戻す（不要なら guideResetDelay=0 に）
+        if (guideResetDelay > 0f && Time.time - lastInputTime > guideResetDelay)
+        {
+            if (lastDevice != LastInputDevice.KeyboardWASD)
+            {
+                lastDevice = LastInputDevice.KeyboardWASD;
+                ApplyGuideUI(lastDevice);
+            }
+        }
+    }
+
+    private void SetLastDevice(LastInputDevice device)
+    {
+        if (lastDevice == device) // 同じなら時刻更新だけ
+        {
+            lastInputTime = Time.time;
+            // アイテムUIだけ状況で変わるので再反映してもOK
+            ApplyItemGuideUI(device);
+            return;
+        }
+
+        lastDevice = device;
+        lastInputTime = Time.time;
+        ApplyGuideUI(device);
+    }
+
+    private void ApplyGuideUI(LastInputDevice device)
+    {
+        // 操作ガイド
+        SetActiveSafe(WASDGuide, device == LastInputDevice.KeyboardWASD);
+        SetActiveSafe(arrowGuide, device == LastInputDevice.KeyboardArrow);
+        SetActiveSafe(controllerGuide, device == LastInputDevice.Gamepad);
+
+        // アイテムガイド（操作ガイド更新のたびに反映）
+        ApplyItemGuideUI(device);
+    }
+
+    private void ApplyItemGuideUI(LastInputDevice device)
+    {
+        // ガイド表示OFFなら表示処理をしない
+        if (PlayerPrefs.GetInt(OptionPrefs.GUIDE_ENABLED, 0) == 0) return;
+
+        bool itemAvailable = itemManager != null && itemManager.GetItemNum() > 0;
+
+        // itemが無ければ両方消す
+        if (!itemAvailable)
+        {
+            SetActiveSafe(keyboardItemGuide, false);
+            SetActiveSafe(controllerItemGuide, false);
+            return;
+        }
+
+        // itemがある場合のみ表示
+        bool keyboard = (device == LastInputDevice.KeyboardWASD || device == LastInputDevice.KeyboardArrow);
+        bool pad = (device == LastInputDevice.Gamepad);
+
+        SetActiveSafe(keyboardItemGuide, keyboard);
+        SetActiveSafe(controllerItemGuide, pad);
+    }
+
+    private void SetActiveSafe(GameObject go, bool active)
+    {
+        if (go == null) return;
+        if (go.activeSelf == active) return;
+        go.SetActive(active);
     }
 
     public void DecideStartTime()
@@ -1281,6 +1444,8 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             RPC_RemoveItem(usedId);
         }
+
+        ApplyItemGuideUI(lastDevice);
     }
 
     // アイテムを獲得可能か検証
@@ -1555,6 +1720,7 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         Debug.Log("Enqueue Item Request");
         itemManager.Enqueue((int)id);
+        ApplyItemGuideUI(lastDevice);
     }
 
     [PunRPC]
