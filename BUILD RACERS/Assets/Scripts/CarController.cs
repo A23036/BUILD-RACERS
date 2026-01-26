@@ -701,7 +701,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 timerText.enabled = true;
 
                 //ラップUIを更新
-                lapText.text = $"Lap:{Mathf.Max(1, lapCount+1)}/{maxLaps}";
+                lapText.text = $"Lap:{Mathf.Clamp(lapCount + 1, 1, maxLaps)}/{maxLaps}";
             }
 
             //タイマー黄色に変更
@@ -761,7 +761,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
             //周回数をUIに反映
             //lapText.text = $"Angle : {nowAngle} , Lap : {Mathf.Max(0,lapCount)}";
-            lapText.text = $"Lap:{Mathf.Max(1,lapCount+1)}/{maxLaps}";
+            lapText.text = $"Lap:{Mathf.Clamp(lapCount + 1, 1, maxLaps)}/{maxLaps}";
 
             //　プレイヤー入力:Update()で取得した入力を使用
             motorInput = inputMotor;
