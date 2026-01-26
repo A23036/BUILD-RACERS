@@ -135,6 +135,7 @@ public class CarController : MonoBehaviourPunCallbacks
     private Quaternion stunStartRotation;
     private Quaternion stunStartLocalRotation;
     private GameObject bodyMesh;
+    private GameObject speedMeter;
 
     [Header("パッシブアイテム用パラメータ")]
     [SerializeField] private float accelerationPower = 0.5f;
@@ -336,6 +337,7 @@ public class CarController : MonoBehaviourPunCallbacks
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
         bodyMesh = gameObject.transform.Find("BodyMesh").gameObject;
+        speedMeter = GameObject.Find("SpeedMeter");
 
         itemManager = GetComponent<ItemManager>();
 
@@ -824,7 +826,13 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // 速度表示など残す（rb.linearVelocity -> rb.velocity）
         float speed = rb.linearVelocity.magnitude * 3.6f;
-        if (speedText != null && driver == null) speedText.text = $"{speed:F1}";
+        if (speedText != null && driver == null)
+        {
+            speedText.text = $"{speed:F1}";
+
+            float angle = 43.6f - speed;
+            speedMeter.transform.localRotation = Quaternion.Euler(0f, 0f, angle);
+        }
 
         UpdateBoostEffect(speed);
 
