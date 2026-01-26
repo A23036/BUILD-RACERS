@@ -755,6 +755,7 @@ MonoBehaviour:
   rocketWeight: 10
   rocketHomingWeight: 10
   balloonTrapWeight: 5
+  killerWeight: 0
   speedWeight: 5
   accelerationWeight: 5
   antiStunWeight: 10

@@ -15,6 +15,7 @@ public enum PartsID
     RocketHoming,
     BalloonTrap,
     Flask,
+    Killer,
     Acceleration,
     Speed,
     AntiStun,

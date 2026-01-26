@@ -23,7 +23,7 @@ public enum StunType // スタンの重さ
     Heavy,
 }
 
-public enum BoostType // スタンの重さ
+public enum BoostType // ブースとの長さ
 {
     Short,
     Long,
@@ -801,13 +801,13 @@ public class CarController : MonoBehaviourPunCallbacks
         // --- 地面別・ブースト補正(同じ) ---
         float accelMultiplier = 1f;
         float speedMultiplier = 1f;
-        if (currentGroundTag == "Dirt" && boostTimer <= 0f)
+        if (currentGroundTag == "Dirt" && boostTimer <= 0f && !(driver is Killer))
         {
             accelMultiplier = dirtAccelMultiplier;
             speedMultiplier = dirtSpeedMultiplier;
         }
 
-        if (boostTimer > 0f)
+        if (boostTimer > 0f || driver is Killer)
         {
             accelMultiplier *= boostAccelMultiplier;
             speedMultiplier *= boostSpeedMultiplier;
@@ -1174,6 +1174,11 @@ public class CarController : MonoBehaviourPunCallbacks
                 else
                     Debug.LogWarning("[CarController] SetAI: WaypointContainer が見つかりません。実行時に経路をセットしてください。");
             }
+
+            if(driver is Killer killer)
+            {
+                killer.SetCurrentIdx(GetKillerStartIdx());
+            }
         }
     }
 
@@ -1441,6 +1446,62 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         //UIの非表示
         hidenCanvas.SetActive(false);
+    }
+
+    public void SetKiller()
+    {
+        //キラーに切り替え
+        var wpContainer = FindObjectOfType<WaypointContainer>();
+        SetAI<Killer>(wpContainer);
+        Invoke("ResetKiller", GetKillerTime());
+    }
+
+    public void ResetKiller()
+    {
+        if(driver != null && driver is Killer)
+        {
+            driver = null;
+            Destroy(GetComponent<Killer>());
+        }
+    }
+
+    public float GetKillerTime()
+    {
+        float ret = 0f;
+
+        //順位に応じて時間を調整
+        if (currentRank == 1) ret = 0;
+        else
+        {
+            ret = 8f;
+        }
+
+        return ret;
+    }
+
+    public int GetKillerStartIdx()
+    {
+        int ret = 0;
+
+        //ウェイポイントの中から次に行きそうな場所を取得
+        var wpc = FindObjectOfType<WaypointContainer>();
+        
+        float nowAngle = lapManager.NowAngle(transform.position);
+
+        // 子オブジェクトを順番に取得
+        Transform wpcTransform = wpc.transform;
+        for (int i = 0; i < wpcTransform.childCount; i++)
+        {
+            Transform child = wpcTransform.GetChild(i);
+            float childAngle = lapManager.NowAngle(child.position);
+            if (childAngle > nowAngle)
+            {
+                ret = i;
+                break;
+            }
+        }
+
+        return ret;
     }
 
     // ============================
