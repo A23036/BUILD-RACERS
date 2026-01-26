@@ -381,6 +381,14 @@ public class CarController : MonoBehaviourPunCallbacks
                     resultUI.SetActive(false);
                 }
                 break;
+            case "Map3":
+                var smm3 = FindObjectOfType<map3>();
+                if (smm3 != null)
+                {
+                    resultUI = smm3.GetResultUI();
+                    resultUI.SetActive(false);
+                }
+                break;
         }
 
         if (!PhotonNetwork.IsConnected)
@@ -875,6 +883,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //ラップ判定 100度ごとにチェックポイントを通過したか
+        var startObj = GameObject.Find("StartPos");
         int sector = Mathf.FloorToInt(nowAngle / 100f);
         if(sector > 0)
         {
@@ -961,6 +970,12 @@ public class CarController : MonoBehaviourPunCallbacks
 
         transform.position = pos;
         isSetStartPos = true;
+
+        var startPosObj = GameObject.Find("StartPos");
+        if (startPosObj != null)
+        {
+            transform.rotation = startPosObj.transform.rotation;
+        }
     }
 
     [PunRPC]

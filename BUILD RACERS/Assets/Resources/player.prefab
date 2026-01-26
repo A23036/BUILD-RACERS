@@ -732,9 +732,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f347b57b189b36e4ca7907ccfb56ab3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LinearInterpolation: 0
-  LinearExtrapolation: 1
-  INTERPOLATE: 30
+  useInterpolation: 1
+  useExtrapolation: 0
+  interpolationBackTime: 100
+  autoOptBackTime: 0
+  minBackTime: 10
+  maxBackTime: 2000
+  serializationRate: 30
 --- !u!114 &8753930163125487384
 MonoBehaviour:
   m_ObjectHideFlags: 0

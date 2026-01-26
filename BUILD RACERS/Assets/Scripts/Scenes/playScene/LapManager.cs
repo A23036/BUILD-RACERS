@@ -40,7 +40,11 @@ public class LapManager : MonoBehaviour
             angle += 360;
         }
 
-        return angle;
+        //開始時点の角度を考慮
+        var startObj = GameObject.Find("StartPos");
+        float ret = angle - offset;
+        if(ret < 0) ret += 360;
+        return (ret) % 360;
     }
 
     public void SetMaxLaps(int n)

@@ -61,7 +61,7 @@ public class singleScene : baseScene
 
         //シングルプレイへ
         var ms = mapSelector.GetComponent<MapSelector>();
-        SceneManager.LoadScene(ms.GetSceneName());
+        SceneManager.LoadScene(ms.GetSceneName());  
     }
 
     public void PushBackButton()

@@ -251,10 +251,9 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             var karts = FindObjectsOfType<CarController>();
             foreach (var kart in karts)
             {
-
-
                 //初期位置へセット
                 kart.SetStartPos(startPosList[idx++ % startPosList.Length].position + offsetPos);
+                kart.transform.rotation = gameObject.transform.rotation;
 
                 Debug.Log($"=== Set StartPos Drivers (Offline) {kart.transform.position} ===");
             }

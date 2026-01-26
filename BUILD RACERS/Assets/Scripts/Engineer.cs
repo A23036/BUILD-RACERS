@@ -80,6 +80,14 @@ public class Engineer : MonoBehaviourPunCallbacks
                     resultUI.SetActive(false);
                 }
                 break;
+            case "Map3":
+                var smm3 = FindObjectOfType<map3>();
+                if (smm3 != null)
+                {
+                    resultUI = smm3.GetResultUI();
+                    resultUI.SetActive(false);
+                }
+                break;
         }
     }
 

@@ -6220,7 +6220,7 @@ MonoBehaviour:
     - m_Text: Course "Map2"
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: Course ""
+    - m_Text: Course "Map3"
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
