@@ -166,6 +166,7 @@ public class Parts : MonoBehaviour
         // 画面外に落ちたら削除
         if (IsOutOfScreen())
         {
+            panelManager?.StopDragBlink();
             panelManager.itemUsed();
             Destroy(gameObject);
         }
@@ -289,6 +290,9 @@ public class Parts : MonoBehaviour
 
         // Collider を掴み判定可能に
         UpdateColliderState();
+
+        // ガイドUI明滅開始
+        panelManager?.StartDragBlink(partsType);
     }
 
     // ドラッグ終了処理
@@ -296,6 +300,9 @@ public class Parts : MonoBehaviour
     {
         isDragging = false;
         draggingTouchId = null;
+
+        // ガイドUI明滅終了処理
+        panelManager?.StopDragBlink();
 
         float pressDuration = Time.time - pressTime;
 

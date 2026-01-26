@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using TMPro;
-using System.Runtime.Serialization.Formatters;
+using UnityEngine.UI;
+using System.Collections;
 
 public class PanelManager : MonoBehaviour
 {
@@ -26,6 +26,15 @@ public class PanelManager : MonoBehaviour
     private int previewOriginY = -1;
 
     private Engineer engineer;
+
+    [Header("設置ガイドUI ")]
+    [SerializeField] private Image panelFrameImage; // Passive / Item 用
+    [SerializeField] private Image mapFrameImage;   // Gimmick 用
+    [SerializeField] private float blinkSpeed = 4f; // 明滅の速さ
+    [SerializeField] private float minAlpha = 0f;
+    [SerializeField] private float maxAlpha = 1f;
+    private Coroutine blinkCo;
+    private Image blinkingTarget;
 
     public void SetEngineer(Engineer en)
     {
@@ -358,6 +367,63 @@ public class PanelManager : MonoBehaviour
         }
         return CanPlaceParts(previewPartsData, previewOriginX, previewOriginY);
     }
+    public void StartDragBlink(PartsType type)
+    {
+        Image target = (type == PartsType.Gimmick) ? mapFrameImage : panelFrameImage;
+
+        // 対象が無ければ何もしない
+        if (target == null) return;
+
+        // いったん両方消す（重なり防止）
+        SetAlpha(panelFrameImage, 0f);
+        SetAlpha(mapFrameImage, 0f);
+
+        // すでに同じのが点滅中ならそのまま
+        if (blinkingTarget == target && blinkCo != null) return;
+
+        // 切り替え
+        StopDragBlink();
+
+        blinkingTarget = target;
+        blinkCo = StartCoroutine(BlinkCoroutine(target));
+    }
+
+    public void StopDragBlink()
+    {
+        if (blinkCo != null)
+        {
+            StopCoroutine(blinkCo);
+            blinkCo = null;
+        }
+        blinkingTarget = null;
+
+        // 終了時は両方消す
+        SetAlpha(panelFrameImage, 0f);
+        SetAlpha(mapFrameImage, 0f);
+    }
+
+    private IEnumerator BlinkCoroutine(Image target)
+    {
+        Color c = target.color;
+
+        while (true)
+        {
+            float a = Mathf.Lerp(minAlpha, maxAlpha, Mathf.PingPong(Time.time * blinkSpeed, 1f));
+            c.a = a;
+            target.color = c;
+            yield return null;
+        }
+    }
+
+    private void SetAlpha(Image img, float a)
+    {
+        if (img == null) return;
+        Color c = img.color;
+        c.a = a;
+        img.color = c;
+    }
+
+
 
     // パネルのサイズを取得（外部から参照用）
     public int GetPanelWidth() => PanelWidth;
