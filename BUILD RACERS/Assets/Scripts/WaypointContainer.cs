@@ -9,7 +9,7 @@ using System.Collections.Generic;
 /// </summary>
 public class WaypointContainer : MonoBehaviour
 {
-    [SerializeField] private List<Transform> waypoints = new List<Transform>();
+    [SerializeField] public List<Transform> waypoints = new List<Transform>();
 
     public IReadOnlyList<Transform> Waypoints => waypoints;
 

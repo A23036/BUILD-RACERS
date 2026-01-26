@@ -5,52 +5,15 @@ using System.Collections.Generic;
 /// AIDriver ウェイポイントを巡回するAI
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
-public class AIDriver : MonoBehaviour, IDriver
+public class Killer : AIDriver, IDriver
 {
-    [Header("参照")]
-    [SerializeField] protected WaypointContainer waypointContainer = null;
-    [SerializeField] protected int startIndex = 0;
-
-    [Header("ウェイポイント設定")]
-    [SerializeField] protected float MaxWpRadius = 12f;   // 目的地の最大半径
-    [SerializeField] protected float MinWpRadius = 4f;    // 目的地の最小半径
-    [SerializeField] protected bool loopPath = true;
-
-    [Header("ステアリング調整")]
-    [SerializeField] protected float steerP = 2.0f;
-    [SerializeField] protected float steerD = 0.1f;         // 小さくしてオーバー反応を防ぐ
-    [SerializeField] protected float maxSteerAngle = 45f;
-
-    [Header("速度制御")]
-    [SerializeField] protected float targetMaxSpeedKmh = 73f;
-    [SerializeField] protected float cornerMinSpeedKmh = 16f;
-
-    [Header("挙動調整")]
-    [SerializeField] protected float reactionTime = 0.05f;
-    [SerializeField] protected float noiseAmount = 1f;
-
-    protected Rigidbody rb;
-    protected Transform tf;
-    protected List<Transform> waypoints = new List<Transform>();
-    protected int currentIndex = 0;
-
-    protected float lastError = 0f;
-    protected float lastSteer = 0f;
-    protected float lastThrottle = 0f;
-    protected float lastBrake = 0f;
-
-    protected float targetSpeedMps;
-
-    protected void Awake()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         tf = transform;
-
-        //入力ノイズをランダムで設定
-        noiseAmount = Random.Range(0.5f,2.5f);
     }
 
-    protected void Start()
+    private void Start()
     {
         RefreshWaypoints();
         if (waypoints.Count == 0)
@@ -59,8 +22,16 @@ public class AIDriver : MonoBehaviour, IDriver
             return;
         }
 
-        currentIndex = Mathf.Clamp(startIndex, 0, waypoints.Count - 1);
+        //速度をキラー仕様に
+        maxSteerAngle = 90f;
+        targetMaxSpeedKmh *= 2;
+
         targetSpeedMps = targetMaxSpeedKmh / 3.6f;
+    }
+
+    public void SetCurrentIdx(int idx)
+    {
+        currentIndex = idx;
     }
 
     public void GetInputs(out float throttle, out float brake, out float steer)
@@ -73,11 +44,12 @@ public class AIDriver : MonoBehaviour, IDriver
 
         //目的地点が近づくほど、到着判定を広くする
         int preIdx = currentIndex - 1;
-        if(preIdx < 0) preIdx = waypoints.Count - 1;
+        if (preIdx < 0) preIdx = waypoints.Count - 1;
         float betDist = (waypoints[preIdx].position - curr.position).magnitude;
         float nowDist = (tf.position - curr.position).magnitude;
-        float rate = 1f -   nowDist / betDist;
-        float waypointRadius = Mathf.Lerp(MinWpRadius, MaxWpRadius,rate);
+        float rate = 1f - nowDist / betDist;
+        brake = rate * rate * 2;
+        float waypointRadius = Mathf.Lerp(MinWpRadius, MaxWpRadius, rate);
 
         // --- 到達判定（進行方向ベース） ---
         Vector3 toWp = curr.position - tf.position;
@@ -125,16 +97,25 @@ public class AIDriver : MonoBehaviour, IDriver
         float alpha = Mathf.Clamp01(Time.fixedDeltaTime / Mathf.Max(reactionTime, 1e-5f));
         steer = Mathf.Lerp(lastSteer, rawSteer, alpha);
         throttle = Mathf.Lerp(lastThrottle, desiredThrottle, alpha);
-        throttle = 1;
+        
         brake = Mathf.Lerp(lastBrake, desiredBrake, alpha);
 
-        lastSteer = steer;
-        lastThrottle = throttle;
-        lastBrake = brake;
+        //挙動をキラー仕様にする
+        float killerSteerMagni = 0.5f;
+        float killerMagni = 1.2f;
+
+        if (steer < 0) killerSteerMagni *= -1;
+
+        if(Mathf.Abs(steer) > 0.3f) lastSteer = steer + killerSteerMagni;
+        else lastSteer = steer;
+        lastThrottle = throttle * killerMagni;
+        lastBrake = brake * killerMagni;
+
+        Debug.Log($"KILLER INPUTS : T={lastThrottle:F2}, B={lastBrake:F2}, S={lastSteer:F2}");
     }
 
     // --- ウェイポイント移行 ---
-    protected void AdvanceWaypoint()
+    private void AdvanceWaypoint()
     {
         if (waypoints.Count == 0) return;
         currentIndex++;
@@ -153,54 +134,8 @@ public class AIDriver : MonoBehaviour, IDriver
         }
     }
 
-    // --- ルックアヘッド点計算 ---
-    protected Vector3 GetLookAheadPoint(float lookDist)
-    {
-        if (waypoints.Count == 0)
-            return tf.position;
-
-        int searchIdx = currentIndex;
-        Vector3 last = tf.position;
-        Vector3 next = waypoints[searchIdx].position;
-        float remaining = lookDist;
-
-        while (true)
-        {
-            float segLen = Vector3.Distance(last, next);
-            if (segLen >= remaining)
-                return last + (next - last).normalized * remaining;
-
-            remaining -= segLen;
-            last = next;
-
-            if (++searchIdx >= waypoints.Count)
-            {
-                if (loopPath) searchIdx = 0;
-                else return waypoints[waypoints.Count - 1].position;
-            }
-            next = waypoints[searchIdx].position;
-        }
-    }
-
-    protected void RefreshWaypoints()
-    {
-        waypoints.Clear();
-        if (waypointContainer != null)
-        {
-            foreach (var wp in waypointContainer.Waypoints)
-                if (wp != null) waypoints.Add(wp);
-        }
-    }
-
-    public void SetWaypointContainer(WaypointContainer container)
-    {
-        waypointContainer = container;
-        RefreshWaypoints();
-        currentIndex = Mathf.Clamp(startIndex, 0, Mathf.Max(0, waypoints.Count - 1));
-    }
-
     public bool ItemUseDecision()
     {
-        return true;
+        return false;
     }
 }

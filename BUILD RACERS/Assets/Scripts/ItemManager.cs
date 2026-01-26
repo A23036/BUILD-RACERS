@@ -14,6 +14,8 @@ public class ItemManager : MonoBehaviour
     [SerializeField] private int rocketWeight;
     [SerializeField] private int rocketHomingWeight;
     [SerializeField] private int balloonTrapWeight;
+    [SerializeField] private int killerWeight;
+
     [SerializeField] private int speedWeight;
     [SerializeField] private int accelerationWeight;
     [SerializeField] private int antiStunWeight;
@@ -175,7 +177,6 @@ public class ItemManager : MonoBehaviour
                 {
                     return PartsID.AntiStun;
                 }
-
             case PartsType.Item:
                 int r2 = Random.Range(0, 4);
                 Debug.Log("RandomItem:" + r2);
@@ -191,9 +192,13 @@ public class ItemManager : MonoBehaviour
                 {
                     return PartsID.RocketHoming;
                 }
-                else
+                else if(r2 == 3)
                 {
                     return PartsID.BalloonTrap;
+                }
+                else
+                {
+                    return PartsID.Killer;
                 }
             case PartsType.Gimmick:
                 int r3 = Random.Range(0, 4);
@@ -216,7 +221,7 @@ public class ItemManager : MonoBehaviour
                 }
             default:
                 return 0;
-        }
+            }
     }
 
     public PartsType GetPartsType(PartsID id)
@@ -229,6 +234,7 @@ public class ItemManager : MonoBehaviour
             case PartsID.Rocket:
             case PartsID.RocketHoming:
             case PartsID.BalloonTrap:
+            case PartsID.Killer:
                 type = PartsType.Item;
                 break;
             case PartsID.Speed:
@@ -348,6 +354,12 @@ public class ItemManager : MonoBehaviour
 
             return;
         }
+
+        if (id == PartsID.Killer)
+        {
+            // ë¶ç¿Ç…ÉLÉâÅ[èÛë‘Çïtó^
+            carController.SetKiller();
+        }
     }
 
     public void SetItemWeight()
@@ -356,6 +368,8 @@ public class ItemManager : MonoBehaviour
         itemWeightMap[PartsID.Rocket] = rocketWeight;
         itemWeightMap[PartsID.RocketHoming] = rocketHomingWeight;
         itemWeightMap[PartsID.BalloonTrap] = balloonTrapWeight;
+        itemWeightMap[PartsID.Killer] = killerWeight;
+
         itemWeightMap[PartsID.Acceleration] = accelerationWeight;
         itemWeightMap[PartsID.Speed] = speedWeight;
         itemWeightMap[PartsID.AntiStun] = antiStunWeight;
