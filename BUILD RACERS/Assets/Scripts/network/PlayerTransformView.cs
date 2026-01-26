@@ -9,7 +9,18 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
 
     [Tooltip("補間バッファ時間（ミリ秒）- ネットワークジッター対策　回線良ければ低く、ゴミなら高く")]
     [SerializeField] private float interpolationBackTime = 100f;
-    
+
+    [Tooltip("補間バッファ時間の自動最適化")]
+    [SerializeField] private bool autoOptBackTime = true;
+    [Tooltip("最適化　最低、最大時間")]
+    [SerializeField] private float minBackTime = 10f;
+    [SerializeField] private float maxBackTime = 2000f;
+
+    //ジッター測定用
+    private float[] receiveDeltaTimes = new float[10];
+    private int receiveIndex = 0;
+    private double lastReceiveTime = 0;
+
     // 同期フレーム
     [SerializeField] private int serializationRate = 30;
     
@@ -45,6 +56,12 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
         // 現在のレンダリング時刻（少し過去）
         double renderTime = PhotonNetwork.Time - interpolationBackTime / 1000.0;
         
+        //補間時間の自動最適化
+        if(autoOptBackTime)
+        {
+            AdjustInteroplationBackTime();
+        }
+
         if (useInterpolation)
         {
             InterpolatePosition(renderTime);
@@ -62,7 +79,47 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
             Debug.Log($"Interpolation: {useInterpolation}, Extrapolation: {useExtrapolation}");
         }
     }
-    
+
+    private void AdjustInteroplationBackTime()
+    {
+        // 受信間隔のジッター（ばらつき）を計算
+        if (receiveIndex < receiveDeltaTimes.Length - 1) return; // データが溜まるまで待つ
+
+        float sum = 0f;
+        float max = 0f;
+        float min = float.MaxValue;
+
+        for (int i = 0; i < receiveDeltaTimes.Length; i++)
+        {
+            float dt = receiveDeltaTimes[i];
+            if (dt > 0)
+            {
+                sum += dt;
+                max = Mathf.Max(max, dt);
+                min = Mathf.Min(min, dt);
+            }
+        }
+
+        float avg = (max + min) / 2;
+        float jitter = max - min; // ジッター（最大と最小の差）
+        float maxLate = max;
+
+        // ジッターが大きいほど、バッファ時間を増やす
+        // 平均受信間隔 + ジッターの2倍 を目安にする 計算方法模索中
+        float targetBackTime = ((avg + jitter) * 10f) * 1000f; // 秒→ミリ秒
+
+        // 滑らかに調整（急激に変化させない）
+        float adjustSpeed = 50f * Time.deltaTime; // 1秒あたり50ms変化
+        interpolationBackTime = Mathf.MoveTowards(
+            interpolationBackTime,
+            Mathf.Clamp(targetBackTime, minBackTime, maxBackTime),
+            adjustSpeed
+        );
+
+        // デバッグ表示（必要に応じて）
+        Debug.Log($"Jitter: {jitter*1000:F1}ms, BackTime: {interpolationBackTime:F1}ms , targetBackTime: {targetBackTime:F1}");
+    }
+
     private void InterpolatePosition(double renderTime)
     {
         // バッファから適切な2つの状態を見つけて補間
@@ -170,6 +227,15 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
             lastPosition = pos;
             lastRotation = rot;
         }
+
+        //ジッターを測定
+        if (lastReceiveTime > 0)
+        {
+            float deltaTime = (float)(info.SentServerTime - lastReceiveTime);
+            receiveDeltaTimes[receiveIndex] = deltaTime;
+            receiveIndex = (receiveIndex + 1) % receiveDeltaTimes.Length;
+        }
+        lastReceiveTime = info.SentServerTime;
     }
     
     private void AddState(State state)
