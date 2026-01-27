@@ -426,11 +426,11 @@ public class CarController : MonoBehaviourPunCallbacks
         keyboardItemGuide = GameObject.Find("ItemGuideKeyboardImage");
         controllerItemGuide = GameObject.Find("ItemGuideControllerImage");
         
-        WASDGuide.SetActive(false);
-        arrowGuide.SetActive(false);
-        controllerGuide.SetActive(false);
-        keyboardItemGuide.SetActive(false);
-        controllerItemGuide.SetActive(false);
+        if (WASDGuide != null) WASDGuide.SetActive(false);
+        if (arrowGuide != null) arrowGuide.SetActive(false);
+        if (controllerGuide != null) controllerGuide.SetActive(false);
+        if (keyboardItemGuide != null) keyboardItemGuide.SetActive(false);
+        if (controllerItemGuide != null) controllerItemGuide.SetActive(false);
 
         // ガイド表示フラグの初期化（無ければON）
         if (!PlayerPrefs.HasKey(OptionPrefs.GUIDE_ENABLED))
