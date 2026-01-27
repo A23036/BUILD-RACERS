@@ -15,6 +15,8 @@ public class Killer : AIDriver, IDriver
 
     private void Start()
     {
+        isKiller = true;
+
         RefreshWaypoints();
         if (waypoints.Count == 0)
         {
@@ -22,16 +24,27 @@ public class Killer : AIDriver, IDriver
             return;
         }
 
-        //速度をキラー仕様に
+        //パラメータをキラー仕様に
         maxSteerAngle = 90f;
         targetMaxSpeedKmh *= 2;
 
+        MaxWpRadius = 8f;
+
         targetSpeedMps = targetMaxSpeedKmh / 3.6f;
+
+        noiseAmount = 0f;
     }
 
     public void SetCurrentIdx(int idx)
     {
         currentIndex = idx;
+
+        var wpcTransform = GameObject.Find("Waypoints").transform;
+        Debug.Log($"Killer StartIdx : {wpcTransform.GetChild(idx)}");
+
+        //空飛ばないように車体を進行方向に設定
+        Vector3 targetVec = waypoints[currentIndex].position - tf.position;
+        transform.rotation = Quaternion.LookRotation(targetVec.normalized, Vector3.up);
     }
 
     public void GetInputs(out float throttle, out float brake, out float steer)
@@ -55,8 +68,23 @@ public class Killer : AIDriver, IDriver
         Vector3 toWp = curr.position - tf.position;
         float dist = toWp.magnitude;
         float forwardDot = Vector3.Dot(tf.forward, toWp.normalized);
+
+        RaycastHit[] hits = Physics.RaycastAll(tf.position + Vector3.up * 0.5f, toWp.normalized, dist);
+        bool isHitWall = false;
+        foreach (var hit in hits)
+        {
+            if (hit.collider.tag == "Wall")
+            {
+                // 壁に当たるなら一つ前のウェイポイントへ戻る
+                isHitWall = true;
+                currentIndex--;
+                if(currentIndex < 0) currentIndex = waypoints.Count - 1;
+                break;
+            }
+        }
+
         // 近ければ次へ
-        if (dist < waypointRadius)
+        if (dist < waypointRadius && isHitWall == false)
         {
             AdvanceWaypoint();
             curr = waypoints[currentIndex];
@@ -91,7 +119,6 @@ public class Killer : AIDriver, IDriver
 
         // --- ノイズ追加 ---　アクセルのみノイズを適用
         rawSteer += Random.Range(-noiseAmount, noiseAmount);
-        //desiredThrottle += Random.Range(-noiseAmount, noiseAmount);
 
         // --- スムージング ---
         float alpha = Mathf.Clamp01(Time.fixedDeltaTime / Mathf.Max(reactionTime, 1e-5f));
@@ -101,8 +128,8 @@ public class Killer : AIDriver, IDriver
         brake = Mathf.Lerp(lastBrake, desiredBrake, alpha);
 
         //挙動をキラー仕様にする
-        float killerSteerMagni = 0.5f;
-        float killerMagni = 1.2f;
+        float killerSteerMagni = 0.7f;
+        float killerMagni = 1.5f;
 
         if (steer < 0) killerSteerMagni *= -1;
 
@@ -111,7 +138,8 @@ public class Killer : AIDriver, IDriver
         lastThrottle = throttle * killerMagni;
         lastBrake = brake * killerMagni;
 
-        Debug.Log($"KILLER INPUTS : T={lastThrottle:F2}, B={lastBrake:F2}, S={lastSteer:F2}");
+        var cc = GetComponent<CarController>();
+        if (cc.isMine) Debug.Log($"[KILLER] : T={lastThrottle:F2}, B={lastBrake:F2}, S={lastSteer:F2}");
     }
 
     // --- ウェイポイント移行 ---
@@ -137,5 +165,11 @@ public class Killer : AIDriver, IDriver
     public bool ItemUseDecision()
     {
         return false;
+    }
+
+    public bool IsKiller()
+    {
+        Debug.Log("IsKiller called : " + isKiller);
+        return isKiller;
     }
 }

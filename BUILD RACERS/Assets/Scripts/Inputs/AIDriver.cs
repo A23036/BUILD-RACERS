@@ -41,6 +41,12 @@ public class AIDriver : MonoBehaviour, IDriver
 
     protected float targetSpeedMps;
 
+    protected bool isKiller = false;
+
+    //デバッグ用
+    float minSteer = 1e6f;
+    float maxSteer = 0f;
+
     protected void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -128,9 +134,17 @@ public class AIDriver : MonoBehaviour, IDriver
         throttle = 1;
         brake = Mathf.Lerp(lastBrake, desiredBrake, alpha);
 
+        minSteer = Mathf.Min(minSteer, steer);
+        maxSteer = Mathf.Max(maxSteer, steer);
+
         lastSteer = steer;
         lastThrottle = throttle;
         lastBrake = brake;
+
+        var cc = GetComponent<CarController>();
+        if(cc.isMine) Debug.Log($"[AIDriver] Throttle: {throttle:F2}, Brake: {brake:F2}, Steer: {steer:F2}");
+        Debug.Log($"[AIDriver] Throttle: {throttle:F2}, Brake: {brake:F2}, Steer: {steer:F2}");
+        Debug.Log($"[AIDriver] Steer Range: Min={minSteer:F2}, Max={maxSteer:F2}");
     }
 
     // --- ウェイポイント移行 ---
@@ -202,5 +216,10 @@ public class AIDriver : MonoBehaviour, IDriver
     public bool ItemUseDecision()
     {
         return true;
+    }
+
+    public bool IsKiller()
+    {
+        return isKiller;
     }
 }

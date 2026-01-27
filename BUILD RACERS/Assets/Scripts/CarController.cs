@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using PW;
 
 public enum State // カートの状態
 {
@@ -217,6 +218,7 @@ public class CarController : MonoBehaviourPunCallbacks
     private float lastInputTime = -999f;
 
     private float killerTimer = 0f;
+    List<(Vector3, Vector3)> debugDrawLineList = new List<(Vector3, Vector3)>();
 
     public void AddPartsNum()
     {
@@ -287,6 +289,8 @@ public class CarController : MonoBehaviourPunCallbacks
     public void SetStun(StunType type)
     {
         if (state == State.Stun) return;
+
+        if(killerTimer > 0f) return;
 
         state = State.Stun;
         ClearBoostEffect();
@@ -668,8 +672,14 @@ public class CarController : MonoBehaviourPunCallbacks
         //周回角度更新
         UpdateAngle();
 
+        //デバッグ用
+        foreach(var linePos in debugDrawLineList)
+        {
+            Debug.DrawLine(linePos.Item1, linePos.Item2, Color.blue);
+        }
+
         //キラー更新
-        if(killerTimer > 0f) UpdateKiller();
+        if (killerTimer > 0f) UpdateKiller();
 
         //周回判定
         if (isLapClear)
@@ -685,6 +695,8 @@ public class CarController : MonoBehaviourPunCallbacks
             if(lapCount > 0) blinkTimer = lapBlinkTime;
 
             isLapClear = false;
+
+            Debug.Log($"Lap Clear! Current Lap: {lapCount}");
         }
 
         //ゴール判定
@@ -694,7 +706,6 @@ public class CarController : MonoBehaviourPunCallbacks
 
             //リザルトUIを有効化
             if(resultUI.activeSelf == false) resultUI.SetActive(true);
-            resultUI.SetActive(true);
 
             //ランキングUIを更新
             var result = resultUI.GetComponent<resultUI>();
@@ -730,11 +741,15 @@ public class CarController : MonoBehaviourPunCallbacks
                         if(isMine) result.UpdateRankUI(PlayerPrefs.GetString("PlayerName"), timer);
                         else result.UpdateRankUI(GetName(), timer);
                     }
+
+                    Debug.Log($"GOAL TIME : {timer}");
                 }
             }
 
-            if (driver == null)
+            if (driver == null || isMine && driver.IsKiller())
             {
+                ResetKiller();
+
                 //AIに切り替え
                 var wpContainer = FindObjectOfType<WaypointContainer>();
                 SetAI<AIDriver>(wpContainer);
@@ -780,7 +795,7 @@ public class CarController : MonoBehaviourPunCallbacks
             steerInput = steer;
 
             //CPUアイテム使用
-            if (itemManager.GetItemNum() > 0 && driver.ItemUseDecision())
+            if (driver is AIDriver && itemManager.GetItemNum() > 0 && driver.ItemUseDecision())
             {
                RemoveUsedItem();
             }
@@ -814,13 +829,18 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
             }
 
-            //周回数をUIに反映
-            //lapText.text = $"Angle : {nowAngle} , Lap : {Mathf.Max(0,lapCount)}";
-            lapText.text = $"Lap:{Mathf.Clamp(lapCount + 1, 1, maxLaps)}/{maxLaps}";
+            
 
             //　プレイヤー入力:Update()で取得した入力を使用
             motorInput = inputMotor;
             steerInput = inputSteer;
+        }
+
+        //UI更新
+        if(isMine)
+        {
+            //周回数をUIに反映
+            lapText.text = $"Lap:{Mathf.Clamp(lapCount + 1, 1, maxLaps)}/{maxLaps}";
 
             //順位更新
             UpdateRank();
@@ -856,13 +876,15 @@ public class CarController : MonoBehaviourPunCallbacks
         // --- 地面別・ブースト補正(同じ) ---
         float accelMultiplier = 1f;
         float speedMultiplier = 1f;
-        if (currentGroundTag == "Dirt" && boostTimer <= 0f && !(driver is Killer))
+        bool isKiller = false;
+        if(driver != null) isKiller = driver.IsKiller();
+        if (currentGroundTag == "Dirt" && boostTimer <= 0f && !isKiller)
         {
             accelMultiplier = dirtAccelMultiplier;
             speedMultiplier = dirtSpeedMultiplier;
         }
 
-        if (boostTimer > 0f || driver is Killer)
+        if (boostTimer > 0f || killerTimer > 0f)
         {
             accelMultiplier *= boostAccelMultiplier;
             speedMultiplier *= boostSpeedMultiplier;
@@ -889,7 +911,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // 速度表示など残す（rb.linearVelocity -> rb.velocity）
         float speed = rb.linearVelocity.magnitude * 3.6f;
-        if (speedText != null && driver == null)
+        if (speedText != null && isMine)
         {
             speedText.text = $"{speed:F1}";
 
@@ -924,7 +946,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         // 重力補正
-        rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
+        if(killerTimer <= 0) rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
     }
 
     //中心点からの角度計算　ラップ判定
@@ -958,7 +980,7 @@ public class CarController : MonoBehaviourPunCallbacks
             if (f) throughFlags++;
         }
 
-        if (throughFlags == flags.Length && cur == 0)
+        if (throughFlags == flags.Length && 0 < cur && cur < 10)
         {
             isLapClear = true;
             for (int i = 0; i < flags.Length; i++)
@@ -1198,9 +1220,6 @@ public class CarController : MonoBehaviourPunCallbacks
             else if (currentRank == 3) rankText.text = "3rd";
             else rankText.text = currentRank + "th";
         }
-
-        //キラー終了処理
-        if (killerTimer > 0f && currentRank == 1) killerTimer = 0f;
     }
 
     public int GetLapCount()
@@ -1251,6 +1270,8 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             currentGroundTag = "Default";
         }
+
+        Debug.Log($"Ground Tag: {currentGroundTag}");
     }
 
     private void UpdateStun()
@@ -1629,25 +1650,49 @@ public class CarController : MonoBehaviourPunCallbacks
         var wpContainer = FindObjectOfType<WaypointContainer>();
         SetAI<Killer>(wpContainer);
         killerTimer = GetKillerTime();
+
+        rb.useGravity = false;
     }
 
     public void UpdateKiller()
     {
         killerTimer -= Time.deltaTime;
 
-        if(killerTimer <= 0f)
+        //高さを制限
+        transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
+
+        //キラー終了処理
+        if (killerTimer > 0f && currentRank == 1) killerTimer = 0f;
+
+        if (killerTimer <= 0f)
         {
             ResetKiller();
+        }
+        else
+        {
+            Debug.Log($"Killer Time Remaining : {killerTimer:F2} sec");
         }
     }
 
     public void ResetKiller()
     {
-        if(driver != null && driver is Killer)
+        if(driver.IsKiller())
         {
             driver = null;
             Destroy(GetComponent<Killer>());
+            killerTimer = 0f;
+
+            Debug.Log("Killer Reset");
         }
+        else
+        {
+            Debug.Log("Killer Reset Filed");
+
+            //ドライバーのデータ型を確認
+            Debug.Log($"Driver Type : {driver.GetType()}");
+        }
+
+        rb.useGravity = true;
     }
 
     public float GetKillerTime()
@@ -1658,7 +1703,7 @@ public class CarController : MonoBehaviourPunCallbacks
         if (currentRank == 1) ret = 0.5f;
         else
         {
-            ret = 8f;
+            ret = 7f;
         }
 
         return ret;
@@ -1672,45 +1717,43 @@ public class CarController : MonoBehaviourPunCallbacks
         var wpc = FindObjectOfType<WaypointContainer>();
         
         float nowAngle = lapManager.NowAngle(transform.position);
-        Vector3 nowPos = transform.position;
+        Vector3 offsetY = new Vector3(0,1,0);
+        Vector3 nowPos = transform.position + offsetY;
 
         float minLen = 1e6f;
         
         // 子オブジェクトを順番に取得
         Transform wpcTransform = wpc.transform;
 
-        List<Transform> angleCloseList = new List<Transform>();
-        List<float> lenList = new List<float>();
-        List<int> idxList = new List<int>();
-        
-        for (int i = 0; i < wpcTransform.childCount; i++)
+        for (int i = wpcTransform.childCount - 1; i >= 0; i--)
         {
-            Transform child = wpcTransform.GetChild(i);
-            float childAngle = lapManager.NowAngle(child.position);
-            Vector3 childPos = child.position;
-            if (childAngle > nowAngle)
-            {
-                angleCloseList.Add(child);
-                lenList.Add(Vector3.Distance(nowPos, childPos));
-                idxList.Add(i);
+            Vector3 wpPos = wpcTransform.GetChild(i).position + offsetY;
+            RaycastHit[] hitList = Physics.RaycastAll(nowPos, (wpPos - nowPos).normalized, (wpPos - nowPos).magnitude);
 
-                if(minLen > lenList.Last())
-                {
-                    minLen = lenList.Last();
-                }
+            bool isHitWall = false;
+            foreach(var hitp in hitList)
+            {
+                //Wallに遮られているものは除外
+                if (hitp.collider.CompareTag("Wall")) isHitWall = true;
+            }
+            if (isHitWall) continue;
+
+            if (lapManager.NowAngle(wpPos) < nowAngle)
+            {
+                debugDrawLineList.Add((wpPos, nowPos));
+                return (i + 1) % wpcTransform.childCount;
+            }
+
+            //最も近いもの
+            if ((nowPos - wpPos).magnitude < minLen)
+            {
+                minLen = (nowPos - wpPos).magnitude;
+                ret = i;
             }
         }
 
-        for(int i = 0;i < lenList.Count;i++)
-        {
-            if (lenList[i] == minLen)
-            {
-                ret = idxList[i];
-
-                Debug.Log($"Killer StartIdx : {idxList[i]}");
-            }
-        }
-
+        //角度でリターンしなければ距離ベースで計算
+        debugDrawLineList.Add((wpcTransform.GetChild(ret).position + offsetY,nowPos));
         return ret;
     }
 
