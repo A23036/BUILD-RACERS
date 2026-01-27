@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public enum State // カートの状態
 {
@@ -214,6 +215,8 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private LastInputDevice lastDevice = LastInputDevice.KeyboardWASD;
     private float lastInputTime = -999f;
+
+    private float killerTimer = 0f;
 
     public void AddPartsNum()
     {
@@ -664,6 +667,9 @@ public class CarController : MonoBehaviourPunCallbacks
 
         //周回角度更新
         UpdateAngle();
+
+        //キラー更新
+        if(killerTimer > 0f) UpdateKiller();
 
         //周回判定
         if (isLapClear)
@@ -1191,6 +1197,9 @@ public class CarController : MonoBehaviourPunCallbacks
             else if (currentRank == 3) rankText.text = "3rd";
             else rankText.text = currentRank + "th";
         }
+
+        //キラー終了処理
+        if (killerTimer > 0f && currentRank == 1) killerTimer = 0f;
     }
 
     public int GetLapCount()
@@ -1618,7 +1627,17 @@ public class CarController : MonoBehaviourPunCallbacks
         //キラーに切り替え
         var wpContainer = FindObjectOfType<WaypointContainer>();
         SetAI<Killer>(wpContainer);
-        Invoke("ResetKiller", GetKillerTime());
+        killerTimer = GetKillerTime();
+    }
+
+    public void UpdateKiller()
+    {
+        killerTimer -= Time.deltaTime;
+
+        if(killerTimer <= 0f)
+        {
+            ResetKiller();
+        }
     }
 
     public void ResetKiller()
@@ -1635,7 +1654,7 @@ public class CarController : MonoBehaviourPunCallbacks
         float ret = 0f;
 
         //順位に応じて時間を調整
-        if (currentRank == 1) ret = 0;
+        if (currentRank == 1) ret = 0.5f;
         else
         {
             ret = 8f;
@@ -1652,17 +1671,42 @@ public class CarController : MonoBehaviourPunCallbacks
         var wpc = FindObjectOfType<WaypointContainer>();
         
         float nowAngle = lapManager.NowAngle(transform.position);
+        Vector3 nowPos = transform.position;
 
+        float minLen = 1e6f;
+        
         // 子オブジェクトを順番に取得
         Transform wpcTransform = wpc.transform;
+
+        List<Transform> angleCloseList = new List<Transform>();
+        List<float> lenList = new List<float>();
+        List<int> idxList = new List<int>();
+        
         for (int i = 0; i < wpcTransform.childCount; i++)
         {
             Transform child = wpcTransform.GetChild(i);
             float childAngle = lapManager.NowAngle(child.position);
+            Vector3 childPos = child.position;
             if (childAngle > nowAngle)
             {
-                ret = i;
-                break;
+                angleCloseList.Add(child);
+                lenList.Add(Vector3.Distance(nowPos, childPos));
+                idxList.Add(i);
+
+                if(minLen > lenList.Last())
+                {
+                    minLen = lenList.Last();
+                }
+            }
+        }
+
+        for(int i = 0;i < lenList.Count;i++)
+        {
+            if (lenList[i] == minLen)
+            {
+                ret = idxList[i];
+
+                Debug.Log($"Killer StartIdx : {idxList[i]}");
             }
         }
 

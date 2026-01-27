@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5876acb191de19449b014404ef8978b1, type: 3}
   m_Name: Parts_Killer
   m_EditorClassIdentifier: 
-  width: 1
-  height: 1
-  coreX: 0
-  coreY: 0
-  serializedGrid: 01
+  width: 4
+  height: 4
+  coreX: 2
+  coreY: 1
+  serializedGrid: 00000101000101010101010000010000

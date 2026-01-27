@@ -160,6 +160,9 @@ public class ItemManager : MonoBehaviour
 
     public PartsID GetRandomItem(PartsType type)
     {
+        //テスト　キラーのみ
+        //return PartsID.Killer;
+
         switch (type)
         {
             case PartsType.Passive:
@@ -178,7 +181,7 @@ public class ItemManager : MonoBehaviour
                     return PartsID.AntiStun;
                 }
             case PartsType.Item:
-                int r2 = Random.Range(0, 4);
+                int r2 = Random.Range(0, 5);
                 Debug.Log("RandomItem:" + r2);
                 if (r2 == 0)
                 {
@@ -359,6 +362,8 @@ public class ItemManager : MonoBehaviour
         {
             // 即座にキラー状態を付与
             carController.SetKiller();
+            Debug.Log("KILLER SET");
+            return;
         }
     }
 
