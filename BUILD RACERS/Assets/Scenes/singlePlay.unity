@@ -5492,7 +5492,7 @@ MonoBehaviour:
   DriverUI: {fileID: 246593203}
   EngineerUI: {fileID: 638005463}
   ResultUI: {fileID: 563083613}
-  botsNum: 1
+  botsNum: 7
 --- !u!1 &458937789
 GameObject:
   m_ObjectHideFlags: 0
