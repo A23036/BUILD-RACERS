@@ -112,7 +112,7 @@ public class ItemBoxController : MonoBehaviour
                 // アイテム取得数の上限でなければランダムなアイテムを生成
                 if (carController.CanGetItem())
                 {
-                    carController.SendParts(itemManager.GetRandomItem(partsType));
+                    carController.SendParts(itemManager.GetRandomItem(carController.GetCurrentRank(),partsType));
                     carController.AddPartsNum(); // アイテム数を追加
                 }
             }
@@ -121,7 +121,7 @@ public class ItemBoxController : MonoBehaviour
                 //シングル or チュートリアルならそのままアイテム獲得する
                 if(PlayerPrefs.GetInt("driverNum") != -1) // ドライバーの時
                 {
-                    PartsID id = itemManager.GetRandomItem(partsType);
+                    PartsID id = itemManager.GetRandomItem(carController.GetCurrentRank(), partsType);
 
                     //アイテム
                     PartsType itemType = itemManager.GetPartsType(id);
@@ -139,7 +139,7 @@ public class ItemBoxController : MonoBehaviour
                 }
                 else // エンジニアの時
                 {
-                    carController.SendParts(itemManager.GetRandomItem(partsType));
+                    carController.SendParts(itemManager.GetRandomItem(carController.GetCurrentRank(), partsType));
                     carController.AddPartsNum();
                 }
             }

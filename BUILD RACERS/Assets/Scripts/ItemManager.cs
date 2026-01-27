@@ -21,6 +21,8 @@ public class ItemManager : MonoBehaviour
     [SerializeField] private int antiStunWeight;
 
     [SerializeField] private int maxCapacity;
+
+    [SerializeField] private RankedItemTable rankedTable;
     private int nowCapacity;
 
     private LinkedList<int> itemQueue = new LinkedList<int>();
@@ -29,8 +31,8 @@ public class ItemManager : MonoBehaviour
     private Dictionary<int, List<LinkedListNode<int>>> nodeMap = new Dictionary<int, List<LinkedListNode<int>>>();
 
     CarController carController;
+    private ItemUIManager itemUI;
 
-    [SerializeField] private ItemUIManager itemUI;
 
     public int GetItemNum() => itemQueue.Count;
 
@@ -158,73 +160,29 @@ public class ItemManager : MonoBehaviour
         Debug.Log(s);
     }
 
-    public PartsID GetRandomItem(PartsType type)
+    public PartsID GetRandomItem(int rank,PartsType type)
     {
-        //テスト　キラーのみ
-        //return PartsID.Killer;
+        if (rankedTable == null)
+        {
+            Debug.LogError("RankedItemTable が未設定です ItemManagerのinspectorから設定してください");
+        }
 
+        PartsID randomId = rankedTable.GetRandom(rank, type);
+        /*
         switch (type)
         {
             case PartsType.Passive:
-                int r = Random.Range(0, 3);
-                Debug.Log("RandomItem:" + r);
-                if (r == 0)
-                {
-                    return PartsID.Acceleration;
-                }
-                else if (r == 1)
-                {
-                    return PartsID.Speed;
-                }
-                else
-                {
-                    return PartsID.AntiStun;
-                }
+                Debug.Log("Rank:" + rank + " GetPassive:" + randomId);
+                break;
             case PartsType.Item:
-                int r2 = Random.Range(0, 5);
-                Debug.Log("RandomItem:" + r2);
-                if (r2 == 0)
-                {
-                    return PartsID.Energy;
-                }
-                else if(r2 == 1)
-                {
-                    return PartsID.Rocket;
-                }
-                else if (r2 == 2)
-                {
-                    return PartsID.RocketHoming;
-                }
-                else if(r2 == 3)
-                {
-                    return PartsID.BalloonTrap;
-                }
-                else
-                {
-                    return PartsID.Killer;
-                }
+                Debug.Log("Rank:" + rank + " GetItem:" + randomId);
+                break;
             case PartsType.Gimmick:
-                int r3 = Random.Range(0, 4);
-                Debug.Log("RandomItem:" + r3);
-                if (r3 == 0)
-                {
-                    return PartsID.Mud;
-                }
-                else if (r3 == 1)
-                {
-                    return PartsID.Balloon;
-                }
-                else if (r3 == 2)
-                {
-                    return PartsID.Wall;
-                }
-                else
-                {
-                    return PartsID.Slope;
-                }
-            default:
-                return 0;
-            }
+                Debug.Log("Rank:" + rank + " GetGimmick:" + randomId);
+                break;
+        }\
+        */
+        return randomId;
     }
 
     public PartsType GetPartsType(PartsID id)

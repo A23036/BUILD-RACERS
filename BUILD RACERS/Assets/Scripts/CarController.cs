@@ -636,7 +636,7 @@ public class CarController : MonoBehaviourPunCallbacks
         // ガイドUI表示
         if(PlayerPrefs.GetInt(OptionPrefs.GUIDE_ENABLED,1) == 1) DetectAndUpdateGuideUI();
 
-        Debug.Log("パーツ数:" + partsNum);
+        //Debug.Log("パーツ数:" + partsNum);
     }
 
 
@@ -678,6 +678,7 @@ public class CarController : MonoBehaviourPunCallbacks
             nowAngle = 0f;
 
             //ラップ数を同期
+            if(PhotonNetwork.IsConnected) 
             photonView.RPC("RPC_SyncLapCount", RpcTarget.All, lapCount, photonView.ViewID); 
 
             //タイマーを点滅　スタート直後を除いて実行
@@ -1164,7 +1165,7 @@ public class CarController : MonoBehaviourPunCallbacks
         //全カートの角度とラップ数を取得　比較して順位を決定
         CarController[] cars = FindObjectsOfType<CarController>();
         currentRank = 1;
-        Debug.Log($" === {cars.Length}台のカートで順位計算 === ");
+        //Debug.Log($" === {cars.Length}台のカートで順位計算 === ");
         foreach (var car in cars)
         {
             if (car == this) continue;
@@ -1713,7 +1714,7 @@ public class CarController : MonoBehaviourPunCallbacks
         return ret;
     }
 
-    // ============================
+    public int GetCurrentRank() => currentRank;
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
