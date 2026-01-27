@@ -123,9 +123,6 @@ public class ItemBoxController : MonoBehaviour
                 {
                     PartsID id = itemManager.GetRandomItem(partsType);
 
-                    //テスト　キラーのみ出現
-                    id = PartsID.Killer;
-
                     //アイテム
                     PartsType itemType = itemManager.GetPartsType(id);
                     

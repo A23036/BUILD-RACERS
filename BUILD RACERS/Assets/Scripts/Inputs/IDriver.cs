@@ -10,4 +10,6 @@ public interface IDriver
 
     //アイテムの使用選択
     bool ItemUseDecision() { return false; }
+
+    bool IsKiller() { return false; }
 }
