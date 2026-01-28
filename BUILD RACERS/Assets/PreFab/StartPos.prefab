@@ -85,8 +85,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aa31315716014c42b11006db4651fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPosList: []
+  offsetPos: {x: 0, y: 1, z: 0}
+  startPosList:
+  - {fileID: 8528273110941199452}
+  - {fileID: 1554482940766541745}
+  - {fileID: 673831853526343239}
+  - {fileID: 5779054235740044888}
+  - {fileID: 5633085249654092621}
+  - {fileID: 2110362537787251087}
+  - {fileID: 480848948341723258}
+  - {fileID: 6680881434165900834}
   untilStartTime: 3
+  readyUIObj: {fileID: 0}
 --- !u!114 &521369616737925876
 MonoBehaviour:
   m_ObjectHideFlags: 0

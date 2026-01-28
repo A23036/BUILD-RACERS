@@ -56,19 +56,11 @@ public class Engineer : MonoBehaviourPunCallbacks
 
         switch (SceneManager.GetActiveScene().name)
         {
-            case "gamePlay":
-                var smp = FindObjectOfType<playScene>();
-                if (smp != null)
+            case "Map1":
+                var smm1 = FindObjectOfType<map1>();
+                if (smm1 != null)
                 {
-                    resultUI = smp.GetResultUI();
-                    resultUI.SetActive(false);
-                }
-                break;
-            case "singlePlay":
-                var smsp = FindObjectOfType<singlePlayScene>();
-                if (smsp != null)
-                {
-                    resultUI = smsp.GetResultUI();
+                    resultUI = smm1.GetResultUI();
                     resultUI.SetActive(false);
                 }
                 break;

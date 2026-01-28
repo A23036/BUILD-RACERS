@@ -65,10 +65,10 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.IsConnected)
         {
             //ドライバーを初期位置にセット
-            Invoke(nameof(SetStartPosDrivers), 1f);
+            Invoke(nameof(SetStartPosDrivers), 3f);
 
             //N秒後にドライバー開始
-            Invoke(nameof(DriverStart), untilStartTime);
+            Invoke(nameof(DriverStart), untilStartTime + 3f);
         }
         //*/
     }
@@ -255,7 +255,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 kart.SetStartPos(startPosList[idx++ % startPosList.Length].position + offsetPos);
                 kart.transform.rotation = gameObject.transform.rotation;
 
-                Debug.Log($"=== Set StartPos Drivers (Offline) {kart.transform.position} ===");
+                Debug.Log($"=== Set StartPos Drivers (Offline) {kart.GetName()} , {kart.transform.position} ===");
             }
             readyUI.StartReadyImage();
         }

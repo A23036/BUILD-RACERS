@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/select.unity
     guid: 5932ffb499dc7324198cc4402a412389
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/gamePlay.unity
     guid: 70354ee96e8643c40adeef678acc5cc8
   - enabled: 1
@@ -35,18 +35,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/shop.unity
     guid: f0218572d6455284f8bc28a29795b2be
-  - enabled: 0
-    path: Assets/Scenes/multi.unity
-    guid: 3536bd41ca3d4e4498fbdea2345e71a9
   - enabled: 1
     path: Assets/Scenes/result.unity
     guid: 03a6d9d121133364f8a3a685ac4d1228
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/singlePlay.unity
     guid: eb4cfdb4ab82fe14982e9e12d4caee10
   - enabled: 1
     path: Assets/Scenes/driver tutorial.unity
     guid: e4a1ad106e9f3c64d86b3aba94e477af
+  - enabled: 1
+    path: Assets/Scenes/Map1.unity
+    guid: 9bc0771b834e5b24e8cf04326d1767de
   - enabled: 1
     path: Assets/Scenes/Map2.unity
     guid: 67612ea745d9a104caf4ed95c9c53d28
