@@ -231,21 +231,31 @@ public class ItemManager : MonoBehaviour
 
             if(PhotonNetwork.IsConnected)
             {
-                PhotonNetwork.Instantiate(
+                var obj = PhotonNetwork.Instantiate(
                     "PetBottle_Rocket_Green",
                     spawnPos,
                     transform.rotation   // 向きも自身に合わせる
                 );
+
+                //所有者名のセット
+                RocketGreen rocket = obj.GetComponent<RocketGreen>();
+                rocket.SetParentName(obj.GetComponent<PhotonView>().Owner.NickName);
             }
             else
             {
                 GameObject prefab = (GameObject)Resources.Load("PetBottle_Rocket_Green");
 
-                Instantiate(
+                var obj = Instantiate(
                     prefab,
                     spawnPos,
                     transform.rotation   // 向きも自身に合わせる
                 );
+
+                //所有者名のセット
+                RocketGreen rocket = obj.GetComponent<RocketGreen>();
+                CarController carController = GetComponent<CarController>();
+                if(carController.isMine) rocket.SetParentName(PlayerPrefs.GetString("PlayerName"));
+                else rocket.SetParentName(carController.GetName());
             }
 
             return;
@@ -267,8 +277,13 @@ public class ItemManager : MonoBehaviour
                     spawnPos,
                     transform.rotation   // 向きも自身に合わせる
                 );
+
                 // ロケットの生成者をセット
                 rocket.GetComponent<RocketRed>().SetOwner(transform);
+
+                //所有者名のセット
+                RocketRed rocketRed = rocket.GetComponent<RocketRed>();
+                rocketRed.SetParentName(rocket.GetComponent<PhotonView>().Owner.NickName);
             }
             else
             {
@@ -280,6 +295,12 @@ public class ItemManager : MonoBehaviour
                     transform.rotation   // 向きも自身に合わせる
                 );
                 rocket.GetComponent<RocketRed>().SetOwner(transform);
+
+                //所有者名のセット
+                RocketRed rocketRed = rocket.GetComponent<RocketRed>();
+                CarController carController = GetComponent<CarController>();
+                if (carController.isMine) rocketRed.SetParentName(PlayerPrefs.GetString("PlayerName"));
+                else rocketRed.SetParentName(carController.GetName());
             }
 
             return;
@@ -296,21 +317,35 @@ public class ItemManager : MonoBehaviour
 
             if (PhotonNetwork.IsConnected)
             {
-                var rocket = PhotonNetwork.Instantiate(
+                var balloon = PhotonNetwork.Instantiate(
                     "BalloonTrap",
                     spawnPos,
                     transform.rotation   // 向きも自身に合わせる
                 );
+
+                //所有者名のセット
+                /*
+                WaterBalloonTrap balloonTrap = balloon.GetComponent<WaterBalloonTrap>();
+                balloonTrap.SetParentName(balloon.GetComponent<PhotonView>().Owner.NickName);
+                */
             }
             else
             {
                 GameObject prefab = (GameObject)Resources.Load("BalloonTrap");
 
-                var rocket = Instantiate(
+                var balloon = Instantiate(
                     prefab,
                     spawnPos,
                     transform.rotation   // 向きも自身に合わせる
                 );
+
+                //所有者名のセット
+                /*
+                WaterBalloonTrap balloonTrap = balloon.GetComponent<WaterBalloonTrap>();
+                CarController carController = GetComponent<CarController>();
+                if (carController.isMine) balloonTrap.SetParentName(PlayerPrefs.GetString("PlayerName"));
+                else balloonTrap.SetParentName(carController.GetName());
+                */
             }
 
             return;

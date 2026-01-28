@@ -41,6 +41,8 @@ public class WaterBalloonTrap : MonoBehaviour
     private bool flashStarted = false;  // フラッシュ開始済みか
     private Coroutine explosionRoutine; // 既存の爆発シーケンス管理（任意）
 
+    private string parentName;
+
     void Start()
     {
         if (balloonRenderer == null)
@@ -247,9 +249,9 @@ public class WaterBalloonTrap : MonoBehaviour
         // ----------------------------
         if (!isExploding)
         {
-            car.SetStun(stunType);
+            car.SetStun(stunType, parentName, GetType().Name);
 
-            car.SetStun(stunType);
+            car.SetStun(stunType, parentName, GetType().Name);
             ExplodeImmediately();
             return;
         }
@@ -257,7 +259,7 @@ public class WaterBalloonTrap : MonoBehaviour
         // ----------------------------
         // 爆発中：範囲スタン判定
         // ----------------------------
-        car.SetStun(stunType);
+        car.SetStun(stunType, parentName, GetType().Name);
     }
 
 
@@ -268,5 +270,14 @@ public class WaterBalloonTrap : MonoBehaviour
         {
             Destroy(materialInstance);
         }
+    }
+    public void SetParentName(string name)
+    {
+        parentName = name;
+    }
+
+    public string GetParentName()
+    {
+        return parentName;
     }
 }

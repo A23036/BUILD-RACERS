@@ -323,6 +323,7 @@ public class resultUI : MonoBehaviour
 
         string format = $"<mspace=0.7em>{rankStr} , {name.PadRight(8)} & {pairName.PadRight(8)} , {timeStr}</mspace>";
         Text.text = format;
+        Debug.Log($"RANKING UI UPDATE: {Text.text}");
 
         //Œë·‚ÌC³@Ž©•ª‚æ‚è’·‚¢ƒ^ƒCƒ€‚ª‚ ‚ê‚ÎŒðŠ·‚·‚é
         for (int i = rankUIupdateFlags.Length - 1; i >= 0; i--)
