@@ -220,6 +220,13 @@ public class CarController : MonoBehaviourPunCallbacks
     private float killerTimer = 0f;
     List<(Vector3, Vector3)> debugDrawLineList = new List<(Vector3, Vector3)>();
 
+    [SerializeField] GameObject killerEffect;
+
+    private WaypointContainer wpc;
+
+    private CarController[] cars;
+    private bool isGetCars = false;
+
     public void AddPartsNum()
     {
         partsNum++;
@@ -382,19 +389,11 @@ public class CarController : MonoBehaviourPunCallbacks
 
         switch (SceneManager.GetActiveScene().name)
         {
-            case "gamePlay":
-                var smp = FindObjectOfType<playScene>();
-                if (smp != null)
+            case "Map1":
+                var smm1 = FindObjectOfType<map1>();
+                if (smm1 != null)
                 {
-                    resultUI = smp.GetResultUI();
-                    resultUI.SetActive(false);
-                }
-                break;
-            case "singlePlay":
-                var smsp = FindObjectOfType<singlePlayScene>();
-                if (smsp != null)
-                {
-                    resultUI = smsp.GetResultUI();
+                    resultUI = smm1.GetResultUI();
                     resultUI.SetActive(false);
                 }
                 break;
@@ -452,6 +451,14 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         // fireFx は必要になったタイミングで生成(遅延生成)する
+
+        //キラーエフェクト　最初は非表示
+        if(killerEffect != null)
+        {
+            killerEffect.SetActive(false);
+        }
+
+        wpc = FindObjectOfType<WaypointContainer>();
     }
 
     private TextMeshProUGUI InitText(TextMeshProUGUI tmpro, string tag)
@@ -673,10 +680,12 @@ public class CarController : MonoBehaviourPunCallbacks
         UpdateAngle();
 
         //デバッグ用
+        /*
         foreach(var linePos in debugDrawLineList)
         {
             Debug.DrawLine(linePos.Item1, linePos.Item2, Color.blue);
         }
+        */
 
         //キラー更新
         if (killerTimer > 0f) UpdateKiller();
@@ -699,8 +708,12 @@ public class CarController : MonoBehaviourPunCallbacks
             Debug.Log($"Lap Clear! Current Lap: {lapCount}");
         }
 
+        //順位更新
+        UpdateRank();
+        if(isMine) UpdateRankUI();
+
         //ゴール判定
-        if(lapCount == maxLaps)
+        if (lapCount == maxLaps)
         {
             isRaceClear = true;
 
@@ -746,22 +759,13 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
             }
 
-            if (driver == null || isMine && driver.IsKiller())
-            {
-                ResetKiller();
-
-                //AIに切り替え
-                var wpContainer = FindObjectOfType<WaypointContainer>();
-                SetAI<AIDriver>(wpContainer);
-
-                //リザルトUIを表示開始
-                result.StartCoroutines();
-            }
+            //ゴール後自動走行のAIに切り替え
+            ChangeToAutoDriver();
 
             //ゴール後に表示されるように
             if (isMine)
             {
-                UpdateRank();
+                UpdateRankUI();
 
                 //ゴール後にずれが生じないように
                 int minutes = (int)(timer / 60);
@@ -947,6 +951,33 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // 重力補正
         if(killerTimer <= 0) rb.AddForce(Vector3.down * extraGravity, ForceMode.Acceleration);
+    }
+
+    //ゴール後に自動走行AIに切り替え
+    public void ChangeToAutoDriver()
+    {
+        var result = resultUI.GetComponent<resultUI>();
+
+        bool isChange = false;
+
+        if (driver == null)
+        {
+            isChange = true;
+        }
+        else if(driver != null && driver.IsKiller())
+        {
+            isChange = true;
+        }
+
+        if(isChange)
+        {
+            //AIに切り替え
+            var wpContainer = FindObjectOfType<WaypointContainer>();
+            SetAI<AIDriver>(wpContainer);
+
+            //リザルトUIを表示開始
+            result.StartCoroutines();
+        }
     }
 
     //中心点からの角度計算　ラップ判定
@@ -1179,21 +1210,31 @@ public class CarController : MonoBehaviourPunCallbacks
     //順位更新
     public void UpdateRank()
     {
+        if(!isGetCars)
+        {
+            cars = FindObjectsOfType<CarController>();
+            isGetCars = true;
+        }
+
         //観戦者の時に作動しないように RPCがバッファされてるのでここで処理止める
         if (PlayerPrefs.GetInt("isMonitor") == 1) return;
 
         if(rankText == null) return;
 
         //全カートの角度とラップ数を取得　比較して順位を決定
-        CarController[] cars = FindObjectsOfType<CarController>();
         currentRank = 1;
-        //Debug.Log($" === {cars.Length}台のカートで順位計算 === ");
+        Debug.Log($" === {cars.Length}台のカートで順位計算 === ");
         foreach (var car in cars)
         {
             if (car == this) continue;
 
-            //ラップ数が多いほうが上位
-            if (car.GetLapCount() > lapCount)
+            //ウェイポイントが進んでるほうが上位
+            if (car.GetNearllyWpIdx(car.transform.position) > GetNearllyWpIdx(transform.position))
+            {
+                currentRank++;
+            }
+            //ウェイポンとが同じならラップ数が多いほうが上位
+            else if (car.GetLapCount() > lapCount)
             {
                 currentRank++;
             }
@@ -1206,9 +1247,12 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
             }
         }
+    }
 
+    public void UpdateRankUI()
+    {
         //UIに反映
-        if(lapCount == maxLaps - 1 && lapManager.NowAngle(transform.position) >= 340f)
+        if (lapCount == maxLaps - 1 && lapManager.NowAngle(transform.position) >= 340f)
         {
             //ゴール直前なら表示なし
             rankText.text = "";
@@ -1652,6 +1696,9 @@ public class CarController : MonoBehaviourPunCallbacks
         killerTimer = GetKillerTime();
 
         rb.useGravity = false;
+
+        //エフェクト有効化
+        killerEffect.SetActive(true);
     }
 
     public void UpdateKiller()
@@ -1676,7 +1723,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void ResetKiller()
     {
-        if(driver.IsKiller())
+        if(driver != null && driver.IsKiller())
         {
             driver = null;
             Destroy(GetComponent<Killer>());
@@ -1693,6 +1740,9 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         rb.useGravity = true;
+
+        //エフェクト無効化
+        killerEffect.SetActive(false);
     }
 
     public float GetKillerTime()
@@ -1709,6 +1759,7 @@ public class CarController : MonoBehaviourPunCallbacks
         return ret;
     }
 
+    //キラー用スタート地点の取得
     public int GetKillerStartIdx()
     {
         int ret = 0;
@@ -1754,6 +1805,51 @@ public class CarController : MonoBehaviourPunCallbacks
 
         //角度でリターンしなければ距離ベースで計算
         debugDrawLineList.Add((wpcTransform.GetChild(ret).position + offsetY,nowPos));
+        return ret;
+    }
+
+    //Wallオブジェクトに遮らていない最近点を返す
+    public int GetNearllyWpIdx(Vector3 pos)
+    {
+        int ret = 0;
+
+        float nowAngle = lapManager.NowAngle(transform.position);
+        Vector3 offsetY = new Vector3(0, 1, 0);
+        Vector3 nowPos = transform.position + offsetY;
+
+        float minLen = 1e6f;
+
+        // 子オブジェクトを順番に取得
+        Transform wpcTransform = wpc.transform;
+
+        for (int i = wpcTransform.childCount - 1; i >= 0; i--)
+        {
+            Vector3 wpPos = wpcTransform.GetChild(i).position + offsetY;
+            RaycastHit[] hitList = Physics.RaycastAll(nowPos, (wpPos - nowPos).normalized, (wpPos - nowPos).magnitude);
+
+            bool isHitWall = false;
+            foreach (var hitp in hitList)
+            {
+                //Wallに遮られているものは除外
+                if (hitp.collider.CompareTag("Wall"))
+                {
+                    isHitWall = true;
+                    break;
+                }
+            }
+
+            if (isHitWall) continue;
+
+            //最も近いもの
+            if ((nowPos - wpPos).magnitude < minLen)
+            {
+                minLen = (nowPos - wpPos).magnitude;
+                ret = i;
+            }
+        }
+
+        Debug.DrawLine(nowPos, wpcTransform.GetChild(ret).position, Color.blue);
+
         return ret;
     }
 

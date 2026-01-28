@@ -140,11 +140,6 @@ public class AIDriver : MonoBehaviour, IDriver
         lastSteer = steer;
         lastThrottle = throttle;
         lastBrake = brake;
-
-        var cc = GetComponent<CarController>();
-        if(cc.isMine) Debug.Log($"[AIDriver] Throttle: {throttle:F2}, Brake: {brake:F2}, Steer: {steer:F2}");
-        Debug.Log($"[AIDriver] Throttle: {throttle:F2}, Brake: {brake:F2}, Steer: {steer:F2}");
-        Debug.Log($"[AIDriver] Steer Range: Min={minSteer:F2}, Max={maxSteer:F2}");
     }
 
     // --- ウェイポイント移行 ---
