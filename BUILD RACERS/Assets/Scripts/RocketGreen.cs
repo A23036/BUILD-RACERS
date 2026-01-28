@@ -1,4 +1,5 @@
 using UnityEngine;
+using Photon.Pun;
 
 public class RocketGreen : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public class RocketGreen : MonoBehaviour
     public GameObject destroyEffectPrefab;
     [Tooltip("エフェクトが自動で消えるまでの時間")]
     public float effectLifeTime = 2f;
+
+    private string parentName = "";
 
     void Start()
     {
@@ -128,8 +131,15 @@ public class RocketGreen : MonoBehaviour
 
                 if (car != null)
                 {
+                    //攻撃者名を渡す
+                    var photonView = GetComponent<PhotonView>();
+                    if(PhotonNetwork.InRoom && photonView != null) 
+                    {
+                        parentName = photonView.Owner.NickName;
+                    }
+
                     // ヒットしたPlayerに軽程度のスタン状態を設定
-                    car.SetStun(StunType.Light);
+                    car.SetStun(StunType.Light,parentName,GetType().Name);
 
                     Debug.Log($"HIT ROCKET : {car.GetName()}");
                 }
@@ -140,5 +150,15 @@ public class RocketGreen : MonoBehaviour
             // ロケットを破壊
             Destroy(gameObject);
         }
+    }
+
+    public void SetParentName(string name)
+    {
+        parentName = name;
+    }
+
+    public string GetParentName()
+    {
+        return parentName;
     }
 }

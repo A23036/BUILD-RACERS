@@ -227,6 +227,11 @@ public class CarController : MonoBehaviourPunCallbacks
     private CarController[] cars;
     private bool isGetCars = false;
 
+    private CarController playerCar;
+
+    //ヒット通知用
+    LogUI logUI;
+
     public void AddPartsNum()
     {
         partsNum++;
@@ -293,7 +298,7 @@ public class CarController : MonoBehaviourPunCallbacks
         PlayFireEffect();
     }
 
-    public void SetStun(StunType type)
+    public void SetStun(StunType type , string attacekrName, string weaponName)
     {
         if (state == State.Stun) return;
 
@@ -330,6 +335,14 @@ public class CarController : MonoBehaviourPunCallbacks
 
         stunElapsed = 0f;
         stunStartLocalRotation = bodyMesh.transform.localRotation;
+
+        //ヒット通知
+        string myName = GetName();
+        if(PhotonNetwork.InRoom) myName = photonView.Owner.NickName;
+        if (logUI != null)
+        {
+            logUI.AddHitLog(attacekrName,myName, weaponName);
+        }
 
         Debug.Log($"SET STAN : {GetName()}");
     }
@@ -459,6 +472,10 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         wpc = FindObjectOfType<WaypointContainer>();
+
+        playerCar = null;
+
+        logUI = FindObjectOfType<LogUI>();
     }
 
     private TextMeshProUGUI InitText(TextMeshProUGUI tmpro, string tag)
@@ -653,6 +670,12 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
+        if (!isGetCars)
+        {
+            cars = FindObjectsOfType<CarController>();
+            isGetCars = true;
+        }
+
         //時間計測
         if (state == State.Drive)
         {
@@ -749,13 +772,14 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
                 else
                 {
-                    if (PlayerPrefs.GetInt("drivreNum") != -1)
+                    if (isMine)
                     {
-                        if(isMine) result.UpdateRankUI(PlayerPrefs.GetString("PlayerName"), timer);
-                        else result.UpdateRankUI(GetName(), timer);
-                    }
+                        result.UpdateRankUI(PlayerPrefs.GetString("PlayerName"), timer);
 
-                    Debug.Log($"GOAL TIME : {timer}");
+                        //リザルトUIを表示開始
+                        result.StartCoroutines();
+                    }
+                    else result.UpdateRankUI(GetName(), timer);
                 }
             }
 
@@ -763,7 +787,7 @@ public class CarController : MonoBehaviourPunCallbacks
             ChangeToAutoDriver();
 
             //ゴール後に表示されるように
-            if (isMine)
+            if (isMine && PlayerPrefs.GetInt("driverNum") != -1)
             {
                 UpdateRankUI();
 
@@ -776,10 +800,10 @@ public class CarController : MonoBehaviourPunCallbacks
 
                 //ラップUIを更新
                 lapText.text = $"Lap:{Mathf.Clamp(lapCount + 1, 1, maxLaps)}/{maxLaps}";
-            }
 
-            //タイマー黄色に変更
-            timerText.color = Color.yellow;
+                //タイマー黄色に変更
+                timerText.color = Color.yellow;
+            }
 
             //ゴール判定が一度のみ実行されるように
             maxLaps = -1;
@@ -841,7 +865,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //UI更新
-        if(isMine)
+        if(isMine && PlayerPrefs.GetInt("driverNum") != -1)
         {
             //周回数をUIに反映
             lapText.text = $"Lap:{Mathf.Clamp(lapCount + 1, 1, maxLaps)}/{maxLaps}";
@@ -915,7 +939,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         // 速度表示など残す（rb.linearVelocity -> rb.velocity）
         float speed = rb.linearVelocity.magnitude * 3.6f;
-        if (speedText != null && isMine)
+        if (speedText != null && isMine && PlayerPrefs.GetInt("driverNum") != -1)
         {
             speedText.text = $"{speed:F1}";
 
@@ -974,9 +998,6 @@ public class CarController : MonoBehaviourPunCallbacks
             //AIに切り替え
             var wpContainer = FindObjectOfType<WaypointContainer>();
             SetAI<AIDriver>(wpContainer);
-
-            //リザルトUIを表示開始
-            result.StartCoroutines();
         }
     }
 
@@ -1161,8 +1182,25 @@ public class CarController : MonoBehaviourPunCallbacks
         }
         else if(!PhotonNetwork.IsConnected)
         {
-            timer += Time.deltaTime;
+            //プレイヤー基準で計測
+            if(playerCar == null)
+            {
+                foreach(var car in cars)
+                {
+                    if(car.isMine) playerCar = car;
+                }
+            }
+            
+            if(isMine) timer += Time.deltaTime;
+            else timer = playerCar.GetTimer();
         }
+
+        Debug.Log($"Timer: {timer}");
+    }
+
+    public double GetTimer()
+    {
+        return timer;
     }
 
     [PunRPC]
@@ -1210,12 +1248,6 @@ public class CarController : MonoBehaviourPunCallbacks
     //順位更新
     public void UpdateRank()
     {
-        if(!isGetCars)
-        {
-            cars = FindObjectsOfType<CarController>();
-            isGetCars = true;
-        }
-
         //観戦者の時に作動しないように RPCがバッファされてるのでここで処理止める
         if (PlayerPrefs.GetInt("isMonitor") == 1) return;
 
@@ -1251,6 +1283,9 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void UpdateRankUI()
     {
+        //エンジニアは処理なし　シングルプレイで反応しないように
+        if(PlayerPrefs.GetInt("engineerNum") != -1) return;
+
         //UIに反映
         if (lapCount == maxLaps - 1 && lapManager.NowAngle(transform.position) >= 340f)
         {
@@ -1685,7 +1720,7 @@ public class CarController : MonoBehaviourPunCallbacks
     public void HiddenUI()
     {
         //UIの非表示
-        hidenCanvas.SetActive(false);
+        if(PlayerPrefs.GetInt("driverNum") != -1) hidenCanvas.SetActive(false);
     }
 
     public void SetKiller()

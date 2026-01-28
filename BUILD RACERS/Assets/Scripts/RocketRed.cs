@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class RocketRed : MonoBehaviour
@@ -38,6 +39,8 @@ public class RocketRed : MonoBehaviour
     private Transform ownerPlayer; // 発射元
 
     private bool isLockedOn = false;
+
+    private string parentName = "";
 
     // 生成者をセット
     public void SetOwner(Transform owner)
@@ -243,8 +246,15 @@ public class RocketRed : MonoBehaviour
 
                 if (car != null)
                 {
+                    //攻撃者名を渡す
+                    var photonView = GetComponent<PhotonView>();
+                    if (PhotonNetwork.InRoom && photonView != null)
+                    {
+                        parentName = photonView.Owner.NickName;
+                    }
+
                     // ヒットしたPlayerに軽程度のスタン状態を設定
-                    car.SetStun(StunType.Light);
+                    car.SetStun(StunType.Light,parentName,GetType().Name);
 
                     Debug.Log($"HIT ROCKET : {car.GetName()}");
                 }
@@ -257,5 +267,14 @@ public class RocketRed : MonoBehaviour
 
             Debug.Log("[redrocket]not wall");
         }
+    }
+    public void SetParentName(string name)
+    {
+        parentName = name;
+    }
+
+    public string GetParentName()
+    {
+        return parentName;
     }
 }

@@ -85,6 +85,7 @@ public class playScene : baseScene
         //オフラインなら普通のInstantiate
         if (!PhotonNetwork.IsConnected)
         {
+            /*
             //プレイヤーの生成
             if (PlayerPrefs.GetInt("driverNum") != -1)
             {
@@ -121,6 +122,52 @@ public class playScene : baseScene
 
             //BOTドライバーの生成
             GenerateBotDrivers();
+            return;
+            */
+
+            carController = null;
+            engineer = null;
+
+            //プレイヤーの生成
+            if (PlayerPrefs.GetInt("driverNum") != -1)
+            {
+                //ドライバーの生成
+                var player = Instantiate(Resources.Load("player"), new Vector3(0, 0, 0), Quaternion.identity);
+                player.GetComponent<CarController>().SetCamera();
+                carController = player.GetComponent<CarController>();
+
+                //UIの有効化
+                DriverUI.SetActive(true);
+                EngineerUI.SetActive(false);
+            }
+            else if (PlayerPrefs.GetInt("engineerNum") != -1)
+            {
+                //UIの有効化
+                DriverUI.SetActive(false);
+                EngineerUI.SetActive(true);
+
+                //相方ドライバーの生成（CPU）
+                var cpu = Instantiate(Resources.Load("Player"));
+                carController = cpu.GetComponent<CarController>();
+                //carController.SetCamera();
+                carController.SetName(PlayerPrefs.GetString("PlayerName"));
+                var cpuCc = cpu.GetComponent<CarController>();
+                var wpContainer = FindObjectOfType<WaypointContainer>();
+                cpuCc.SetAI<AIDriver>(wpContainer);
+
+                //エンジニアの生成
+                var player = Instantiate(Resources.Load("Engineer"));
+                engineer = player.GetComponent<Engineer>();
+                engineer.SetPairDriver(cpuCc);
+                engineer.SetCamera();
+            }
+            else Debug.Log("not select");
+
+            carController.isMine = true;
+
+            //BOTドライバーの生成
+            GenerateBotDrivers();
+
             return;
         }
 

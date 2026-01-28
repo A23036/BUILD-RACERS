@@ -28,6 +28,8 @@ public class WaterBalloonExplosion : MonoBehaviour
     private Material materialInstance;
     private Material originalMaterial; // ★元のマテリアル保存用
 
+    private string parentName;
+
     void Start()
     {
         if (balloonRenderer == null)
@@ -189,7 +191,7 @@ public class WaterBalloonExplosion : MonoBehaviour
             if (car != null)
             {
                 // ヒットしたPlayerに中程度のスタン状態を設定
-                car.SetStun(stunType);
+                car.SetStun(stunType, parentName, GetType().Name);
 
                 Debug.Log("[Balloon]:player stuned");
             }
@@ -203,5 +205,14 @@ public class WaterBalloonExplosion : MonoBehaviour
         {
             Destroy(materialInstance);
         }
+    }
+    public void SetParentName(string name)
+    {
+        parentName = name;
+    }
+
+    public string GetParentName()
+    {
+        return parentName;
     }
 }
