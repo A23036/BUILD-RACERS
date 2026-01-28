@@ -40,12 +40,17 @@ public class tittleScene : baseScene
     [Header("Sound")]
     [SerializeField] private AudioClip clickSound; // クリック音
 
+    [Header("Fade")]
+    [SerializeField] private Fade fade;
+
     private CanvasGroup pressStartCanvasGroup;
     private Coroutine animationSequenceCoroutine;
     private Coroutine blinkCoroutine;
 
     private AnimationState state;
     private bool isFinishEntered = false;
+
+    private bool isSceneChanging = false;
 
     void Start()
     {
@@ -86,9 +91,6 @@ public class tittleScene : baseScene
 
         if (clicked)
         {
-            // クリック音を再生
-            PlayClickSound();
-
             if (state != AnimationState.Finish) // アニメーション中にクリックでスキップ
             {
                 state = AnimationState.Finish;
@@ -104,15 +106,28 @@ public class tittleScene : baseScene
             }
             else
             {
-                // 点滅停止（任意）
+                if (isSceneChanging) return;
+                isSceneChanging = true;
+
+                // 点滅停止
                 if (blinkCoroutine != null)
                 {
                     StopCoroutine(blinkCoroutine);
                     blinkCoroutine = null;
                 }
 
-                SceneManager.LoadScene("menu");
+                PlayClickSound();
+
+                // フェードイン → 完了後にシーン遷移
+                if (fade != null)
+                {
+                    fade.FadeIn(0.8f, () =>
+                    {
+                        SceneManager.LoadScene("menu");
+                    });
+                }
             }
+
         }
 
         base.Update();

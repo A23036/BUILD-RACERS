@@ -1,15 +1,23 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class menu : baseScene
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Fade")]
+    [SerializeField] private Fade fade;
+
     void Start()
     {
         preSceneName = "tittle";
+
+        if (fade != null)
+        {
+            fade.SetStartRange();
+            fade.FadeOut(0.8f);
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
         base.Update();

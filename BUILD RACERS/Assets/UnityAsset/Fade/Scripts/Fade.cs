@@ -36,6 +36,11 @@ public class Fade : MonoBehaviour
 
 	float cutoutRange;
 
+	public void SetStartRange()
+	{
+		cutoutRange = 1.0f;
+    }
+
 	void Init ()
 	{
 		fade = GetComponent<IFade> ();
