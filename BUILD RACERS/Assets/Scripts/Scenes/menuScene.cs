@@ -25,28 +25,47 @@ public class menu : baseScene
 
     public void PushTutorialButton()
     {
-        SceneManager.LoadScene("tutorial");
+        fade.FadeIn(0.8f, () =>
+        {
+            SceneManager.LoadScene("tutorial");
+        });
     }
 
     public void PushSingleButton()
     {
-        SceneManager.LoadScene("single");
+        fade.FadeIn(0.8f, () =>
+        {
+            SceneManager.LoadScene("single");
+        });
     }
 
     public void PushMultiButton()
     {
-        SceneManager.LoadScene("Robby");
+        fade.FadeIn(0.8f, () =>
+        {
+            SceneManager.LoadScene("Robby");
+        });
     }
+
     public void PushOptionButton()
     {
-        SceneManager.LoadScene("option");
+        fade.FadeIn(0.8f, () =>
+        {
+            SceneManager.LoadScene("option");
+        });
     }
     public void PushShopButton()
     {
-        SceneManager.LoadScene("shop");
+        fade.FadeIn(0.8f, () =>
+        {
+            SceneManager.LoadScene("shop");
+        });
     }
     public void PushBackButton()
     {
-        SceneManager.LoadScene("tittle");
+        fade.FadeIn(0.8f, () =>
+        {
+            SceneManager.LoadScene("tittle");
+        });
     }
 }

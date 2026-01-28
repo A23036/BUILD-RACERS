@@ -53,7 +53,7 @@ public class selectScene : baseScene
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        preSceneName = "menu";
+        preSceneName = "robby";
 
         GameObject inputField = GameObject.Find("InputField (TMP)");
         TMP_InputField input = inputField.GetComponent<TMP_InputField>();

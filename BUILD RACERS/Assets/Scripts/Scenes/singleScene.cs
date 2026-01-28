@@ -17,9 +17,19 @@ public class singleScene : baseScene
     //セレクター関係
     private selectSystem ss;
 
+    [Header("Fade")]
+    [SerializeField] private Fade fade;
+
+
     void Start()
     {
         preSceneName = "menu";
+
+        if (fade != null)
+        {
+            fade.SetStartRange();
+            fade.FadeOut(0.8f);
+        }
 
         GameObject inputField = GameObject.Find("InputField (TMP)");
         TMP_InputField input = inputField.GetComponent<TMP_InputField>();
@@ -66,7 +76,10 @@ public class singleScene : baseScene
 
     public void PushBackButton()
     {
-        SceneManager.LoadScene("menu");
+        fade.FadeIn(0.8f, () =>
+        {
+            SceneManager.LoadScene("menu");
+        });
     }
 
     public void InputText()
