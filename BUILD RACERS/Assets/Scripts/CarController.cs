@@ -334,7 +334,7 @@ public class CarController : MonoBehaviourPunCallbacks
         string nowSceneName = SceneManager.GetActiveScene().name;
         switch (nowSceneName)
         {
-            case "driverTutorial":
+            case "driver tutorial":
                 state = State.Drive;
                 break;
             default:

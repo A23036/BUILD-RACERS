@@ -10,7 +10,7 @@ public class driverTutorial : baseScene
     private void Awake()
     {
         //ドライバーの生成
-        var player = Instantiate(Resources.Load("player"), new Vector3(0, 0, 0), Quaternion.identity);
+        var player = Instantiate(Resources.Load("tutorial player"), new Vector3(0, 0, -5), Quaternion.identity);
         player.GetComponent<CarController>().SetCamera();
         carController = player.GetComponent<CarController>();
         carController.isMine = true;
@@ -25,8 +25,6 @@ public class driverTutorial : baseScene
     // Update is called once per frame
     void Update()
     {
-
-
         base.Update();
     }
 }
