@@ -17699,6 +17699,7 @@ MonoBehaviour:
   fadeOutDuration: 0.25
   RocketGreenFont: {fileID: 11400000, guid: dd8634d697f5aff469ce8be132781bf6, type: 2}
   RocketRedFont: {fileID: 11400000, guid: b51fc985fdb1a724b9d1fd7806aae643, type: 2}
+  BalloonFont: {fileID: 11400000, guid: d666c373a7d70884588c6711b4921661, type: 2}
   BalloonTrapFont: {fileID: 11400000, guid: a2a8ac8927860ff4cb0627afb218e2f7, type: 2}
 --- !u!1001 &1537344880
 PrefabInstance:
@@ -21956,6 +21957,7 @@ GameObject:
   - component: {fileID: 1881033436}
   - component: {fileID: 1881033435}
   - component: {fileID: 1881033437}
+  - component: {fileID: 1881033438}
   m_Layer: 5
   m_Name: RawImage
   m_TagString: Untagged
@@ -22037,6 +22039,28 @@ MonoBehaviour:
   - Dirt
   removeEffectPrefab: {fileID: 985483039366664255, guid: 5ce5ed284d19793429bd73436f113db8, type: 3}
   effectLifeTime: 2
+--- !u!114 &1881033438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881033433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 6
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1882760412
 GameObject:
   m_ObjectHideFlags: 0

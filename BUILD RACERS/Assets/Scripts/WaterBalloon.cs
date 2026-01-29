@@ -1,5 +1,6 @@
-using UnityEngine;
+using Photon.Pun;
 using System.Collections;
+using UnityEngine;
 
 public class WaterBalloonExplosion : MonoBehaviour
 {
@@ -190,6 +191,13 @@ public class WaterBalloonExplosion : MonoBehaviour
 
             if (car != null)
             {
+                //攻撃者名を渡す
+                var photonView = GetComponent<PhotonView>();
+                if (PhotonNetwork.InRoom && photonView != null)
+                {
+                    parentName = photonView.Owner.NickName;
+                }
+
                 // ヒットしたPlayerに中程度のスタン状態を設定
                 car.SetStun(stunType, parentName, GetType().Name);
 
