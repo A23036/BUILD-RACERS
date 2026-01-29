@@ -26,12 +26,6 @@ public class singleScene : baseScene
     {
         preSceneName = "menu";
 
-        if (fade != null)
-        {
-            fade.SetStartRange();
-            fade.FadeOut(fadeOutDuration);
-        }
-
         GameObject inputField = GameObject.Find("InputField (TMP)");
         TMP_InputField input = inputField.GetComponent<TMP_InputField>();
         input.text = PlayerPrefs.GetString("PlayerName");
@@ -43,6 +37,15 @@ public class singleScene : baseScene
 
         //ŠÏíÒƒtƒ‰ƒO‰Šú‰»
         PlayerPrefs.SetInt("isMonitor", 0);
+    }
+
+    private void Awake()
+    {
+        if (fade != null)
+        {
+            fade.SetStartRange();
+            fade.FadeOut(fadeOutDuration);
+        }
     }
 
     // Update is called once per frame

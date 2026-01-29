@@ -36,17 +36,30 @@ public class Fade : MonoBehaviour
 
 	float cutoutRange;
 
-	public void SetStartRange()
-	{
-		cutoutRange = 1.0f;
+    public void SetStartRange()
+    {
+        EnsureInit();
+        cutoutRange = 1.0f;
+        if (fade != null)
+        {
+            fade.Range = cutoutRange;
+        }
     }
 
-	void Init ()
+    void Init ()
 	{
 		fade = GetComponent<IFade> ();
 	}
 
-	void OnValidate ()
+    void EnsureInit()
+    {
+        if (fade == null)
+        {
+            Init();
+        }
+    }
+
+    void OnValidate ()
 	{
 		Init ();
 		fade.Range = cutoutRange;
@@ -92,7 +105,13 @@ public class Fade : MonoBehaviour
 
 	public Coroutine FadeOut (float time, System.Action action)
 	{
-		StopAllCoroutines ();
+        EnsureInit();
+        if (fade == null)
+        {
+            Debug.LogWarning("Fade component not found.", this);
+            return null;
+        }
+        StopAllCoroutines ();
 		return StartCoroutine (FadeoutCoroutine (time, action));
 	}
 
@@ -103,7 +122,13 @@ public class Fade : MonoBehaviour
 
 	public Coroutine FadeIn (float time, System.Action action)
 	{
-		StopAllCoroutines ();
+        EnsureInit();
+        if (fade == null)
+        {
+            Debug.LogWarning("Fade component not found.", this);
+            return null;
+        }
+        StopAllCoroutines ();
 		return StartCoroutine (FadeinCoroutine (time, action));
 	}
 
