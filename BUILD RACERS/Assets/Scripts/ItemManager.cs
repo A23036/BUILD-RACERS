@@ -324,10 +324,8 @@ public class ItemManager : MonoBehaviour
                 );
 
                 //所有者名のセット
-                /*
                 WaterBalloonTrap balloonTrap = balloon.GetComponent<WaterBalloonTrap>();
-                balloonTrap.SetParentName(balloon.GetComponent<PhotonView>().Owner.NickName);
-                */
+                balloonTrap.SetParentName(balloon.GetComponentInChildren<PhotonView>().Owner.NickName);
             }
             else
             {
@@ -340,12 +338,10 @@ public class ItemManager : MonoBehaviour
                 );
 
                 //所有者名のセット
-                /*
-                WaterBalloonTrap balloonTrap = balloon.GetComponent<WaterBalloonTrap>();
+                WaterBalloonTrap balloonTrap = balloon.GetComponentInChildren<WaterBalloonTrap>();
                 CarController carController = GetComponent<CarController>();
                 if (carController.isMine) balloonTrap.SetParentName(PlayerPrefs.GetString("PlayerName"));
                 else balloonTrap.SetParentName(carController.GetName());
-                */
             }
 
             return;

@@ -25,6 +25,12 @@ public class PassiveSlotUI : MonoBehaviour
 
     public void SetItem(PartsID id, Sprite sprite)
     {
+        // アクティブでない場合は何もしない
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         ItemId = id;
         passiveImage.sprite = sprite;
         passiveImage.enabled = true;
@@ -45,6 +51,12 @@ public class PassiveSlotUI : MonoBehaviour
 
     private void StartAnimation(IEnumerator routine)
     {
+        // アクティブでない場合は何もしない
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         StopAnimation();
         animationRoutine = StartCoroutine(routine);
     }
@@ -66,6 +78,8 @@ public class PassiveSlotUI : MonoBehaviour
 
         while (elapsed < popDuration)
         {
+            if (gameObject.activeSelf == false) yield break;
+
             elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / popDuration);
             float eased = Mathf.SmoothStep(0f, 1f, t);

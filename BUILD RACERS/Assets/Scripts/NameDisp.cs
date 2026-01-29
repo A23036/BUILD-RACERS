@@ -34,10 +34,4 @@ public class NameDisp : MonoBehaviourPunCallbacks
         //名前のビルボード
         transform.forward = Camera.main.transform.forward;
     }
-
-    public void SetNameDisp(string s)
-    {
-
-    }
-
 }

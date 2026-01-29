@@ -17,6 +17,11 @@ public class LogUI : MonoBehaviour
     [SerializeField] private float spacing = 10f; // ログ間のスペース
     [SerializeField] private float fadeOutDuration = 0.5f; // フェードアウト時間
 
+    [Header("Fonts")]
+    [SerializeField] private TMP_SpriteAsset RocketGreenFont;
+    [SerializeField] private TMP_SpriteAsset RocketRedFont;
+    [SerializeField] private TMP_SpriteAsset BalloonTrapFont;
+
     private List<GameObject> activeHitLogs = new List<GameObject>();
 
     void Update()
@@ -108,6 +113,11 @@ public class LogUI : MonoBehaviour
 
     private IEnumerator SmoothMove(RectTransform rectTransform, Vector2 targetPosition)
     {
+        if (rectTransform == null)
+        {
+            yield break;
+        }
+
         Vector2 startPosition = rectTransform.anchoredPosition;
         float elapsed = 0f;
         float duration = 0.3f;
@@ -125,10 +135,15 @@ public class LogUI : MonoBehaviour
             yield return null;
         }
 
+        if (rectTransform == null)
+        {
+            yield break;
+        }
+
         rectTransform.anchoredPosition = targetPosition;
     }
 
-    // 外部から呼び出せるメソッド（キル情報付き）
+    // 外部から呼び出せるメソッド
     public void AddHitLog(string AttackerName, string victimName, string weaponIcon = "")
     {
         SpawnHitLog();
@@ -140,20 +155,53 @@ public class LogUI : MonoBehaviour
 
             // 自身または子オブジェクトからTextMeshProUGUIを探す
             TextMeshProUGUI textComponent = latestLog.GetComponentInChildren<TextMeshProUGUI>();
+            Image img = latestLog.GetComponentInChildren<Image>();
 
             if (textComponent != null)
             {
-                textComponent.text = $"{AttackerName} → {victimName} : {weaponIcon}";
+                //フォント画像の設定
+                switch (weaponIcon)
+                {
+                    case "RocketGreen":
+                        textComponent.spriteAsset = RocketGreenFont;
+                        break;
+                    case "RocketRed":
+                        textComponent.spriteAsset = RocketRedFont;
+                        break;
+                    case "WaterBalloonTrap":
+                        textComponent.spriteAsset = BalloonTrapFont;
+                        break;
+                    default:
+                        break;
+                }
+
+                //画像位置と大きさの調整
+                textComponent.text = $"{AttackerName.PadRight(8)} → {victimName.PadRight(8)} : <voffset=0.3fem><size=150%><sprite=0></size></voffset>";
+
+                float brightness = 200f / 255f;
+
+                //色の変更
+                if(AttackerName == victimName)
+                {
+                    img.color = new Color(150f / 255f, 150f / 255f, 0, brightness);
+                }
+                else if (AttackerName == PlayerPrefs.GetString("PlayerName"))
+                {
+                    img.color = new Color(0, 150f / 255f, 0 , brightness);
+                }
+                else if (victimName == PlayerPrefs.GetString("PlayerName"))
+                {
+                    img.color = new Color(150f / 255f , 0 , 0, brightness);
+                }
+                else
+                {
+                    img.color = new Color(0, 0, 0, brightness);
+                }
             }
             else
             {
                 Debug.LogWarning("TextMeshProUGUIコンポーネントが見つかりません！");
             }
         }
-
-        //色の変更
-        Image img = logPrefab.GetComponent<Image>();
-        if (AttackerName == PlayerPrefs.GetString("PlayerName")) img.color = new Color(img.color.r , 150f / 255f , img.color.b);
-        else if(victimName == PlayerPrefs.GetString("PlayerName")) img.color = new Color(150f / 255f , img.color.g , img.color.b);
     }
 }
