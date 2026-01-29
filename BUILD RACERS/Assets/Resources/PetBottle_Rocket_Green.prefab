@@ -348,7 +348,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 50
-  lifeTime: 100
+  lifeTime: 10
   maxReflectCount: 10
   targetHeight: 1.4
   heightAdjustSpeed: 5

@@ -210,6 +210,7 @@ public class robbyScene : baseScene
         if (roomButtons.Count == 0) noRoomsText.SetActive(true);
         else noRoomsText.SetActive(false);
     }
+
     private int CalculateTotalPlayers(List<RoomInfo> roomList)
     {
         int total = 0;

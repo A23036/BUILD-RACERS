@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: -372565306327409299}
   - component: {fileID: 8285318730011526284}
   - component: {fileID: -8297389706690546950}
+  - component: {fileID: -5138681071631269252}
+  - component: {fileID: -3072414790805102510}
   m_Layer: 0
   m_Name: PetBottle_Rocket_Red
   m_TagString: Untagged
@@ -77,7 +79,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 50
-  lifeTime: 100
+  lifeTime: 10
   maxReflectCount: 10
   targetHeight: 1.4
   heightAdjustSpeed: 5
@@ -129,10 +131,48 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: -372565306327409299}
+  - {fileID: -5138681071631269252}
+  - {fileID: -3072414790805102510}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &-5138681071631269252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261097858096690942}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
+--- !u!114 &-3072414790805102510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261097858096690942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f347b57b189b36e4ca7907ccfb56ab3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useInterpolation: 1
+  useExtrapolation: 0
+  interpolationBackTime: 100
+  autoOptBackTime: 1
+  minBackTime: 10
+  maxBackTime: 2000
+  serializationRate: 30
 --- !u!1 &4906363917143529223
 GameObject:
   m_ObjectHideFlags: 0

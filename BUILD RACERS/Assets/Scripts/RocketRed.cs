@@ -1,7 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class RocketRed : MonoBehaviour
+public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
 {
     // Inspectorで速度を設定できるように public にします
     public float speed = 50f;
@@ -51,7 +51,8 @@ public class RocketRed : MonoBehaviour
     void Start()
     {
         // 破壊タイマーを開始
-        Destroy(gameObject, lifeTime);
+        if(!PhotonNetwork.InRoom) Destroy(gameObject, lifeTime);
+
         // 初期の反射回数を設定
         currentReflectCount = maxReflectCount;
         // 初期の移動方向をローカルの上方向（Z軸）に設定
@@ -60,6 +61,19 @@ public class RocketRed : MonoBehaviour
 
     void Update()
     {
+        if(PhotonNetwork.InRoom && !photonView.IsMine) return;
+
+        //タイマー更新
+        if(photonView.IsMine)
+        {
+            lifeTime -= Time.deltaTime;
+            if(lifeTime <= 0f)
+            {
+                PhotonNetwork.Destroy(gameObject);
+                return;
+            }
+        }
+
         // 高さ維持処理
         MaintainHeight();
 
@@ -135,7 +149,6 @@ public class RocketRed : MonoBehaviour
             Debug.DrawRay(origin, dir * detectDistance, Color.cyan);
         }
     }
-
 
     // プレイヤーの方向を向かせる
     void DetectTargetPlayer()
@@ -262,6 +275,7 @@ public class RocketRed : MonoBehaviour
 
             // エフェクトを再生
             PlayDestroyEffect();
+
             // ロケットを破壊
             Destroy(gameObject);
 
@@ -276,5 +290,24 @@ public class RocketRed : MonoBehaviour
     public string GetParentName()
     {
         return parentName;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // ロケットの位置と回転を送信
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+        }
+        else
+        {
+            // ロケットの位置と回転を受信
+            Vector3 receivedPosition = (Vector3)stream.ReceiveNext();
+            Quaternion receivedRotation = (Quaternion)stream.ReceiveNext();
+            // 受信した位置と回転を適用
+            transform.position = receivedPosition;
+            transform.rotation = receivedRotation;
+        }
     }
 }
