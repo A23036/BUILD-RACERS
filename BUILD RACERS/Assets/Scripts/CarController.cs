@@ -229,6 +229,10 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private CarController playerCar;
 
+    //順位計算を何秒ごとに行うか
+    private float rankTimer = 0f;
+    private float rankUpdateInterval = 0.5f;
+
     //ヒット通知用
     LogUI logUI;
 
@@ -270,7 +274,7 @@ public class CarController : MonoBehaviourPunCallbacks
         Debug.Log("PassiveState: Acceleration: " + passiveNumList[0] + " Speed: " + passiveNumList[1] + " AntiStun: " + passiveNumList[2]);
 
         //パッシブのUI更新
-        if (isMine)
+        if (isMine && isRaceClear == false)
         {
             UpdatePassiveUI();
         }
@@ -337,8 +341,16 @@ public class CarController : MonoBehaviourPunCallbacks
         stunStartLocalRotation = bodyMesh.transform.localRotation;
 
         //ヒット通知
-        string myName = GetName();
-        if(PhotonNetwork.InRoom) myName = photonView.Owner.NickName;
+        string myName;
+        if (isMine)
+        {
+            myName = PlayerPrefs.GetString("PlayerName");
+        }
+        else
+        {
+            myName = GetName();
+        }
+        if (PhotonNetwork.InRoom) myName = photonView.Owner.NickName;
         if (logUI != null)
         {
             logUI.AddHitLog(attacekrName,myName, weaponName);
@@ -732,8 +744,17 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //順位更新
-        UpdateRank();
-        if(isMine) UpdateRankUI();
+        if(rankTimer >= rankUpdateInterval)
+        {
+            UpdateRank();
+            if (isMine) UpdateRankUI();
+
+            rankTimer = 0f;
+        }
+        else
+        {
+            rankTimer += Time.fixedDeltaTime;
+        }
 
         //ゴール判定
         if (lapCount == maxLaps)
@@ -741,7 +762,7 @@ public class CarController : MonoBehaviourPunCallbacks
             isRaceClear = true;
 
             //リザルトUIを有効化
-            if(resultUI.activeSelf == false) resultUI.SetActive(true);
+            if (resultUI.activeSelf == false) resultUI.SetActive(true);
 
             //ランキングUIを更新
             var result = resultUI.GetComponent<resultUI>();
@@ -751,7 +772,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 {
                     //ペアのエンジニアにゴールを通知
                     PhotonView target = PhotonView.Find(pairViewID);
-                    if(target != null) target.RPC("RPC_ReceiveGoalNotif", RpcTarget.All, photonView.ViewID);
+                    if (target != null) target.RPC("RPC_ReceiveGoalNotif", RpcTarget.All, photonView.ViewID);
 
                     result.SetPairEngineerID(pairViewID);
 
@@ -1260,13 +1281,13 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             if (car == this) continue;
 
-            //ウェイポイントが進んでるほうが上位
-            if (car.GetNearllyWpIdx(car.transform.position) > GetNearllyWpIdx(transform.position))
+            //ウェイポンとが同じならラップ数が多いほうが上位
+            if (car.GetLapCount() > lapCount)
             {
                 currentRank++;
             }
-            //ウェイポンとが同じならラップ数が多いほうが上位
-            else if (car.GetLapCount() > lapCount)
+            //ウェイポイントが進んでるほうが上位
+            else if (car.GetNearllyWpIdx(car.transform.position) > GetNearllyWpIdx(transform.position))
             {
                 currentRank++;
             }
@@ -1482,6 +1503,7 @@ public class CarController : MonoBehaviourPunCallbacks
             }
         }
 
+        Debug.Log($"GetName: {ret}");
         return ret;
     }
 

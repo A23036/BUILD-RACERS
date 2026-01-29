@@ -17886,6 +17886,9 @@ MonoBehaviour:
   displayDuration: 3
   spacing: 10
   fadeOutDuration: 0.25
+  RocketGreenFont: {fileID: 11400000, guid: dd8634d697f5aff469ce8be132781bf6, type: 2}
+  RocketRedFont: {fileID: 11400000, guid: b51fc985fdb1a724b9d1fd7806aae643, type: 2}
+  BalloonTrapFont: {fileID: 11400000, guid: a2a8ac8927860ff4cb0627afb218e2f7, type: 2}
 --- !u!1001 &1537344880
 PrefabInstance:
   m_ObjectHideFlags: 0

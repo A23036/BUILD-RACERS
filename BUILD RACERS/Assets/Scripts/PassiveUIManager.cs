@@ -46,6 +46,12 @@ public class PassiveUIManager : MonoBehaviour
 
     public void RefreshFromCounts(int accelerationCount, int speedCount, int antiStunCount)
     {
+        // アクティブでない場合は何もしない
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         currentEntries.Clear();
         currentEntries.AddRange(BuildEntries(accelerationCount, speedCount, antiStunCount));
         EnsureSlots(currentEntries.Count);
@@ -122,6 +128,12 @@ public class PassiveUIManager : MonoBehaviour
 
     private void ActivateSlot(int index, SlotEntry entry, Sprite sprite)
     {
+        // アクティブでない場合は何もしない
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         PassiveSlotUI slot = slots[index];
         slot.gameObject.SetActive(true);
         slot.SetItem(entry.Id, sprite);
@@ -141,6 +153,12 @@ public class PassiveUIManager : MonoBehaviour
 
     private void StartMove(Transform target, Vector3 destination)
     {
+        // アクティブでない場合は何もしない
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }   
+
         if (moveRoutines.TryGetValue(target, out Coroutine routine) && routine != null)
         {
             StopCoroutine(routine);
@@ -153,6 +171,8 @@ public class PassiveUIManager : MonoBehaviour
     {
         while (Vector3.Distance(target.localPosition, destination) > 0.1f)
         {
+            if(gameObject.activeSelf == false) yield break;
+
             target.localPosition = Vector3.Lerp(target.localPosition, destination, Time.deltaTime * moveSpeed);
             yield return null;
         }
