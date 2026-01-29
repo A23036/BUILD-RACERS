@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI.Table;
-
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class selectScene : baseScene
@@ -84,13 +83,13 @@ public class selectScene : baseScene
 
     private void Awake()
     {
+        base.Awake();
+
         if (fade != null)
         {
             fade.SetStartRange();
             fade.FadeOut(fadeOutDuration);
         }
-
-        base.Awake();
 
         Debug.Log("=== SELECT SCENE AWAKE ===");
     }
@@ -153,7 +152,14 @@ public class selectScene : baseScene
 
         props["driverNum"] = dn;
         props["engineerNum"] = bn;
-        if(ss != null && ss.photonView.IsMine) PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        if(ss != null && ss.photonView.IsMine)
+        {
+            if (!PhotonNetwork.IsConnectedAndReady) return;
+            if (!PhotonNetwork.InRoom) return; // 部屋にいないなら送れない
+            if (PhotonNetwork.NetworkClientState != Photon.Realtime.ClientState.Joined) return;
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        }
     }
 
     //観戦者の更新処理
@@ -480,6 +486,8 @@ public class selectScene : baseScene
     {
         if(ss != null) ss.DeleteMyStat();
 
+        PhotonNetwork.LeaveRoom();
+
         base.PushBackButton();
     }
 
@@ -549,6 +557,9 @@ public class selectScene : baseScene
         //ルーム内のメンバーに共有
         if (PhotonNetwork.IsMasterClient)
         {
+            if (!PhotonNetwork.InRoom) return;
+            if (PhotonNetwork.CurrentRoom == null) return;
+
             var hash = new Hashtable();
             hash["playSceneName"] = str;
             PhotonNetwork.CurrentRoom.SetCustomProperties(hash);

@@ -200,6 +200,8 @@ public class robbyScene : baseScene
             if (geneFlag.TryGetValue(room.Name,out bool b) && b) continue;
 
             //部屋ボタンの削除
+            if(!roomButtons.ContainsKey(room.Name)) continue;
+
             Destroy(roomButtons[room.Name]);
             roomButtons.Remove(room.Name);
         }
@@ -412,12 +414,6 @@ public class robbyScene : baseScene
         //プレイ人数が異常値なら処理なし
         if(maxPlayers < 2 || 16 < maxPlayers) return;
 
-        //シーン遷移
-        fade.FadeIn(fadeInDuration, () =>
-        {
-            SceneManager.LoadScene("select");
-        });
-
         //ルームのオプション設定
         RoomOptions options = new RoomOptions
         {
@@ -437,7 +433,13 @@ public class robbyScene : baseScene
         //ルームのプレイ人数上限設定　観戦はプレイ人数含めて合計20人まで
         PlayerPrefs.SetInt("roomLimitPlayers", maxPlayers);
 
-        //ルームを新規作成　接続
-        PhotonNetwork.JoinOrCreateRoom(createRoomName, options, TypedLobby.Default);
+        //シーン遷移
+        fade.FadeIn(fadeInDuration, () =>
+        {
+            SceneManager.LoadScene("select");
+
+            //ルームを新規作成　接続
+            PhotonNetwork.JoinOrCreateRoom(createRoomName, options, TypedLobby.Default);
+        });
     }
 }
