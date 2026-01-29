@@ -71,16 +71,31 @@ public class CreateGimmic : MonoBehaviour
             // Åö êVãKê∂ê¨
             if (PhotonNetwork.IsConnected)
             {
-                PhotonNetwork.Instantiate(
+                var obj = PhotonNetwork.Instantiate(
                     partsId.ToString(),
                     placePos,
                     rot
                 );
+
+                //èäóLé“ñºÇÃê›íË
+                var pv = obj.GetComponent<PhotonView>();
+                if (partsId.ToString() == "Balloon")
+                {
+                    var wb = GetComponentInChildren<WaterBalloonExplosion>();
+                    wb.SetParentName(pv.Owner.NickName);
+                }
             }
             else
             {
                 GameObject prefab = Resources.Load<GameObject>(partsId.ToString());
-                Instantiate(prefab, placePos, rot);
+                var obj = Instantiate(prefab, placePos, rot);
+
+                //èäóLé“ñºÇÃê›íË
+                if (partsId.ToString() == "Balloon")
+                {
+                    var wb = obj.GetComponentInChildren<WaterBalloonExplosion>();
+                    wb.SetParentName(PlayerPrefs.GetString("PlayerName"));
+                }
             }
 
             Debug.Log($"[Gimmick] Placed on {hit.collider.tag}");

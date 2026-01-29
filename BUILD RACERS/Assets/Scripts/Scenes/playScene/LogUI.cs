@@ -20,6 +20,7 @@ public class LogUI : MonoBehaviour
     [Header("Fonts")]
     [SerializeField] private TMP_SpriteAsset RocketGreenFont;
     [SerializeField] private TMP_SpriteAsset RocketRedFont;
+    [SerializeField] private TMP_SpriteAsset BalloonFont;
     [SerializeField] private TMP_SpriteAsset BalloonTrapFont;
 
     private List<GameObject> activeHitLogs = new List<GameObject>();
@@ -168,10 +169,14 @@ public class LogUI : MonoBehaviour
                     case "RocketRed":
                         textComponent.spriteAsset = RocketRedFont;
                         break;
+                    case "WaterBalloonExplosion":
+                        textComponent.spriteAsset = BalloonFont;
+                        break;
                     case "WaterBalloonTrap":
                         textComponent.spriteAsset = BalloonTrapFont;
                         break;
                     default:
+                        Debug.LogError("–³Œø‚ÈweaponIcon‚ªŽw’è‚³‚ê‚Ü‚µ‚½: " + weaponIcon);
                         break;
                 }
 
