@@ -137,8 +137,10 @@ public class AIDriver : MonoBehaviour, IDriver
         minSteer = Mathf.Min(minSteer, steer);
         maxSteer = Mathf.Max(maxSteer, steer);
 
+        float throttleRate = waypointRadius / MaxWpRadius;
+
         lastSteer = steer;
-        lastThrottle = throttle;
+        lastThrottle = throttle * throttleRate;
         lastBrake = brake;
     }
 
