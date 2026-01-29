@@ -50,7 +50,11 @@ public class selectScene : baseScene
     private float updateRoomInfoInterval = 1f;
     private float updateRoomInfoTimer = 0f;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Fade")]
+    [SerializeField] private Fade fade;
+    [SerializeField] private float fadeInDuration = 0.8f;
+    [SerializeField] private float fadeOutDuration = 0.8f;
+
     void Start()
     {
         preSceneName = "robby";
@@ -80,6 +84,12 @@ public class selectScene : baseScene
 
     private void Awake()
     {
+        if (fade != null)
+        {
+            fade.SetStartRange();
+            fade.FadeOut(fadeOutDuration);
+        }
+
         base.Awake();
 
         Debug.Log("=== SELECT SCENE AWAKE ===");
@@ -97,7 +107,7 @@ public class selectScene : baseScene
         //人数表示の更新
         string curPlayresNum = FindObjectsOfType<selectSystem>().Length.ToString();
         string maxPlayresNum = limitPlayers.ToString();
-        playersCountText.text = curPlayresNum + " / " + maxPlayresNum;
+        playersCountText.text = curPlayresNum + "/" + maxPlayresNum + "人";
 
         //観戦者数の更新　超過人数を観戦者としてカウント
         monitorsCounter.text = FindObjectsOfType<monitorSystem>().Length.ToString();
@@ -216,7 +226,10 @@ public class selectScene : baseScene
 
             Debug.Log(hash["driverNum"] + "," + hash["engineerNum"] + "," + PlayerPrefs.GetInt("isMonitor"));
 
-            SceneManager.LoadScene(playSceneName);
+            fade.FadeIn(fadeInDuration, () =>
+            {
+                SceneManager.LoadScene(playSceneName);
+            });
         }
     }
 
@@ -319,7 +332,7 @@ public class selectScene : baseScene
         base.OnJoinedRoom();
 
         //ルーム名の表示
-        roomNameText.text = $"部屋の名前:\n{PhotonNetwork.CurrentRoom.Name}";
+        roomNameText.text = $"【部屋の名前】\n{PhotonNetwork.CurrentRoom.Name}";
 
         //マスターならプレイ人数を設定　そうでなければ受信
         if (PhotonNetwork.IsMasterClient)

@@ -29,7 +29,10 @@ public class robbyScene : baseScene
     [SerializeField]private float duration = 0.2f;
     private bool isMoving = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Fade")]
+    [SerializeField] private Fade fade;
+    [SerializeField] private float fadeInDuration = 0.8f;
+    [SerializeField] private float fadeOutDuration = 0.8f;
 
     private const int MAX_CCU = 20;
 
@@ -38,6 +41,12 @@ public class robbyScene : baseScene
     void Start()
     {
         preSceneName = "menu";
+
+        if (fade != null)
+        {
+            fade.SetStartRange();
+            fade.FadeOut(fadeOutDuration);
+        }
 
         maxPlayers = 0;
 
@@ -71,7 +80,10 @@ public class robbyScene : baseScene
 
     public void PushSelectButton()
     {
-        SceneManager.LoadScene("select");
+        fade.FadeIn(fadeInDuration, () =>
+        {
+            SceneManager.LoadScene("select");
+        });
     }
 
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
@@ -401,7 +413,10 @@ public class robbyScene : baseScene
         if(maxPlayers < 2 || 16 < maxPlayers) return;
 
         //シーン遷移
-        SceneManager.LoadScene("select");
+        fade.FadeIn(fadeInDuration, () =>
+        {
+            SceneManager.LoadScene("select");
+        });
 
         //ルームのオプション設定
         RoomOptions options = new RoomOptions

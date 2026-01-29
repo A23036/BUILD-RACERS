@@ -19,7 +19,8 @@ public class singleScene : baseScene
 
     [Header("Fade")]
     [SerializeField] private Fade fade;
-
+    [SerializeField] private float fadeInDuration = 0.8f;
+    [SerializeField] private float fadeOutDuration = 0.8f;
 
     void Start()
     {
@@ -28,7 +29,7 @@ public class singleScene : baseScene
         if (fade != null)
         {
             fade.SetStartRange();
-            fade.FadeOut(0.8f);
+            fade.FadeOut(fadeOutDuration);
         }
 
         GameObject inputField = GameObject.Find("InputField (TMP)");
@@ -76,7 +77,7 @@ public class singleScene : baseScene
 
     public void PushBackButton()
     {
-        fade.FadeIn(0.8f, () =>
+        fade.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("menu");
         });

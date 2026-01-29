@@ -41,7 +41,8 @@ public class tittleScene : baseScene
     [SerializeField] private AudioClip clickSound; // クリック音
 
     [Header("Fade")]
-    [SerializeField] private Fade fade;
+    [SerializeField] private Fade fadeIn;
+    [SerializeField] private float fadeInDuration = 0.8f;
 
     private CanvasGroup pressStartCanvasGroup;
     private Coroutine animationSequenceCoroutine;
@@ -119,9 +120,9 @@ public class tittleScene : baseScene
                 PlayClickSound();
 
                 // フェードイン → 完了後にシーン遷移
-                if (fade != null)
+                if (fadeIn != null)
                 {
-                    fade.FadeIn(0.8f, () =>
+                    fadeIn.FadeIn(fadeInDuration, () =>
                     {
                         SceneManager.LoadScene("menu");
                     });

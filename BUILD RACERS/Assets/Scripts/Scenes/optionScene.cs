@@ -3,13 +3,22 @@ using UnityEngine.SceneManagement;
 
 public class optionScene : baseScene
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Fade")]
+    [SerializeField] private Fade fade;
+    [SerializeField] private float fadeInDuration = 0.8f;
+    [SerializeField] private float fadeOutDuration = 0.8f;
+
     void Start()
     {
         preSceneName = "menu";
+
+        if (fade != null)
+        {
+            fade.SetStartRange();
+            fade.FadeOut(fadeOutDuration);
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
         base.Update();
@@ -17,6 +26,9 @@ public class optionScene : baseScene
 
     public void PushBackButton()
     {
-        SceneManager.LoadScene("menu");
+        fade.FadeIn(fadeInDuration, () =>
+        {
+            SceneManager.LoadScene("menu");
+        });
     }
 }

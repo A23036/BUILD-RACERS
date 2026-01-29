@@ -6,6 +6,9 @@ public class menu : baseScene
 {
     [Header("Fade")]
     [SerializeField] private Fade fade;
+    [SerializeField] private Fade fadeToTutorial;
+    [SerializeField] private float fadeInDuration = 0.8f;
+    [SerializeField] private float fadeOutDuration = 0.8f;
 
     void Start()
     {
@@ -14,7 +17,7 @@ public class menu : baseScene
         if (fade != null)
         {
             fade.SetStartRange();
-            fade.FadeOut(0.8f);
+            fade.FadeOut(fadeOutDuration);
         }
     }
 
@@ -25,7 +28,7 @@ public class menu : baseScene
 
     public void PushTutorialButton()
     {
-        fade.FadeIn(0.8f, () =>
+        fadeToTutorial.FadeIn(0.8f, () =>
         {
             SceneManager.LoadScene("tutorial");
         });
@@ -33,7 +36,7 @@ public class menu : baseScene
 
     public void PushSingleButton()
     {
-        fade.FadeIn(0.8f, () =>
+        fade.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("single");
         });
@@ -41,7 +44,7 @@ public class menu : baseScene
 
     public void PushMultiButton()
     {
-        fade.FadeIn(0.8f, () =>
+        fade.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("Robby");
         });
@@ -49,21 +52,21 @@ public class menu : baseScene
 
     public void PushOptionButton()
     {
-        fade.FadeIn(0.8f, () =>
+        fade.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("option");
         });
     }
     public void PushShopButton()
     {
-        fade.FadeIn(0.8f, () =>
+        fade.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("shop");
         });
     }
     public void PushBackButton()
     {
-        fade.FadeIn(0.8f, () =>
+        fade.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("tittle");
         });

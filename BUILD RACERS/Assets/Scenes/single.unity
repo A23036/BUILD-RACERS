@@ -2851,6 +2851,8 @@ MonoBehaviour:
   lapSetter: {fileID: 253099627}
   mapSelector: {fileID: 1702779293}
   fade: {fileID: 407334888}
+  fadeInDuration: 0.3
+  fadeOutDuration: 0.3
 --- !u!114 &1421747474
 MonoBehaviour:
   m_ObjectHideFlags: 0
