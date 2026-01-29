@@ -26,15 +26,15 @@ using UnityEngine.Assertions;
 
 public class Fade : MonoBehaviour
 {
-	IFade fade;
+    IFade fade;
 
-	void Start ()
-	{
-		Init ();
-		fade.Range = cutoutRange;
-	}
+    void Start()
+    {
+        Init();
+        fade.Range = cutoutRange;
+    }
 
-	float cutoutRange;
+    float cutoutRange;
 
     public void SetStartRange()
     {
@@ -46,10 +46,10 @@ public class Fade : MonoBehaviour
         }
     }
 
-    void Init ()
-	{
-		fade = GetComponent<IFade> ();
-	}
+    void Init()
+    {
+        fade = GetComponent<IFade>();
+    }
 
     void EnsureInit()
     {
@@ -59,81 +59,112 @@ public class Fade : MonoBehaviour
         }
     }
 
-    void OnValidate ()
-	{
-		Init ();
-		fade.Range = cutoutRange;
-	}
+    void OnValidate()
+    {
+        Init();
+        fade.Range = cutoutRange;
+    }
 
-	IEnumerator FadeoutCoroutine (float time, System.Action action)
-	{
-		float endTime = Time.timeSinceLevelLoad + time * (cutoutRange);
+    IEnumerator FadeoutCoroutine(float time, System.Action action)
+    {
+        // deltaTime方式：現在のcutoutRangeから0へ、time秒かけて進める
+        // cutoutRangeは 1=完全に覆う / 0=完全に開く（元実装の挙動を維持）
+        float start = cutoutRange;
 
-		var endFrame = new WaitForEndOfFrame ();
+        if (time <= 0f)
+        {
+            cutoutRange = 0f;
+            fade.Range = cutoutRange;
+            if (action != null) action();
+            yield break;
+        }
 
-		while (Time.timeSinceLevelLoad <= endTime) {
-			cutoutRange = (endTime - Time.timeSinceLevelLoad) / time;
-			fade.Range = cutoutRange;
-			yield return endFrame;
-		}
-		cutoutRange = 0;
-		fade.Range = cutoutRange;
+        float t = 0f;
+        while (t < time)
+        {
+            t += Time.deltaTime;
+            float p = Mathf.Clamp01(t / time);
 
-		if (action != null) {
-			action ();
-		}
-	}
+            cutoutRange = Mathf.Lerp(start, 0f, p);
+            fade.Range = cutoutRange;
 
-	IEnumerator FadeinCoroutine (float time, System.Action action)
-	{
-		float endTime = Time.timeSinceLevelLoad + time * (1 - cutoutRange);
-		
-		var endFrame = new WaitForEndOfFrame ();
+            yield return null;
+        }
 
-		while (Time.timeSinceLevelLoad <= endTime) {
-			cutoutRange = 1 - ((endTime - Time.timeSinceLevelLoad) / time);
-			fade.Range = cutoutRange;
-			yield return endFrame;
-		}
-		cutoutRange = 1;
-		fade.Range = cutoutRange;
+        cutoutRange = 0f;
+        fade.Range = cutoutRange;
 
-		if (action != null) {
-			action ();
-		}
-	}
+        if (action != null)
+        {
+            action();
+        }
+    }
 
-	public Coroutine FadeOut (float time, System.Action action)
-	{
+    IEnumerator FadeinCoroutine(float time, System.Action action)
+    {
+        // deltaTime方式：現在のcutoutRangeから1へ、time秒かけて進める
+        float start = cutoutRange;
+
+        if (time <= 0f)
+        {
+            cutoutRange = 1f;
+            fade.Range = cutoutRange;
+            if (action != null) action();
+            yield break;
+        }
+
+        float t = 0f;
+        while (t < time)
+        {
+            t += Time.deltaTime;
+            float p = Mathf.Clamp01(t / time);
+
+            cutoutRange = Mathf.Lerp(start, 1f, p);
+            fade.Range = cutoutRange;
+
+            yield return null;
+        }
+
+        cutoutRange = 1f;
+        fade.Range = cutoutRange;
+
+        if (action != null)
+        {
+            action();
+        }
+    }
+
+    public Coroutine FadeOut(float time, System.Action action)
+    {
         EnsureInit();
         if (fade == null)
         {
             Debug.LogWarning("Fade component not found.", this);
             return null;
         }
-        StopAllCoroutines ();
-		return StartCoroutine (FadeoutCoroutine (time, action));
-	}
+        StopAllCoroutines();
+        return StartCoroutine(FadeoutCoroutine(time, action));
+    }
 
-	public Coroutine FadeOut (float time)
-	{
-		return FadeOut (time, null);
-	}
+    public Coroutine FadeOut(float time)
+    {
+        return FadeOut(time, null);
+    }
 
-	public Coroutine FadeIn (float time, System.Action action)
-	{
+    public Coroutine FadeIn(float time, System.Action action)
+    {
         EnsureInit();
         if (fade == null)
         {
             Debug.LogWarning("Fade component not found.", this);
             return null;
         }
-        StopAllCoroutines ();
-		return StartCoroutine (FadeinCoroutine (time, action));
-	}
+        StopAllCoroutines();
+        return StartCoroutine(FadeinCoroutine(time, action));
+    }
 
-	public Coroutine FadeIn (float time)
-	{
-		return FadeIn (time, null);
-	}
+    public Coroutine FadeIn(float time)
+    {
+        return FadeIn(time, null);
+    }
 }
