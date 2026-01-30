@@ -96,29 +96,3 @@ MonoBehaviour:
         weight: 30
       - id: 10
         weight: 50
-  - rankMin: 7
-    rankMax: 8
-    passive:
-      items:
-      - id: 6
-        weight: 20
-      - id: 7
-        weight: 60
-      - id: 8
-        weight: 20
-    item:
-      items:
-      - id: 2
-        weight: 40
-      - id: 0
-        weight: 50
-      - id: 5
-        weight: 0
-    gimmick:
-      items:
-      - id: 9
-        weight: 20
-      - id: 11
-        weight: 30
-      - id: 10
-        weight: 50

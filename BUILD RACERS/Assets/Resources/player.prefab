@@ -763,7 +763,7 @@ MonoBehaviour:
   accelerationWeight: 5
   antiStunWeight: 10
   maxCapacity: 25
-  rankedTable: {fileID: 11400000, guid: 270a08f879d1ca34885e5817829065b9, type: 2}
+  rankedTable: {fileID: 11400000, guid: 2d372db464062304c8f5f4ce151f7bf6, type: 2}
 --- !u!1 &8388995873041266228
 GameObject:
   m_ObjectHideFlags: 0

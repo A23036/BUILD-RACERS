@@ -236,6 +236,14 @@ public class CarController : MonoBehaviourPunCallbacks
     //ヒット通知用
     LogUI logUI;
 
+    private bool isTutorial = false;
+
+
+    public void SetIsTutorial()
+    {
+        isTutorial = true;
+    }
+
     public void AddPartsNum()
     {
         partsNum++;
@@ -436,6 +444,13 @@ public class CarController : MonoBehaviourPunCallbacks
                 {
                     resultUI = smm3.GetResultUI();
                     resultUI.SetActive(false);
+                }
+                break;
+            case "driver tutorial":
+                var smm4 = FindObjectOfType<driverTutorial>();
+                if (smm4 != null)
+                {
+                    resultUI = null;
                 }
                 break;
         }
@@ -726,7 +741,7 @@ public class CarController : MonoBehaviourPunCallbacks
         if (killerTimer > 0f) UpdateKiller();
 
         //周回判定
-        if (isLapClear)
+        if (!isTutorial && isLapClear)
         {
             lapCount++;
             nowAngle = 0f;
@@ -744,7 +759,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //順位更新
-        if(rankTimer >= rankUpdateInterval)
+        if(!isTutorial && rankTimer >= rankUpdateInterval)
         {
             UpdateRank();
             if (isMine) UpdateRankUI();
@@ -757,7 +772,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //ゴール判定
-        if (lapCount == maxLaps)
+        if (!isTutorial && (lapCount == maxLaps))
         {
             isRaceClear = true;
 
@@ -886,7 +901,7 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //UI更新
-        if(isMine && PlayerPrefs.GetInt("driverNum") != -1)
+        if(!isTutorial && isMine && PlayerPrefs.GetInt("driverNum") != -1)
         {
             //周回数をUIに反映
             lapText.text = $"Lap:{Mathf.Clamp(lapCount + 1, 1, maxLaps)}/{maxLaps}";
@@ -1216,7 +1231,7 @@ public class CarController : MonoBehaviourPunCallbacks
             else timer = playerCar.GetTimer();
         }
 
-        Debug.Log($"Timer: {timer}");
+        //Debug.Log($"Timer: {timer}");
     }
 
     public double GetTimer()
@@ -1371,7 +1386,7 @@ public class CarController : MonoBehaviourPunCallbacks
             currentGroundTag = "Default";
         }
 
-        Debug.Log($"Ground Tag: {currentGroundTag}");
+        //Debug.Log($"Ground Tag: {currentGroundTag}");
     }
 
     private void UpdateStun()
@@ -1520,7 +1535,7 @@ public class CarController : MonoBehaviourPunCallbacks
     public void SendParts(PartsID id)
     {
         //ゴール後は処理なし
-        if(resultUI.gameObject.activeSelf)
+        if(!isTutorial && resultUI.gameObject.activeSelf)
         {
             return;
         }
