@@ -1574,7 +1574,7 @@ public class CarController : MonoBehaviourPunCallbacks
     public void RemoveUsedItem()
     {
         // 使用するアイテムIDを取り出す
-        PartsID usedId = (PartsID)itemManager.Dequeue(true);
+        PartsID usedId = (PartsID)itemManager.ItemDequeue(true);
 
         // ----------------------------
         // エンジニア側に使用したアイテムパーツ削除を通知
@@ -1975,7 +1975,7 @@ public class CarController : MonoBehaviourPunCallbacks
     public void RPC_EnqueueItem(PartsID id)
     {
         Debug.Log("Enqueue Item Request");
-        itemManager.Enqueue((int)id);
+        itemManager.ItemEnqueue((int)id);
         ApplyItemGuideUI(lastDevice);
     }
 
@@ -1984,7 +1984,7 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         Debug.Log("Remove Item Request");
         itemManager.Remove((int)id);
-        int? nextItem = itemManager.Dequeue(false);
+        int? nextItem = itemManager.ItemDequeue(false);
     }
 
     [PunRPC]
@@ -1992,7 +1992,7 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         Debug.Log("Remove Item Request");
         itemManager.Remove((int)id);
-        int? nextItem = itemManager.Dequeue(false);
+        int? nextItem = itemManager.ItemDequeue(false);
     }
 
     [PunRPC]

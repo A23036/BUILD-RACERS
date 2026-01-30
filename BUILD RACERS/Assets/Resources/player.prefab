@@ -754,15 +754,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95c774c4b974d5246ab0e8dc2a7d15dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  energyWeight: 5
+  energyWeight: 10
   rocketWeight: 10
   rocketHomingWeight: 10
   balloonTrapWeight: 5
   killerWeight: 15
   speedWeight: 5
   accelerationWeight: 5
-  antiStunWeight: 10
-  maxCapacity: 25
+  antiStunWeight: 5
+  ItemCapacity: 25
+  PassiveCapacity: 15
   rankedTable: {fileID: 11400000, guid: 2d372db464062304c8f5f4ce151f7bf6, type: 2}
 --- !u!1 &8388995873041266228
 GameObject:

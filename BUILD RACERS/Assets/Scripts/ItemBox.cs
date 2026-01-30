@@ -128,13 +128,13 @@ public class ItemBoxController : MonoBehaviour
                     
                     if (itemType == PartsType.Item)
                     {
-                        itemManager.Enqueue((int)id);
+                        itemManager.ItemEnqueue((int)id);
                         carController.AddPartsNum(); // アイテム数を追加
                     }
                     //パッシブ
                     else if(itemType == PartsType.Passive)
                     {
-                        carController.RPC_SetPassiveState(id, true);
+                        itemManager.PassiveEnqueue((int)id);
                     }
                 }
                 else // エンジニアの時

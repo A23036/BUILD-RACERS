@@ -1,6 +1,7 @@
 using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
@@ -8,6 +9,9 @@ public class ItemManager : MonoBehaviour
 {
     //シングルで使うアイテムの重み
     private Dictionary<PartsID, int> itemWeightMap;
+
+    //シングルで使うパッシブの重み
+    private Dictionary<PartsID, int> passiveWeightMap;
 
     //各アイテムの重み
     [SerializeField] private int energyWeight;
@@ -20,12 +24,18 @@ public class ItemManager : MonoBehaviour
     [SerializeField] private int accelerationWeight;
     [SerializeField] private int antiStunWeight;
 
-    [SerializeField] private int maxCapacity;
+    [SerializeField] private int ItemCapacity;
+    [SerializeField] private int PassiveCapacity;
 
     [SerializeField] private RankedItemTable rankedTable;
-    private int nowCapacity;
+    private int nowPassiveCapacity;
+    private int nowItemCapacity;
 
     private LinkedList<int> itemQueue = new LinkedList<int>();
+
+    // シングルのみで使うパッシブ用キュー
+    private LinkedList<PartsID> passiveQueue = new LinkedList<PartsID>();
+
 
     // 同じIDのノードをリストで管理
     private Dictionary<int, List<LinkedListNode<int>>> nodeMap = new Dictionary<int, List<LinkedListNode<int>>>();
@@ -54,27 +64,30 @@ public class ItemManager : MonoBehaviour
 
         //重みの設定
         itemWeightMap = new Dictionary<PartsID, int>();
+        passiveWeightMap = new Dictionary<PartsID, int>();
         SetItemWeight();
+        SetPassiveWeight();
 
-        nowCapacity = 0;
+        nowItemCapacity = 0;
+        nowPassiveCapacity = 0;
     }
 
     // アイテム追加（同じIDも追加可能）
-    public void Enqueue(int itemId)
+    public void ItemEnqueue(int itemId)
     {
         //シングルプレイなら重みチェック
-        if (!PhotonNetwork.IsConnected)
+        if (!PhotonNetwork.IsConnected && carController.isMine)
         {
             //キャパオーバーなら処理なし
-            if (nowCapacity + itemWeightMap[(PartsID)itemId] > maxCapacity)
+            if (nowItemCapacity + itemWeightMap[(PartsID)itemId] > ItemCapacity)
             {
                 Debug.Log("parts capacity over");
-                Debug.Log("Capacity : " + nowCapacity);
+                Debug.Log("ItemCapacity : " + nowItemCapacity);
                 return;
             }
 
-            nowCapacity += itemWeightMap[(PartsID)itemId];
-            Debug.Log("Capacity : " + nowCapacity);
+            nowItemCapacity += itemWeightMap[(PartsID)itemId];
+            Debug.Log("ItemCapacity : " + nowItemCapacity);
         }
 
         var node = itemQueue.AddLast(itemId);
@@ -92,8 +105,51 @@ public class ItemManager : MonoBehaviour
         }
     }
 
+    // パッシブ追加(シングルプレイ)
+    public void PassiveEnqueue(int itemId)
+    {
+        if(!carController.isMine) return;
+
+        PartsID id = (PartsID)itemId;
+
+        // 重みが無い/未設定なら事故るのでガード
+        if (passiveWeightMap == null || !passiveWeightMap.ContainsKey(id))
+        {
+            Debug.LogError("passiveWeightMapに重みがありません : " + id);
+            return;
+        }
+
+        int addW = passiveWeightMap[id];
+
+        //キャパオーバーなら古い順に新しいものが入るまで削除
+        if (nowPassiveCapacity + addW > PassiveCapacity)
+        {
+            // 入るまで最古を消す
+            while (nowPassiveCapacity + addW > PassiveCapacity)
+            {
+                // 最古を削除
+                PartsID oldest = passiveQueue.First.Value;
+                passiveQueue.RemoveFirst();
+
+                if (passiveWeightMap.ContainsKey(oldest))
+                {
+                    nowPassiveCapacity -= passiveWeightMap[oldest];
+                    carController.RPC_SetPassiveState(oldest, false);
+                }
+            }
+        }
+
+        // 追加
+        passiveQueue.AddLast(id);
+        nowPassiveCapacity += addW;
+
+        carController.RPC_SetPassiveState(id, true);
+
+        Debug.Log("PassiveCapacity : " + nowPassiveCapacity);
+    }
+
     // 最も古いアイテムを取り出す
-    public int? Dequeue(bool isUse)
+    public int? ItemDequeue(bool isUse)
     {
         if (itemQueue.Count == 0)
             return null;
@@ -104,10 +160,10 @@ public class ItemManager : MonoBehaviour
         PrintItemQueue();
 
         //シングルプレイなら重み計算
-        if(!PhotonNetwork.IsConnected)
+        if(!PhotonNetwork.IsConnected && carController.isMine && isUse)
         {
-            nowCapacity -= itemWeightMap[(PartsID)id];
-            Debug.Log("Capacity : " + nowCapacity);
+            nowItemCapacity -= itemWeightMap[(PartsID)id];
+            Debug.Log("ItemCapacity : " + nowItemCapacity);
         }
         
         // 使用フラグが立っていたらアイテム生成
@@ -363,9 +419,12 @@ public class ItemManager : MonoBehaviour
         itemWeightMap[PartsID.RocketHoming] = rocketHomingWeight;
         itemWeightMap[PartsID.BalloonTrap] = balloonTrapWeight;
         itemWeightMap[PartsID.Killer] = killerWeight;
+    }
 
-        itemWeightMap[PartsID.Acceleration] = accelerationWeight;
-        itemWeightMap[PartsID.Speed] = speedWeight;
-        itemWeightMap[PartsID.AntiStun] = antiStunWeight;
+    public void SetPassiveWeight()
+    {
+        passiveWeightMap[PartsID.Speed] = speedWeight;
+        passiveWeightMap[PartsID.Acceleration] = accelerationWeight;
+        passiveWeightMap[PartsID.AntiStun] = antiStunWeight;
     }
 }
