@@ -234,7 +234,8 @@ public class CarController : MonoBehaviourPunCallbacks
     private float rankUpdateInterval = 0.5f;
 
     //ヒット通知用
-    LogUI logUI;
+    private LogUI logUI;
+    private PhotonView logUIpv;
 
     private bool isTutorial = false;
 
@@ -517,6 +518,10 @@ public class CarController : MonoBehaviourPunCallbacks
         playerCar = null;
 
         logUI = FindObjectOfType<LogUI>();
+        if(logUI != null)
+        {
+            logUIpv = logUI.GetComponent<PhotonView>();
+        }
     }
 
     private TextMeshProUGUI InitText(TextMeshProUGUI tmpro, string tag)

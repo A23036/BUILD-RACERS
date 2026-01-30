@@ -70,6 +70,7 @@ MonoBehaviour:
   - RPC_NotifyDriverGoal
   - RPC_SyncLapCount
   - RPC_SetStun
+  - RPC_AddHitLog
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

@@ -144,6 +144,12 @@ public class LogUI : MonoBehaviour
         rectTransform.anchoredPosition = targetPosition;
     }
 
+    [PunRPC]
+    public void RPC_AddHitLog(string AttackerName, string victimName, string weaponIcon = "")
+    {
+        AddHitLog(AttackerName, victimName, weaponIcon);
+    }
+
     // 外部から呼び出せるメソッド
     public void AddHitLog(string AttackerName, string victimName, string weaponIcon = "")
     {
