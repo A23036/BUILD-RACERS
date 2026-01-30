@@ -103,7 +103,10 @@ public class robbyScene : baseScene
         {
             Debug.Log($"サーバーが満員です {totalInRooms} / {MAX_CCU}");
             Debug.Log("メニューに戻ります");
-            SceneManager.LoadScene("menu");
+            fade.FadeIn(fadeInDuration, () =>
+            {
+                SceneManager.LoadScene("menu");
+            });
         }
 
         Dictionary<string, bool> geneFlag = new Dictionary<string, bool>();
@@ -441,6 +444,14 @@ public class robbyScene : baseScene
 
             //ルームを新規作成　接続
             PhotonNetwork.JoinOrCreateRoom(createRoomName, options, TypedLobby.Default);
+        });
+    }
+
+    public void PushBackButton()
+    {
+        fade.FadeIn(fadeInDuration, () =>
+        {
+            SceneManager.LoadScene("menu");
         });
     }
 }

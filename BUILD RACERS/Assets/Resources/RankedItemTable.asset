@@ -113,7 +113,7 @@ MonoBehaviour:
       - id: 0
         weight: 50
       - id: 5
-        weight: 10
+        weight: 0
     gimmick:
       items:
       - id: 9
