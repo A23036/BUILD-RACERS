@@ -192,7 +192,7 @@ public class WaterBalloonExplosion : MonoBehaviour
             if (car != null)
             {
                 //çUåÇé“ñºÇìnÇ∑
-                var photonView = GetComponent<PhotonView>();
+                var photonView = GetComponentInChildren<PhotonView>();
                 if (PhotonNetwork.InRoom && photonView != null)
                 {
                     parentName = photonView.Owner.NickName;

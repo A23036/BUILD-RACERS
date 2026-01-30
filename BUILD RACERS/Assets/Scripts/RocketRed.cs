@@ -50,9 +50,6 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
 
     void Start()
     {
-        // 破壊タイマーを開始
-        if(!PhotonNetwork.InRoom) Destroy(gameObject, lifeTime);
-
         // 初期の反射回数を設定
         currentReflectCount = maxReflectCount;
         // 初期の移動方向をローカルの上方向（Z軸）に設定
@@ -64,14 +61,22 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
         if(PhotonNetwork.InRoom && !photonView.IsMine) return;
 
         //タイマー更新
-        if(photonView.IsMine)
+        lifeTime -= Time.deltaTime;
+        if(lifeTime <= 0f)
         {
-            lifeTime -= Time.deltaTime;
-            if(lifeTime <= 0f)
+            // エフェクトを再生
+            PlayDestroyEffect();
+
+            if (photonView.IsMine)
             {
                 PhotonNetwork.Destroy(gameObject);
-                return;
             }
+            else
+            {
+                Destroy(gameObject);
+            }
+
+            return;
         }
 
         // 高さ維持処理
@@ -122,10 +127,10 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
 
         Vector3[] directions =
         {
-        currentDirection,
-        Quaternion.Euler(0, detectAngle, 0) * currentDirection,
-        Quaternion.Euler(0, -detectAngle, 0) * currentDirection
-    };
+            currentDirection,
+            Quaternion.Euler(0, detectAngle, 0) * currentDirection,
+            Quaternion.Euler(0, -detectAngle, 0) * currentDirection
+        };
 
         foreach (var dir in directions)
         {
@@ -241,8 +246,12 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
             }
             else
             {
+                // エフェクトを再生
+                PlayDestroyEffect();
+                
                 // 反射回数が残っていない場合、ロケットを破壊する
                 Destroy(gameObject);
+                
                 Debug.Log("[redrocket]Refrect Limit");
             }
         }
@@ -250,38 +259,51 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
         {
             return;
         }
-        else
+        // ヒットしたのがPlayerだった時　オフラインのみ　オンラインは相手目線で処理
+        else if (collision.gameObject.CompareTag("Player")/* && PhotonNetwork.InRoom == false*/)
         {
-            // ヒットしたのがPlayerだった時
-            if (collision.gameObject.CompareTag("Player"))
+            var car = collision.gameObject.GetComponentInParent<CarController>();
+
+            if (car != null)
             {
-                var car = collision.gameObject.GetComponentInParent<CarController>();
-
-                if (car != null)
+                //攻撃者名を渡す
+                var photonView = GetComponent<PhotonView>();
+                if (PhotonNetwork.InRoom && photonView != null)
                 {
-                    //攻撃者名を渡す
-                    var photonView = GetComponent<PhotonView>();
-                    if (PhotonNetwork.InRoom && photonView != null)
-                    {
-                        parentName = photonView.Owner.NickName;
-                    }
-
-                    // ヒットしたPlayerに軽程度のスタン状態を設定
-                    car.SetStun(StunType.Light,parentName,GetType().Name);
-
-                    Debug.Log($"HIT ROCKET : {car.GetName()}");
+                    parentName = photonView.Owner.NickName;
                 }
+
+                // ヒットしたPlayerに軽程度のスタン状態を設定 一時無効化 2026.0130
+                if(PhotonNetwork.InRoom && false)
+                {
+                    photonView.RPC("SetStunRPC", RpcTarget.All, StunType.Light, parentName, GetType().Name, car.photonView.ViewID);
+
+                    // ロケットを破壊
+                    Invoke("PhotonNetwork.Destroy(gameObject)",0.5f);
+                }
+                else
+                {
+                    car.SetStun(StunType.Light, parentName, GetType().Name);
+
+                    // ロケットを破壊
+                    Destroy(gameObject);
+                }
+                
+                Debug.Log($"HIT ROCKET : {car.GetName()}");
             }
 
             // エフェクトを再生
             PlayDestroyEffect();
 
-            // ロケットを破壊
-            Destroy(gameObject);
-
             Debug.Log("[redrocket]not wall");
         }
     }
+
+    public void HitAndDestroy()
+    {
+
+    }
+
     public void SetParentName(string name)
     {
         parentName = name;

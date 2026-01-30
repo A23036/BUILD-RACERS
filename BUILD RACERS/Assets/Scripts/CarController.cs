@@ -310,6 +310,13 @@ public class CarController : MonoBehaviourPunCallbacks
         PlayFireEffect();
     }
 
+    [PunRPC]
+    public void RPC_SetStun(StunType type, string attacekrName, string weaponName , int targetId)
+    {
+        if(photonView.ViewID != targetId) return;
+        SetStun(type , attacekrName , weaponName);
+    }
+
     public void SetStun(StunType type , string attacekrName, string weaponName)
     {
         if (state == State.Stun) return;
@@ -358,10 +365,17 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             myName = GetName();
         }
-        if (PhotonNetwork.InRoom) myName = photonView.Owner.NickName;
-        if (logUI != null)
+        
+        if (PhotonNetwork.InRoom)
         {
-            logUI.AddHitLog(attacekrName,myName, weaponName);
+            myName = photonView.Owner.NickName;
+        }
+        else
+        {
+            if (logUI != null)
+            {
+                logUI.AddHitLog(attacekrName, myName, weaponName);
+            }
         }
 
         Debug.Log($"SET STAN : {GetName()}");
@@ -811,13 +825,13 @@ public class CarController : MonoBehaviourPunCallbacks
                     if (isMine)
                     {
                         result.UpdateRankUI(PlayerPrefs.GetString("PlayerName"), timer);
-
-                        //リザルトUIを表示開始
-                        result.StartCoroutines();
                     }
                     else result.UpdateRankUI(GetName(), timer);
                 }
             }
+
+            //リザルトUIを表示開始
+            if(isMine) result.StartCoroutines();
 
             //ゴール後自動走行のAIに切り替え
             ChangeToAutoDriver();
