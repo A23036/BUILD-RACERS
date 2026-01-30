@@ -78,11 +78,13 @@ public class CreateGimmic : MonoBehaviour
                 );
 
                 //所有者名の設定
-                var pv = obj.GetComponent<PhotonView>();
+                var pv = obj.GetComponentInChildren<PhotonView>();
                 if (partsId.ToString() == "Balloon")
                 {
-                    var wb = GetComponentInChildren<WaterBalloonExplosion>();
-                    wb.SetParentName(pv.Owner.NickName);
+                    //引数trueで非アクティブも検索
+                    WaterBalloonExplosion wb = obj.GetComponentInChildren<WaterBalloonExplosion>(true);
+                    if (wb != null) wb.SetParentName(pv.Owner.NickName);
+                    else Debug.LogError("ONLINE --- FAILED SET PARENT NAME");
                 }
             }
             else
@@ -93,8 +95,9 @@ public class CreateGimmic : MonoBehaviour
                 //所有者名の設定
                 if (partsId.ToString() == "Balloon")
                 {
-                    var wb = obj.GetComponentInChildren<WaterBalloonExplosion>();
-                    wb.SetParentName(PlayerPrefs.GetString("PlayerName"));
+                    WaterBalloonExplosion wb = obj.GetComponentInChildren<WaterBalloonExplosion>();
+                    if(wb != null) wb.SetParentName(PlayerPrefs.GetString("PlayerName"));
+                    else Debug.LogError("OFFLINE --- FAILED SET PARENT NAME");
                 }
             }
 

@@ -73,7 +73,9 @@ public class Parts : MonoBehaviour
         {
             partsData = Resources.Load<PartsBase>("PartsData/" + partsResourceName);
             if (partsData == null)
-                Debug.LogError($"PartsBase {partsResourceName} が見つかりません！");
+            {
+                //Debug.LogError($"PartsBase {partsResourceName} が見つかりません！");
+            }
         }
 
         // grid を初期化
@@ -400,6 +402,7 @@ public class Parts : MonoBehaviour
                 return;
             }
 
+            Debug.Log($"ID: {partsId} , scrPos: {screenPos} , setRot: {setRotation}");
             bool placed = createGimmick.TrySpawnAtScreenPosition(screenPos, partsId, setRotation);
 
             if (placed)
