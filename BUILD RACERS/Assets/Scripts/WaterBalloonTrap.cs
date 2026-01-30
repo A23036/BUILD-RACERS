@@ -1,5 +1,6 @@
-using UnityEngine;
+using Photon.Pun;
 using System.Collections;
+using UnityEngine;
 
 public class WaterBalloonTrap : MonoBehaviour
 {
@@ -243,6 +244,13 @@ public class WaterBalloonTrap : MonoBehaviour
 
         var car = other.GetComponentInParent<CarController>();
         if (car == null) return;
+
+        //攻撃者名を渡す
+        var photonView = GetComponentInChildren<PhotonView>();
+        if (PhotonNetwork.InRoom && photonView != null)
+        {
+            parentName = photonView.Owner.NickName;
+        }
 
         // ----------------------------
         // 設置中トラップ判定（爆発前）

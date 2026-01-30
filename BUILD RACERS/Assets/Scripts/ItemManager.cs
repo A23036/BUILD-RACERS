@@ -324,7 +324,7 @@ public class ItemManager : MonoBehaviour
                 );
 
                 //所有者名のセット
-                WaterBalloonTrap balloonTrap = balloon.GetComponent<WaterBalloonTrap>();
+                WaterBalloonTrap balloonTrap = balloon.GetComponentInChildren<WaterBalloonTrap>();
                 balloonTrap.SetParentName(balloon.GetComponentInChildren<PhotonView>().Owner.NickName);
             }
             else

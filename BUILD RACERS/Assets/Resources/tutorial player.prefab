@@ -698,6 +698,7 @@ MonoBehaviour:
   lapBlinkInterval: 0.3
   searchLimitTime: 20
   guideResetDelay: 2
+  killerEffect: {fileID: 0}
 --- !u!114 &2777997212412123024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -761,7 +762,7 @@ MonoBehaviour:
   accelerationWeight: 5
   antiStunWeight: 10
   maxCapacity: 25
-  rankedTable: {fileID: 11400000, guid: 3c4755182b27bca4db91370808b144d6, type: 2}
+  rankedTable: {fileID: 11400000, guid: 2d372db464062304c8f5f4ce151f7bf6, type: 2}
 --- !u!1 &8388995873041266228
 GameObject:
   m_ObjectHideFlags: 0

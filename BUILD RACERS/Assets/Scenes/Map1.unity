@@ -5526,7 +5526,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isConnect: 1
-  GenerateBotsNum: 7
+  GenerateBotsNum: 1
   DriverUI: {fileID: 179912703}
   EngineerUI: {fileID: 638005463}
   MonitorUI: {fileID: 930479138}
