@@ -907,8 +907,6 @@ public class CarController : MonoBehaviourPunCallbacks
                 }
             }
 
-            
-
             //　プレイヤー入力:Update()で取得した入力を使用
             motorInput = inputMotor;
             steerInput = inputSteer;
@@ -1310,24 +1308,31 @@ public class CarController : MonoBehaviourPunCallbacks
         {
             if (car == this) continue;
 
+            string lap = "",wp = "",angle = "";
+
             //ウェイポンとが同じならラップ数が多いほうが上位
             if (car.GetLapCount() > lapCount)
             {
+                lap = car.GetLapCount().ToString() + " > " + lapCount.ToString();
                 currentRank++;
             }
             //ウェイポイントが進んでるほうが上位
             else if (car.GetNearllyWpIdx(car.transform.position) > GetNearllyWpIdx(transform.position))
             {
+                wp = car.GetNearllyWpIdx(car.transform.position).ToString() + " > " + GetNearllyWpIdx(transform.position).ToString();
                 currentRank++;
             }
-            //ラップ数が同じなら角度が大きいほうが上位
-            else if (car.GetLapCount() == lapCount)
+            //角度が大きいほうが上位
+            else
             {
                 if (lapManager.NowAngle(car.transform.position) > lapManager.NowAngle(transform.position))
                 {
+                    angle = lapManager.NowAngle(car.transform.position).ToString("F1") + " > " + lapManager.NowAngle(transform.position).ToString("F1");
                     currentRank++;
                 }
             }
+
+            Debug.Log($"Comparing with {car.GetName()}: Lap({lap}), WP({wp}), Angle({angle})");
         }
     }
 
