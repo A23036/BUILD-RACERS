@@ -711,12 +711,6 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
-        if (!isGetCars)
-        {
-            cars = FindObjectsOfType<CarController>();
-            isGetCars = true;
-        }
-
         //時間計測
         if (state == State.Drive)
         {
@@ -1263,6 +1257,9 @@ public class CarController : MonoBehaviourPunCallbacks
     public void StateToDrive()
     {
         state = State.Drive;
+
+        cars = FindObjectsOfType<CarController>();
+        isGetCars = true;
     }
 
     [PunRPC]
@@ -1296,19 +1293,21 @@ public class CarController : MonoBehaviourPunCallbacks
     //順位更新
     public void UpdateRank()
     {
+        if (cars == null) return;
         //観戦者の時に作動しないように RPCがバッファされてるのでここで処理止める
         if (PlayerPrefs.GetInt("isMonitor") == 1) return;
 
-        if(rankText == null) return;
+        if (rankText == null) return;
 
         //全カートの角度とラップ数を取得　比較して順位を決定
         currentRank = 1;
+        
         Debug.Log($" === {cars.Length}台のカートで順位計算 === ");
         foreach (var car in cars)
         {
             if (car == this) continue;
 
-            string lap = "",wp = "",angle = "";
+            string lap = "", wp = "", angle = "";
 
             //ウェイポンとが同じならラップ数が多いほうが上位
             if (car.GetLapCount() > lapCount)
