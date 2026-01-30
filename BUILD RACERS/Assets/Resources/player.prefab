@@ -663,7 +663,7 @@ MonoBehaviour:
   miniMapFrame: {fileID: 8889516211707318824}
   MAXITEMNUM: 5
   accelerationPower: 0.5
-  speedPower: 0.05
+  speedPower: 0.2
   antiStunPower: 0.2
   stunEaseCurve:
     serializedVersion: 2

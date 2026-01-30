@@ -485,7 +485,7 @@ public class CarController : MonoBehaviourPunCallbacks
             PlayerPrefs.Save();
             WASDGuide.SetActive(true);
         }
-        else if(PlayerPrefs.GetInt(OptionPrefs.GUIDE_ENABLED) == 1　&& driverNum != -1)
+        else if(PlayerPrefs.GetInt(OptionPrefs.GUIDE_ENABLED) == 1　&& driverNum != -1 && driver == null)
         {
             WASDGuide.SetActive(true);
         }
@@ -1623,7 +1623,7 @@ public class CarController : MonoBehaviourPunCallbacks
             return;
         }
 
-        bool shouldPlay = speed > 90f;
+        bool shouldPlay = speed > 100f;
 
         if (shouldPlay)
         {
