@@ -238,11 +238,43 @@ public class CarController : MonoBehaviourPunCallbacks
     private PhotonView logUIpv;
 
     private bool isTutorial = false;
-
+    private RigidbodyConstraints savedConstraints;
 
     public void SetIsTutorial()
     {
         isTutorial = true;
+    }
+    public bool GetIsTutorial() => isTutorial;
+
+    public void SetState(State st)
+    {
+        state = st;
+        if (!isTutorial) return;
+
+        if (state == State.Stop)
+        {
+            HardStop();
+        }
+        if (state == State.Drive)
+        {
+            ResumeFromStop();
+        }
+    }
+
+    // 物理挙動を停止
+    private void HardStop()
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        savedConstraints = rb.constraints;
+        rb.constraints = RigidbodyConstraints.FreezeAll;
+    }
+
+    // 元に戻す
+    private void ResumeFromStop()
+    {
+        rb.constraints = savedConstraints;
+        rb.WakeUp();
     }
 
     public void AddPartsNum()
@@ -1221,6 +1253,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public void UpdateTimer()
     {
+        if(isTutorial) return;
         //オンラインならサーバー基準で計測
         if (PhotonNetwork.IsConnected && PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("raceStartTime", out object startTimeObj))
         {

@@ -1,9 +1,7 @@
 using Photon.Pun;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.Rendering;
-using UnityEngine.UIElements;
 
 public class ItemManager : MonoBehaviour
 {
@@ -43,6 +41,13 @@ public class ItemManager : MonoBehaviour
     CarController carController;
     private ItemUIManager itemUI;
 
+    // チュートリアル用アイテム取得通知
+    public event Action OnFirstItemAcquired;
+    private bool firstItemNotified = false;
+
+    // チュートリアル用アイテム使用通知
+    public event Action OnFirstItemUsed;
+    private bool firstItemUsedNotified = false;
 
     public int GetItemNum() => itemQueue.Count;
 
@@ -103,6 +108,9 @@ public class ItemManager : MonoBehaviour
             itemUI.RefreshFromQueue(new List<int>(itemQueue));
             PrintItemQueue();
         }
+
+        // 初回のみの通知
+        NotifyFirstItemIfNeeded();
     }
 
     // パッシブ追加(シングルプレイ)
@@ -165,9 +173,15 @@ public class ItemManager : MonoBehaviour
             nowItemCapacity -= itemWeightMap[(PartsID)id];
             Debug.Log("ItemCapacity : " + nowItemCapacity);
         }
-        
+
         // 使用フラグが立っていたらアイテム生成
-        if(isUse) SpawnItem((PartsID)id);
+        if (isUse)
+        {
+            SpawnItem((PartsID)id);
+
+            // 初回通知
+            NotifyFirstItemUsedIfNeeded();
+        }
 
         // アイテムUIの更新
         if (carController.isMine && carController.isRaceClear == false && itemUI != null)
@@ -224,20 +238,6 @@ public class ItemManager : MonoBehaviour
         }
 
         PartsID randomId = rankedTable.GetRandom(rank, type);
-        /*
-        switch (type)
-        {
-            case PartsType.Passive:
-                Debug.Log("Rank:" + rank + " GetPassive:" + randomId);
-                break;
-            case PartsType.Item:
-                Debug.Log("Rank:" + rank + " GetItem:" + randomId);
-                break;
-            case PartsType.Gimmick:
-                Debug.Log("Rank:" + rank + " GetGimmick:" + randomId);
-                break;
-        }\
-        */
         return randomId;
     }
 
@@ -426,5 +426,18 @@ public class ItemManager : MonoBehaviour
         passiveWeightMap[PartsID.Speed] = speedWeight;
         passiveWeightMap[PartsID.Acceleration] = accelerationWeight;
         passiveWeightMap[PartsID.AntiStun] = antiStunWeight;
+    }
+
+    private void NotifyFirstItemIfNeeded()
+    {
+        if (firstItemNotified) return;
+        firstItemNotified = true;
+        OnFirstItemAcquired?.Invoke();
+    }
+    private void NotifyFirstItemUsedIfNeeded()
+    {
+        if (firstItemUsedNotified) return;
+        firstItemUsedNotified = true;
+        OnFirstItemUsed?.Invoke();
     }
 }

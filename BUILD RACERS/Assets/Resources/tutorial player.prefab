@@ -760,6 +760,10 @@ MonoBehaviour:
   killerWeight: 15
   speedWeight: 5
   accelerationWeight: 5
+  antiStunWeight: 5
+  ItemCapacity: 25
+  PassiveCapacity: 15
+  rankedTable: {fileID: 11400000, guid: 3c4755182b27bca4db91370808b144d6, type: 2}
 --- !u!1 &8388995873041266228
 GameObject:
   m_ObjectHideFlags: 0
