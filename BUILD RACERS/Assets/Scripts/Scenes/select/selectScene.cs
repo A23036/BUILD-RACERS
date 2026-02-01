@@ -61,6 +61,7 @@ public class selectScene : baseScene
         GameObject inputField = GameObject.Find("InputField (TMP)");
         TMP_InputField input = inputField.GetComponent<TMP_InputField>();
         input.text = PlayerPrefs.GetString("PlayerName");
+        CheckKaigyo();
 
         debugMessage = GameObject.Find("DebugMessage").GetComponent<TextMeshProUGUI>();
         debugMessage.color = Color.black;
@@ -269,6 +270,36 @@ public class selectScene : baseScene
         {
             text.text = "準備OK!";
             text.color = Color.red;
+        }
+    }
+
+    //オンラインプレイのみUI崩れ防止　シングルなら許容
+    public void CheckKaigyo()
+    {
+        GameObject inputField = GameObject.Find("InputField (TMP)");
+        TMP_InputField input = inputField.GetComponent<TMP_InputField>();
+
+        //改行対策
+        string str = input.text;
+        Debug.Log("INPUT START");
+        for (int i = 0; i < str.Length - 1; i++)
+        {
+            if (str[i] == '\\')
+            {
+                switch (str[i + 1])
+                {
+                    case 'n':
+                    case 'r':
+                    case 't':
+                    case 'v':
+                    case 'f':
+                    case '0':
+                    case 'u':
+                        input.text = string.Empty;
+                        break;
+                }
+
+            }
         }
     }
 

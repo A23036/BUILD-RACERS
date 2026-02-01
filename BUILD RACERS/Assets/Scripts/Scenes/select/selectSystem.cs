@@ -402,6 +402,18 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         //ネームバーの色更新
         nameBar.color = colorPalette[colorNumber % playersCount];
+
+        //コメントの色更新
+        var comments = FindObjectsOfType<Comment>();
+        foreach(var comment in comments)
+        {
+            var cpv = comment.GetComponent<PhotonView>();
+            if(cpv.Owner.ActorNumber == photonView.Owner.ActorNumber)
+            {
+                var text = comment.GetComponentInChildren<TextMeshProUGUI>();
+                text.color = colorPalette[colorNumber % playersCount];
+            }
+        }
     }
 
     public void UpdateCheckmark()
