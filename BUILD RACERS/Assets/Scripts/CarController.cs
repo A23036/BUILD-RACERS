@@ -532,7 +532,7 @@ public class CarController : MonoBehaviourPunCallbacks
             PlayerPrefs.Save();
             WASDGuide.SetActive(true);
         }
-        else if(PlayerPrefs.GetInt(OptionPrefs.GUIDE_ENABLED) == 1　&& driverNum != -1 && driver == null)
+        else if(PlayerPrefs.GetInt(OptionPrefs.GUIDE_ENABLED) == 1　&& driverNum != -1 && driver == null　&& !isTutorial)
         {
             WASDGuide.SetActive(true);
         }

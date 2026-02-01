@@ -8,7 +8,7 @@ using System.Collections;
 using UnityEditor.Presets;
 #endif
 
-public enum TutorialState
+public enum dTutorialState
 {
     WelcomeText,
     EnjoyDrive,
@@ -37,11 +37,11 @@ public class driverTutorial : baseScene
 
     private CarController carController;
     private CarController botPlayer;
-    private TutorialState state;
+    private dTutorialState state;
 
     // 入力待ちフラグ
     private bool isWaitingInput = false;
-    private TutorialState pendingNextState;
+    private dTutorialState pendingNextState;
 
     // 初回アイテム入手フラグ監視用
     private ItemManager playerItemManager;
@@ -86,7 +86,7 @@ public class driverTutorial : baseScene
             fade.SetStartRange();
             fade.FadeOut(fadeOutDuration, () =>
             {
-                EnterState(TutorialState.WelcomeText);
+                EnterState(dTutorialState.WelcomeText);
             });
         }
     }
@@ -151,7 +151,7 @@ public class driverTutorial : baseScene
         }
     }
 
-    private void WaitForInputThenNext(TutorialState next)
+    private void WaitForInputThenNext(dTutorialState next)
     {
         pendingNextState = next;
         isWaitingInput = true;
@@ -168,7 +168,7 @@ public class driverTutorial : baseScene
         botPlayer.SetIsTutorial();
     }
 
-    private void EnterState(TutorialState next)
+    private void EnterState(dTutorialState next)
     {
         state = next;
 
@@ -177,52 +177,52 @@ public class driverTutorial : baseScene
 
         switch (state)
         {
-            case TutorialState.WelcomeText:
+            case dTutorialState.WelcomeText:
                 typer.Play("BUILD RACERSへようこそ！\nここでは「ドライバー」のおためしができます|\n", () =>
                 {
                     // 文字送り完了後、入力待ち→次へ
-                    WaitForInputThenNext(TutorialState.EnjoyDrive);
+                    WaitForInputThenNext(dTutorialState.EnjoyDrive);
                     BeginWaitForAdvance();
                 });
                 break;
 
-            case TutorialState.EnjoyDrive:
+            case dTutorialState.EnjoyDrive:
                 typer.Play("まずはカートを走らせてみましょう|", () =>
                 {
-                    WaitForInputThenNext(TutorialState.Driving);
+                    WaitForInputThenNext(dTutorialState.Driving);
                     BeginWaitForAdvance();
                 });
                 break;
 
-            case TutorialState.Driving:
+            case dTutorialState.Driving:
                 break;
-            case TutorialState.ItemInfo:
+            case dTutorialState.ItemInfo:
                 // アイテム説明テキスト
                 typer.Play("アイテムを入手しましたね！\n早速使ってみましょう|", () =>
                 {
-                    WaitForInputThenNext(TutorialState.ItemUsing);
+                    WaitForInputThenNext(dTutorialState.ItemUsing);
                     BeginWaitForAdvance();
                 });
                 break;
-            case TutorialState.ItemUsing:
+            case dTutorialState.ItemUsing:
                 break;
-            case TutorialState.ItemInfo2:
+            case dTutorialState.ItemInfo2:
                 // アイテム説明テキスト
                 typer.Play("アイテムには様々な種類があります\nチュートリアルで情報を確認できますよ|", () =>
                 {
-                    WaitForInputThenNext(TutorialState.FinishInfo);
+                    WaitForInputThenNext(dTutorialState.FinishInfo);
                     BeginWaitForAdvance();
                 });
                 break;
-            case TutorialState.FinishInfo:
+            case dTutorialState.FinishInfo:
                 // アイテム説明テキスト
                 typer.Play("チュートリアルはESCで終わることができます\n自由に走ってみましょう|", () =>
                 {
-                    WaitForInputThenNext(TutorialState.Quit);
+                    WaitForInputThenNext(dTutorialState.Quit);
                     BeginWaitForAdvance();
                 });
                 break;
-            case TutorialState.Quit:
+            case dTutorialState.Quit:
                 // ここでメニュー戻る等
                 // WaitForInputThenNext(...) でもOK
                 break;
@@ -230,18 +230,18 @@ public class driverTutorial : baseScene
     }
 
     // 入力が進んだ次にしたい処理をここに
-    private void OnAdvanceFromState(TutorialState current)
+    private void OnAdvanceFromState(dTutorialState current)
     {
         switch (current)
         {
-            case TutorialState.EnjoyDrive:
+            case dTutorialState.EnjoyDrive:
                 // テキスト消す
                 typer.ResetTyper(true);
                 // 走行開始
                 carController.SetState(State.Drive);
                 break;
 
-            case TutorialState.ItemInfo:
+            case dTutorialState.ItemInfo:
                 // テキスト消す
                 typer.ResetTyper(true);
                 // 走行開始
@@ -249,7 +249,7 @@ public class driverTutorial : baseScene
                 botPlayer.SetState(State.Drive);
                 break;
 
-            case TutorialState.FinishInfo:
+            case dTutorialState.FinishInfo:
                 // テキスト消す
                 typer.ResetTyper(true);
                 // 走行開始
@@ -271,12 +271,12 @@ public class driverTutorial : baseScene
         }
 
         // 今Driving中じゃなければ無視
-        if (state != TutorialState.Driving) return;
+        if (state != dTutorialState.Driving) return;
 
         // state更新 停止→説明
         carController.SetState(State.Stop);
         botPlayer.SetState(State.Stop);
-        EnterState(TutorialState.ItemInfo);
+        EnterState(dTutorialState.ItemInfo);
     }
 
     private void FirstItemUse()
@@ -290,7 +290,7 @@ public class driverTutorial : baseScene
         }
 
         // 「アイテム使用を促している状態の時だけ」反応させる
-        if (state != TutorialState.ItemUsing) return;
+        if (state != dTutorialState.ItemUsing) return;
 
         if (isTransitionScheduled) return;
         isTransitionScheduled = true;
@@ -303,7 +303,7 @@ public class driverTutorial : baseScene
         yield return new WaitForSeconds(2.0f);
 
         // もしこの間に別の状態へ行ってたら中止（保険）
-        if (state != TutorialState.ItemUsing) yield break;
+        if (state != dTutorialState.ItemUsing) yield break;
 
         // 画面上の入力待ち点滅などがあれば止める
         EndWaitForAdvance();
@@ -311,7 +311,7 @@ public class driverTutorial : baseScene
         // 次の説明へ
         carController.SetState(State.Stop);
         botPlayer.SetState(State.Stop);
-        EnterState(TutorialState.ItemInfo2);
+        EnterState(dTutorialState.ItemInfo2);
 
         afterUseCo = null;
     }

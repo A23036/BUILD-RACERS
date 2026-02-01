@@ -139,7 +139,15 @@ public class ItemBoxController : MonoBehaviour
                 }
                 else // エンジニアの時
                 {
-                    carController.SendParts(itemManager.GetRandomItem(carController.GetCurrentRank(), partsType));
+                    PartsID id = itemManager.GetRandomItem(carController.GetCurrentRank(), partsType);
+
+                    // エンジニアでもタイプはここで確定できる
+                    PartsType itemType = itemManager.GetPartsType(id);
+
+                    // ここで通知（順番固定）
+                    itemManager.NotifyFirstPartsTypeInOrder(itemType);
+
+                    carController.SendParts(id);
                     carController.AddPartsNum();
                 }
             }
