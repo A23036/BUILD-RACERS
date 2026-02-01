@@ -27,9 +27,21 @@ public class tutorialScene : baseScene
 
     public void PushDriverTestButton()
     {
+        // ガイド表示を有効化
+        PlayerPrefs.SetInt(OptionPrefs.GUIDE_ENABLED, 1);
         fade2.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("driver tutorial");
+        });
+    }
+
+    public void PushEngineerTestButton()
+    {
+        // ガイド表示を有効化
+        PlayerPrefs.SetInt(OptionPrefs.GUIDE_ENABLED, 1);
+        fade2.FadeIn(fadeInDuration, () =>
+        {
+            SceneManager.LoadScene("engineer tutorial");
         });
     }
 

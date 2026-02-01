@@ -45,8 +45,14 @@ public class ItemManager : MonoBehaviour
     public event Action OnFirstItemAcquired;
     private bool firstItemNotified = false;
 
-    // チュートリアル用アイテム使用通知
+    // ドライバーチュートリアル用：アイテム使用通知
     public event Action OnFirstItemUsed;
+
+    // エンジニアチュートリアル用：パーツタイプごとの初回通知
+    public event Action<PartsType> OnFirstPartsTypeAcquired;
+
+    // 次に通知すべきタイプ（順番が確定している前提）
+    private PartsType nextNotifyType = PartsType.Passive; 
     private bool firstItemUsedNotified = false;
 
     public int GetItemNum() => itemQueue.Count;
@@ -428,16 +434,33 @@ public class ItemManager : MonoBehaviour
         passiveWeightMap[PartsID.AntiStun] = antiStunWeight;
     }
 
+    // アイテム取得時通知
     private void NotifyFirstItemIfNeeded()
     {
         if (firstItemNotified) return;
         firstItemNotified = true;
         OnFirstItemAcquired?.Invoke();
     }
+
+    // アイテム使用時通知
     private void NotifyFirstItemUsedIfNeeded()
     {
         if (firstItemUsedNotified) return;
         firstItemUsedNotified = true;
         OnFirstItemUsed?.Invoke();
+    }
+
+    // パーツ取得時通知
+    public void NotifyFirstPartsTypeInOrder(PartsType type)
+    {
+        // 順番が確定しているので次に来るべきタイプ以外は無視
+        if (type != nextNotifyType) return;
+
+        OnFirstPartsTypeAcquired?.Invoke(type);
+
+        // 次に進める
+        if (nextNotifyType == PartsType.Passive) nextNotifyType = PartsType.Item;
+        else if (nextNotifyType == PartsType.Item) nextNotifyType = PartsType.Gimmick;
+        // Gimmickまで来たら以後は何もしない（固定でOK）
     }
 }
