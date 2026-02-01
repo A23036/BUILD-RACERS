@@ -22,6 +22,11 @@ public class driverTutorial : baseScene
     [SerializeField] private TextMeshProUGUI infoText;
     [SerializeField] private float waitBlinkInterval = 0.5f;
 
+    [Header("Fade")]
+    [SerializeField] private Fade fade;
+    [SerializeField] private float fadeInDuration = 0.8f;
+    [SerializeField] private float fadeOutDuration = 0.8f;
+
     private Coroutine waitBlinkCo;
     private string waitBlinkBaseText;
 
@@ -72,7 +77,15 @@ public class driverTutorial : baseScene
         preSceneName = "tutorial";
 
         typer = infoText.GetComponent<TextTyper>();
-        EnterState(TutorialState.WelcomeText);
+
+        if (fade != null)
+        {
+            fade.SetStartRange();
+            fade.FadeOut(fadeOutDuration, () =>
+            {
+                EnterState(TutorialState.WelcomeText);
+            });
+        }
     }
 
     private void OnDisable()
