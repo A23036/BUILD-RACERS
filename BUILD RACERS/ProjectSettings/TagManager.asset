@@ -19,6 +19,8 @@ TagManager:
   - TimerText
   - Ground
   - HideCanvas
+  - RocketRed
+  - RocketGreen
   layers:
   - Default
   - TransparentFX

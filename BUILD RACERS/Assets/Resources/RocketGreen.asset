@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fce287c95f7a20c4bae3b7106c60c8c7, type: 3}
-  m_Name: TestItemTable1
+  m_Name: RocketGreen
   m_EditorClassIdentifier: 
   rankMode: 0
   entries:
@@ -18,13 +18,13 @@ MonoBehaviour:
     rankMax: 8
     passive:
       items:
-      - id: 2
+      - id: 1
         weight: 1
     item:
       items:
-      - id: 2
+      - id: 1
         weight: 1
     gimmick:
       items:
-      - id: 2
+      - id: 1
         weight: 1

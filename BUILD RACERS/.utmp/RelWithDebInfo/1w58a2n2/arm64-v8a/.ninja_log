@@ -22,3 +22,5 @@
 1	1503	7914862770065772	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	fde3266172733ae3
 36	1554	7914862770533078	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	44293c4fa961aa00
 1554	1640	7914862771472181	C:/Users/Amore/Documents/Unity/BuildRacers/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1w58a2n2/obj/arm64-v8a/libgame.so	ab7f914c9bdf6df5
+5	311	7916320092369908	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	3da1d542d88aeb41
+311	427	7916320093550943	C:/Users/Amore/Documents/Unity/BuildRacers/BUILD RACERS/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/1w58a2n2/obj/arm64-v8a/libswappywrapper.so	a6e0cf2c39e33927

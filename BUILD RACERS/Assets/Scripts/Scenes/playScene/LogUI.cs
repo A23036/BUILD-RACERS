@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
-public class LogUI : MonoBehaviour
+public class LogUI : MonoBehaviourPunCallbacks
 {
     [Header("Settings")]
     [SerializeField] private GameObject logPrefab; // LogUIの下に生成するプレハブ
@@ -25,8 +25,22 @@ public class LogUI : MonoBehaviour
 
     private List<GameObject> activeHitLogs = new List<GameObject>();
 
+    private string pairName;
+
     void Update()
     {
+    }
+
+    [PunRPC]
+    public void RPC_SetPairName(string myname , string pName)
+    {
+        Debug.Log($"{myname} , {pName}");
+        Debug.Log($"{PlayerPrefs.GetString("PlayerName")}");
+
+        if (PlayerPrefs.GetString("PlayerName") != myname) return;
+        pairName = pName;
+
+        Debug.Log($"SET PAIR NAME LOG UI: {pairName}");
     }
 
     public void SpawnHitLog()
@@ -191,17 +205,22 @@ public class LogUI : MonoBehaviour
 
                 float brightness = 200f / 255f;
 
+                Debug.Log($"{PlayerPrefs.GetString("PlayerName")} , {pairName}");
+
                 //色の変更
-                if(AttackerName == victimName)
+                if(AttackerName == victimName || AttackerName == pairName || victimName == pairName)
                 {
+                    //自滅は黄色
                     img.color = new Color(150f / 255f, 150f / 255f, 0, brightness);
                 }
-                else if (AttackerName == PlayerPrefs.GetString("PlayerName"))
+                else if (AttackerName == PlayerPrefs.GetString("PlayerName") || AttackerName == pairName)
                 {
+                    //攻撃成功は緑色
                     img.color = new Color(0, 150f / 255f, 0 , brightness);
                 }
-                else if (victimName == PlayerPrefs.GetString("PlayerName"))
+                else if (victimName == PlayerPrefs.GetString("PlayerName") || victimName == pairName)
                 {
+                    //攻撃されたら赤色
                     img.color = new Color(150f / 255f , 0 , 0, brightness);
                 }
                 else

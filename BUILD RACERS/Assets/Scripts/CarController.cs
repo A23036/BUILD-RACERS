@@ -1,14 +1,15 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections.Generic;
+using PW;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using System.Linq;
-using PW;
 
 public enum State // カートの状態
 {
@@ -311,13 +312,6 @@ public class CarController : MonoBehaviourPunCallbacks
         PlayFireEffect();
     }
 
-    [PunRPC]
-    public void RPC_SetStun(StunType type, string attacekrName, string weaponName , int targetId)
-    {
-        if(photonView.ViewID != targetId) return;
-        SetStun(type , attacekrName , weaponName);
-    }
-
     public void SetStun(StunType type , string attacekrName, string weaponName)
     {
         if (state == State.Stun) return;
@@ -358,21 +352,27 @@ public class CarController : MonoBehaviourPunCallbacks
 
         //ヒット通知
         string myName;
-        if (isMine)
-        {
-            myName = PlayerPrefs.GetString("PlayerName");
-        }
-        else
-        {
-            myName = GetName();
-        }
         
         if (PhotonNetwork.InRoom)
         {
             myName = photonView.Owner.NickName;
+
+            if (logUI != null)
+            {
+                logUIpv.RPC("RPC_AddHitLog", RpcTarget.All, attacekrName, myName, weaponName);
+            }
         }
         else
         {
+            if (isMine)
+            {
+                myName = PlayerPrefs.GetString("PlayerName");
+            }
+            else
+            {
+                myName = GetName();
+            }
+
             if (logUI != null)
             {
                 logUI.AddHitLog(attacekrName, myName, weaponName);
@@ -588,6 +588,8 @@ public class CarController : MonoBehaviourPunCallbacks
                         startPosPv.RPC("RPC_NotifyDriverConnected", RpcTarget.AllBuffered , photonView.ViewID);
 
                         isNotifyDriverConnected = true;
+
+                        logUIpv.RPC("RPC_SetPairName", RpcTarget.All, pairPhotonView.Owner.NickName,photonView.Owner.NickName);
                     }
                 }
             }
@@ -1335,8 +1337,6 @@ public class CarController : MonoBehaviourPunCallbacks
                     currentRank++;
                 }
             }
-
-            Debug.Log($"Comparing with {car.GetName()}: Lap({lap}), WP({wp}), Angle({angle})");
         }
     }
 
@@ -1468,7 +1468,7 @@ public class CarController : MonoBehaviourPunCallbacks
     //接触がコインならカウント
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Coin"))
+        if (tag == "Coin")
         {
             Coin coinScript = other.GetComponent<Coin>();
             if (coinScript.isCnt == false)
@@ -1480,6 +1480,45 @@ public class CarController : MonoBehaviourPunCallbacks
                 if (PhotonNetwork.IsConnected && !photonView.IsMine || driver != null) return;
                 coinText.text = $"{coinCnt:D4}";
             }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //オンラインの当たり判定
+        if (PhotonNetwork.InRoom == false) return;
+        if (!photonView.IsMine) return;
+
+        string tag = collision.gameObject.tag;
+
+        Debug.Log($"OnCollisionEnter: {tag}");
+
+        switch (tag)
+        {
+            case "RocketGreen":
+            case "RocketRed":
+
+                //削除命令
+                var pv = collision.gameObject.GetComponent<PhotonView>();
+                if (pv != null)
+                {
+                    pv.RPC("RPC_HitAndDestroy", RpcTarget.All);
+                }
+
+                //スタンタイプの設定
+                StunType stunType = StunType.Light;
+                switch (tag)
+                {
+                    case "WaterBalloonExplosion":
+                    case "WaterBalloonTrap":
+                        stunType = StunType.Heavy;
+                        break;
+                }
+
+                //スタン状態付与
+                SetStun(stunType, pv.Owner.NickName, tag);
+
+                break;
         }
     }
 
