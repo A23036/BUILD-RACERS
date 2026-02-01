@@ -3,7 +3,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+
+#if UNITY_EDITOR
 using UnityEditor.Presets;
+#endif
 
 public enum TutorialState
 {
