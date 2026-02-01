@@ -191,6 +191,15 @@ public class Engineer : MonoBehaviourPunCallbacks
 
                         // ペアのドライバーのミニマップ上強調UIを有効化
                         car.SetMapFrame();
+
+                        var logUI = FindObjectOfType<LogUI>();
+                        PhotonView logUIpv = null;
+                        if (logUI != null)
+                        {
+                            logUIpv = logUI.GetComponent<PhotonView>();
+                        }
+
+                        logUIpv.RPC("RPC_SetPairName", RpcTarget.All, pairPhotonView.Owner.NickName, photonView.Owner.NickName);
                     }
                 }
             }

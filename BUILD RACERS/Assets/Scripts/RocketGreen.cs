@@ -1,7 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 
-public class RocketGreen : MonoBehaviour
+public class RocketGreen : MonoBehaviourPunCallbacks , IPunObservable
 {
     // Inspectorで速度を設定できるように public にします
     public float speed = 50f;
@@ -32,10 +32,10 @@ public class RocketGreen : MonoBehaviour
 
     private string parentName = "";
 
+    private bool isDestroyed = false;
+
     void Start()
     {
-        // 破壊タイマーを開始
-        Destroy(gameObject, lifeTime);
         // 初期の反射回数を設定
         currentReflectCount = maxReflectCount;
         // 初期の移動方向をローカルの上方向（Z軸）に設定
@@ -44,6 +44,27 @@ public class RocketGreen : MonoBehaviour
 
     void Update()
     {
+        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
+
+        //タイマー更新
+        lifeTime -= Time.deltaTime;
+        if (lifeTime <= 0f)
+        {
+            if (photonView.IsMine)
+            {
+                photonView.RPC("RPC_HitAndDestroy", RpcTarget.All);
+            }
+            else if (!PhotonNetwork.InRoom)
+            {
+                // エフェクトを再生
+                PlayDestroyEffect();
+
+                Destroy(gameObject);
+            }
+
+            return;
+        }
+
         // 高さ維持処理
         MaintainHeight();
 
@@ -122,33 +143,41 @@ public class RocketGreen : MonoBehaviour
         {
             return;
         }
-        else
+        // ヒットしたのがPlayerだった時　オフラインのみ
+        else if (collision.gameObject.CompareTag("Player"))
         {
-            // ヒットしたのがPlayerだった時
-            if (collision.gameObject.CompareTag("Player"))
+            //オンラインは相手目線で処理
+            if (PhotonNetwork.InRoom) return;
+
+            var car = collision.gameObject.GetComponentInParent<CarController>();
+
+            if (car != null)
             {
-                var car = collision.gameObject.GetComponentInParent<CarController>();
+                // ヒットしたPlayerに軽程度のスタン状態を設定
+                car.SetStun(StunType.Light, parentName, GetType().Name);
 
-                if (car != null)
-                {
-                    //攻撃者名を渡す
-                    var photonView = GetComponent<PhotonView>();
-                    if(PhotonNetwork.InRoom && photonView != null) 
-                    {
-                        parentName = photonView.Owner.NickName;
-                    }
+                // ロケットを破壊
+                Destroy(gameObject);
 
-                    // ヒットしたPlayerに軽程度のスタン状態を設定
-                    car.SetStun(StunType.Light,parentName,GetType().Name);
-
-                    Debug.Log($"HIT ROCKET : {car.GetName()}");
-                }
+                Debug.Log($"HIT ROCKET : {car.GetName()}");
             }
 
             // エフェクトを再生
             PlayDestroyEffect();
-            // ロケットを破壊
-            Destroy(gameObject);
+        }
+        else
+        {
+            if(PhotonNetwork.InRoom)
+            {
+                photonView.RPC("RPC_HitAndDestroy", RpcTarget.All);
+            }
+            else
+            {
+                // エフェクトを再生
+                PlayDestroyEffect();
+                // ロケットを破壊
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -160,5 +189,35 @@ public class RocketGreen : MonoBehaviour
     public string GetParentName()
     {
         return parentName;
+    }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // ロケットの位置と回転を送信
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+        }
+        else
+        {
+            // ロケットの位置と回転を受信
+            Vector3 receivedPosition = (Vector3)stream.ReceiveNext();
+            Quaternion receivedRotation = (Quaternion)stream.ReceiveNext();
+            // 受信した位置と回転を適用
+            transform.position = receivedPosition;
+            transform.rotation = receivedRotation;
+        }
+    }
+
+    [PunRPC]
+    public void RPC_HitAndDestroy()
+    {
+        //複数回呼び出されないように
+        if (isDestroyed) return;
+        isDestroyed = true;
+
+        // エフェクトを再生
+        PlayDestroyEffect();
+        if (photonView.IsMine) PhotonNetwork.Destroy(gameObject);
     }
 }

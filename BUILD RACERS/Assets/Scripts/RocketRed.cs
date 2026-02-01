@@ -42,6 +42,8 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
 
     private string parentName = "";
 
+    private bool isDestroyed = false;
+
     // 生成者をセット
     public void SetOwner(Transform owner)
     {
@@ -64,15 +66,15 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
         lifeTime -= Time.deltaTime;
         if(lifeTime <= 0f)
         {
-            // エフェクトを再生
-            PlayDestroyEffect();
-
             if (photonView.IsMine)
             {
-                PhotonNetwork.Destroy(gameObject);
+                photonView.RPC("RPC_HitAndDestroy", RpcTarget.All);
             }
-            else
+            else if(!PhotonNetwork.InRoom)
             {
+                // エフェクトを再生
+                PlayDestroyEffect();
+
                 Destroy(gameObject);
             }
 
@@ -229,6 +231,8 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
     // ★ 衝突処理 ★
     void OnCollisionEnter(Collision collision)
     {
+        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
+
         // ★ Wallタグの壁に当たった場合のみ反射 ★
         if (collision.gameObject.CompareTag("Wall"))
         {
@@ -259,36 +263,22 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
         {
             return;
         }
-        // ヒットしたのがPlayerだった時　オフラインのみ　オンラインは相手目線で処理
-        else if (collision.gameObject.CompareTag("Player")/* && PhotonNetwork.InRoom == false*/)
+        // ヒットしたのがPlayerだった時　オフラインのみ
+        else if (collision.gameObject.CompareTag("Player"))
         {
+            //オンラインは相手目線で処理
+            if (PhotonNetwork.InRoom) return;
+
             var car = collision.gameObject.GetComponentInParent<CarController>();
 
             if (car != null)
             {
-                //攻撃者名を渡す
-                var photonView = GetComponent<PhotonView>();
-                if (PhotonNetwork.InRoom && photonView != null)
-                {
-                    parentName = photonView.Owner.NickName;
-                }
+                // ヒットしたPlayerに軽程度のスタン状態を設定
+                car.SetStun(StunType.Light, parentName, GetType().Name);
 
-                // ヒットしたPlayerに軽程度のスタン状態を設定 一時無効化 2026.0130
-                if(PhotonNetwork.InRoom && false)
-                {
-                    photonView.RPC("SetStunRPC", RpcTarget.All, StunType.Light, parentName, GetType().Name, car.photonView.ViewID);
+                // ロケットを破壊
+                Destroy(gameObject);
 
-                    // ロケットを破壊
-                    Invoke("PhotonNetwork.Destroy(gameObject)",0.5f);
-                }
-                else
-                {
-                    car.SetStun(StunType.Light, parentName, GetType().Name);
-
-                    // ロケットを破壊
-                    Destroy(gameObject);
-                }
-                
                 Debug.Log($"HIT ROCKET : {car.GetName()}");
             }
 
@@ -297,11 +287,20 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
 
             Debug.Log("[redrocket]not wall");
         }
-    }
-
-    public void HitAndDestroy()
-    {
-
+        else
+        {
+            if(PhotonNetwork.InRoom)
+            {
+                photonView.RPC("RPC_HitAndDestroy", RpcTarget.All);
+            }
+            else
+            {
+                // エフェクトを再生
+                PlayDestroyEffect();
+                // ロケットを破壊
+                Destroy(gameObject);
+            }
+        }
     }
 
     public void SetParentName(string name)
@@ -331,5 +330,17 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
             transform.position = receivedPosition;
             transform.rotation = receivedRotation;
         }
+    }
+
+    [PunRPC]
+    public void RPC_HitAndDestroy()
+    {
+        //複数回呼び出されないように
+        if(isDestroyed) return;
+        isDestroyed = true;
+
+        // エフェクトを再生
+        PlayDestroyEffect();
+        if (photonView.IsMine) PhotonNetwork.Destroy(gameObject);
     }
 }

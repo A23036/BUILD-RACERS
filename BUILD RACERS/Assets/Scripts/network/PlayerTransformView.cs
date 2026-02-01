@@ -115,9 +115,6 @@ public class PlayerTransformView : MonoBehaviourPunCallbacks, IPunObservable
             Mathf.Clamp(targetBackTime, minBackTime, maxBackTime),
             adjustSpeed
         );
-
-        // デバッグ表示（必要に応じて）
-        Debug.Log($"Jitter: {jitter*1000:F1}ms, BackTime: {interpolationBackTime:F1}ms , targetBackTime: {targetBackTime:F1}");
     }
 
     private void InterpolatePosition(double renderTime)

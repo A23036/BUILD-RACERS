@@ -71,6 +71,8 @@ MonoBehaviour:
   - RPC_SyncLapCount
   - RPC_SetStun
   - RPC_AddHitLog
+  - RPC_HitAndDestroy
+  - RPC_SetPairName
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

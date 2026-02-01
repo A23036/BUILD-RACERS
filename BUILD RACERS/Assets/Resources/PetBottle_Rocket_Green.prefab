@@ -284,9 +284,10 @@ GameObject:
   - component: {fileID: 2776085554063711493}
   - component: {fileID: 9009822115311803653}
   - component: {fileID: -7883072595586734296}
+  - component: {fileID: 5743234105239805649}
   m_Layer: 0
   m_Name: PetBottle_Rocket_Green
-  m_TagString: Untagged
+  m_TagString: RocketGreen
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -397,10 +398,31 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 2776085554063711493}
+  - {fileID: 5743234105239805649}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &5743234105239805649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261097858096690942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f347b57b189b36e4ca7907ccfb56ab3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useInterpolation: 1
+  useExtrapolation: 0
+  interpolationBackTime: 100
+  autoOptBackTime: 1
+  minBackTime: 10
+  maxBackTime: 2000
+  serializationRate: 30
 --- !u!1 &3439908302592947490
 GameObject:
   m_ObjectHideFlags: 0
