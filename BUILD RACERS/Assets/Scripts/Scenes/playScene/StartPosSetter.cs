@@ -36,6 +36,11 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject readyUIObj;
     private readyUI readyUI;
 
+    [Header("Fade")]
+    [SerializeField] private Fade fade;
+    [SerializeField] private float fadeInDuration = 0.8f;
+    [SerializeField] private float fadeOutDuration = 0.8f;
+
     private void Awake()
     {
         //ドライバーのスタート地点を取得
@@ -71,6 +76,9 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
             Invoke(nameof(DriverStart), untilStartTime + 3f);
         }
         //*/
+
+        //白い画面から始める
+        fade.SetStartRange();
     }
 
     // Update is called once per frame
@@ -161,6 +169,13 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         foreach(var cc in karts)
         {
             if(!cc.isMine) continue;
+
+            //フェードアウト
+            if (fade != null)
+            {
+                fade.FadeOut(fadeOutDuration);
+            }
+
             var pv = cc.GetComponent<PhotonView>();
             if(pv.ViewID == d_id)
             {
@@ -180,6 +195,13 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         foreach (var eng in engineers)
         {
             var pv = eng.GetComponent<PhotonView>();
+
+            //フェードアウト
+            if (fade != null)
+            {
+                fade.FadeOut(fadeOutDuration);
+            }
+
             if (!pv.IsMine) continue;
             if (pv.ViewID == e_id)
             {
@@ -258,6 +280,12 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
                 Debug.Log($"=== Set StartPos Drivers (Offline) {kart.GetName()} , {kart.transform.position} ===");
             }
             readyUI.StartReadyImage();
+
+            //フェードアウト
+            if (fade != null)
+            {
+                fade.FadeOut(fadeOutDuration);
+            }
         }
 
         else if (PhotonNetwork.IsMasterClient)

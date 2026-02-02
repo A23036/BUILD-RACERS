@@ -75,7 +75,11 @@ public class singleScene : baseScene
 
         //シングルプレイへ
         var ms = mapSelector.GetComponent<MapSelector>();
-        SceneManager.LoadScene(ms.GetSceneName());
+
+        fade.FadeIn(fadeInDuration, () =>
+        {
+            SceneManager.LoadScene(ms.GetSceneName());
+        });
     }
 
     public void PushBackButton()
