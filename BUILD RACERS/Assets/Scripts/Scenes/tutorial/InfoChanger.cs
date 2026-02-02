@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,6 +6,7 @@ public class InfoChanger : MonoBehaviour
 {
     [SerializeField] private AudioClip clickSe; // クリック音
     [SerializeField] private AudioClip fileSe;  // ファイル音
+    [SerializeField] private TextMeshProUGUI treeText;
     private bool isFirst = true;
 
     [System.Serializable]
@@ -16,6 +18,9 @@ public class InfoChanger : MonoBehaviour
         [Header("Button Sprites")]
         public Sprite normalSprite;
         public Sprite selectedSprite;
+
+        [Header("CurrentTree")]
+        public string currentTree;
     }
 
     [SerializeField] private Tab[] tabs;
@@ -53,6 +58,7 @@ public class InfoChanger : MonoBehaviour
 
             // Info 表示切り替え
             tabs[i].infoPanel.SetActive(isSelected);
+            treeText.text = tabs[index].currentTree;
 
             // Button 画像切り替え
             UpdateButtonSprite(tabs[i], isSelected);
