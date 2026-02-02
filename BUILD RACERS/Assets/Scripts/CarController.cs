@@ -107,7 +107,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI speedText;  // 速度表示テキスト
-    [SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
+    //[SerializeField] private TextMeshProUGUI coinText;  // コイン枚数表示テキスト
     [SerializeField] private TextMeshProUGUI lapText;  // 周回数表示テキスト
     [SerializeField] private TextMeshProUGUI rankText;  // 順位表示テキスト
     [SerializeField] private TextMeshProUGUI timerText;  // タイム表示テキスト
@@ -436,7 +436,7 @@ public class CarController : MonoBehaviourPunCallbacks
         if (joystick != null) variableJoystick = joystick.GetComponent<Joystick>();
 
         speedText = InitText(speedText, "SpeedText");
-        coinText = InitText(coinText, "coinText");
+        //coinText = InitText(coinText, "coinText");
         lapText = InitText(lapText, "LapText");
         rankText = InitText(rankText, "RankText");
         timerText = InitText(timerText, "TimerText");
@@ -1511,7 +1511,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
                 //自分以外ならテキストの更新はしない
                 if (PhotonNetwork.IsConnected && !photonView.IsMine || driver != null) return;
-                coinText.text = $"{coinCnt:D4}";
+                //coinText.text = $"{coinCnt:D4}";
             }
         }
     }
