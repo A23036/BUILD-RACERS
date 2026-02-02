@@ -235,6 +235,7 @@ public class selectScene : baseScene
 
             fade.FadeIn(fadeInDuration, () =>
             {
+                SoundManager.Instance.StopBGM(0.8f);
                 SceneManager.LoadScene(playSceneName);
             });
         }

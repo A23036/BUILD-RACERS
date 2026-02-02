@@ -1068,9 +1068,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1361066735}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
-  m_Value: 1
+  m_MaxValue: 20
+  m_WholeNumbers: 1
+  m_Value: 20
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2226,6 +2226,9 @@ MonoBehaviour:
   fade: {fileID: 124802446}
   fadeInDuration: 0.3
   fadeOutDuration: 0.3
+  bgmSlider: {fileID: 490037096}
+  seSlider: {fileID: 2016448078}
+  adjustSe: {fileID: 8300000, guid: b8407b887886c5043a4feb379a874244, type: 3}
 --- !u!4 &1772925281
 Transform:
   m_ObjectHideFlags: 0
@@ -2427,9 +2430,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1565647633}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
-  m_Value: 1
+  m_MaxValue: 20
+  m_WholeNumbers: 1
+  m_Value: 20
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
