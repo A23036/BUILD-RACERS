@@ -33,6 +33,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] private Vector3 offset;
     [SerializeField] private bool gamingColor;
+    [SerializeField] private AudioClip selectSe;
 
     private IconManager im;
     private List<Transform> driverIcons;
@@ -312,6 +313,7 @@ public class selectSystem : MonoBehaviourPunCallbacks, IPunObservable
                 oldkey = pendingkey;
                 key = pendingkey;
 
+                SoundManager.Instance.PlaySE(selectSe);
                 Debug.Log($"Slot acquired: {pendingkey}");
             }
             // ‘¼‚Ìl‚ªæ“¾‚µ‚½A‚Ü‚½‚Ínull‚É‚È‚Á‚½

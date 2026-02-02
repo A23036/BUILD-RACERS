@@ -4092,7 +4092,9 @@ MonoBehaviour:
   CreateUI: {fileID: 18347124}
   PassInputer: {fileID: 773987221}
   backSe: {fileID: 8300000, guid: 2d4df9a6abeb1d945ac5764704818597, type: 3}
-  createSe: {fileID: 8300000, guid: a04effed6a83fa34ca3079749c5139af, type: 3}
+  openMenuSe: {fileID: 8300000, guid: a04effed6a83fa34ca3079749c5139af, type: 3}
+  changeValueSe: {fileID: 8300000, guid: 0b44d08a63de9da4db7f6c6a96925a93, type: 3}
+  creatRoomSe: {fileID: 8300000, guid: 54b70c740451b374f9a6117b2e6161de, type: 3}
   duration: 1
   fade: {fileID: 907633487}
   fadeInDuration: 0.3

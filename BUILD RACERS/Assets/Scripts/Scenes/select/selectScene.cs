@@ -56,6 +56,8 @@ public class selectScene : baseScene
 
     [Header("Sound")]
     [SerializeField] private AudioClip backSe; // 戻る音
+    [SerializeField] private AudioClip readySe; // 準備完了音
+    [SerializeField] private AudioClip cancelSe; // キャンセル音
     private bool isClicked = false;
 
 
@@ -271,11 +273,13 @@ public class selectScene : baseScene
         {
             text.text = "キャンセル";
             text.color = Color.black;
+            SoundManager.Instance.PlaySE(readySe);
         }
         else
         {
             text.text = "準備OK!";
             text.color = Color.red;
+            SoundManager.Instance.PlaySE(cancelSe);
         }
     }
 

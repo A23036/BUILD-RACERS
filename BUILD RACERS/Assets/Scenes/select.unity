@@ -312,6 +312,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: 7
   builderNum: -1
+  selectSe: {fileID: 0}
 --- !u!1 &112256569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1877,6 +1878,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: 5
   builderNum: -1
+  selectSe: {fileID: 0}
 --- !u!1 &291495597
 GameObject:
   m_ObjectHideFlags: 0
@@ -2099,6 +2101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: -1
   builderNum: 1
+  selectSe: {fileID: 0}
 --- !u!114 &342909079 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 11491604, guid: 53c22e1773be7f84aad8ed8b7b58fa6e, type: 3}
@@ -2365,6 +2368,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: 2
   builderNum: -1
+  selectSe: {fileID: 0}
 --- !u!1 &400890080
 GameObject:
   m_ObjectHideFlags: 0
@@ -2512,6 +2516,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: -1
   builderNum: 5
+  selectSe: {fileID: 0}
 --- !u!1 &409984687
 GameObject:
   m_ObjectHideFlags: 0
@@ -3199,6 +3204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: 4
   builderNum: -1
+  selectSe: {fileID: 0}
 --- !u!1 &541314337
 GameObject:
   m_ObjectHideFlags: 0
@@ -4119,6 +4125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: 6
   builderNum: -1
+  selectSe: {fileID: 0}
 --- !u!1 &859659633
 GameObject:
   m_ObjectHideFlags: 0
@@ -5012,6 +5019,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: -1
   builderNum: 0
+  selectSe: {fileID: 0}
 --- !u!1 &1100047137
 GameObject:
   m_ObjectHideFlags: 0
@@ -5689,6 +5697,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: -1
   builderNum: 2
+  selectSe: {fileID: 0}
 --- !u!1 &1202992985
 GameObject:
   m_ObjectHideFlags: 0
@@ -5972,6 +5981,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: 1
   builderNum: -1
+  selectSe: {fileID: 0}
 --- !u!1 &1211142762
 GameObject:
   m_ObjectHideFlags: 0
@@ -8659,6 +8669,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: 3
   builderNum: -1
+  selectSe: {fileID: 0}
 --- !u!1 &1642387244
 GameObject:
   m_ObjectHideFlags: 0
@@ -8849,6 +8860,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: 0
   builderNum: -1
+  selectSe: {fileID: 0}
 --- !u!1 &1672723480
 GameObject:
   m_ObjectHideFlags: 0
@@ -9257,6 +9269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: -1
   builderNum: 6
+  selectSe: {fileID: 0}
 --- !u!1 &1758510911
 GameObject:
   m_ObjectHideFlags: 0
@@ -9980,6 +9993,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: -1
   builderNum: 7
+  selectSe: {fileID: 0}
 --- !u!1 &1901859020
 GameObject:
   m_ObjectHideFlags: 0
@@ -10284,6 +10298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: -1
   builderNum: 4
+  selectSe: {fileID: 0}
 --- !u!1 &1946851293
 GameObject:
   m_ObjectHideFlags: 0
@@ -10907,6 +10922,8 @@ MonoBehaviour:
   fadeInDuration: 0.3
   fadeOutDuration: 0.3
   backSe: {fileID: 8300000, guid: 2d4df9a6abeb1d945ac5764704818597, type: 3}
+  readySe: {fileID: 8300000, guid: 72fdd4acee439d14d89f20f01e8c1389, type: 3}
+  cancelSe: {fileID: 8300000, guid: 0b44d08a63de9da4db7f6c6a96925a93, type: 3}
 --- !u!4 &2054180459
 Transform:
   m_ObjectHideFlags: 0
@@ -11069,6 +11086,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: -1
   builderNum: 3
+  selectSe: {fileID: 0}
 --- !u!1 &2099524286
 GameObject:
   m_ObjectHideFlags: 0

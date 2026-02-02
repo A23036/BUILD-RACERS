@@ -1331,6 +1331,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: -1
   builderNum: 0
+  selectSe: {fileID: 8300000, guid: 37a9eee7bf2bb4047a3e77eceb5e1f9d, type: 3}
 --- !u!114 &615369664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2959,6 +2960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   driverNum: 0
   builderNum: -1
+  selectSe: {fileID: 8300000, guid: 37a9eee7bf2bb4047a3e77eceb5e1f9d, type: 3}
 --- !u!114 &1452436505
 MonoBehaviour:
   m_ObjectHideFlags: 0
