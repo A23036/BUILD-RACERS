@@ -55,6 +55,11 @@ public class engineerTutorial : baseScene
 
     private void Awake()
     {
+        // 状態の初期化
+        PlayerPrefs.SetInt("driverNum", -1);
+        PlayerPrefs.SetInt("engineerNum", 1);
+        PlayerPrefs.SetInt("isMonitor", 0);
+
         //相方ドライバーの生成（CPU）
         var cpu = Instantiate(Resources.Load("tutorial player"), new Vector3(0, 0, -5), Quaternion.identity);
         carController = cpu.GetComponent<CarController>();
@@ -81,10 +86,6 @@ public class engineerTutorial : baseScene
         // 初期状態では停止
         carController.SetState(State.Stop);
 
-        // 状態の初期化
-        PlayerPrefs.SetInt("driverNum", -1);
-        PlayerPrefs.SetInt("engineerNum", 1);
-        PlayerPrefs.SetInt("isMonitor", 0);
     }
 
     void Start()
@@ -227,7 +228,7 @@ public class engineerTutorial : baseScene
                 break;
 
             case eTutorialState.FinishInfo:
-                typer.Play("チュートリアルはESCで終わることができます\n自由にパーツ配置をしてみましょう|", () =>
+                typer.Play("チュートリアルはESCで終わることができます\nパーツ配置を試してみましょう|", () =>
                 {
                     WaitForInputThenNext(eTutorialState.Quit);
                     BeginWaitForAdvance();

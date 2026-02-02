@@ -45,6 +45,9 @@ EditorBuildSettings:
     path: Assets/Scenes/driver tutorial.unity
     guid: e4a1ad106e9f3c64d86b3aba94e477af
   - enabled: 1
+    path: Assets/Scenes/engineer tutorial.unity
+    guid: e3123675c77c6d94c8b5f032e5ec7a9e
+  - enabled: 1
     path: Assets/Scenes/Map1.unity
     guid: 9bc0771b834e5b24e8cf04326d1767de
   - enabled: 1
