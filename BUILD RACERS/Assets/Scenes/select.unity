@@ -6832,6 +6832,7 @@ GameObject:
   - component: {fileID: 1343494707}
   - component: {fileID: 1343494706}
   - component: {fileID: 1343494705}
+  - component: {fileID: 1343494709}
   m_Layer: 5
   m_Name: MapSelector
   m_TagString: Untagged
@@ -6987,6 +6988,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1343494703}
   m_CullTransparentMesh: 1
+--- !u!114 &1343494709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1343494703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e6418cfb6b2da7418585d73f874c16a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  openSe: {fileID: 8300000, guid: 8e0933bb2a1a9884c86fb33ad0561ab9, type: 3}
+  closeSe: {fileID: 8300000, guid: 40b6774947a7d164abef7f74685ac49e, type: 3}
 --- !u!1 &1347553424
 GameObject:
   m_ObjectHideFlags: 0
@@ -10891,6 +10906,7 @@ MonoBehaviour:
   fade: {fileID: 342909079}
   fadeInDuration: 0.3
   fadeOutDuration: 0.3
+  backSe: {fileID: 8300000, guid: 2d4df9a6abeb1d945ac5764704818597, type: 3}
 --- !u!4 &2054180459
 Transform:
   m_ObjectHideFlags: 0

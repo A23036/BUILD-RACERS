@@ -4091,6 +4091,8 @@ MonoBehaviour:
   isConnect: 1
   CreateUI: {fileID: 18347124}
   PassInputer: {fileID: 773987221}
+  backSe: {fileID: 8300000, guid: 2d4df9a6abeb1d945ac5764704818597, type: 3}
+  createSe: {fileID: 8300000, guid: a04effed6a83fa34ca3079749c5139af, type: 3}
   duration: 1
   fade: {fileID: 907633487}
   fadeInDuration: 0.3
@@ -5215,7 +5217,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1653713006}
   m_HandleRect: {fileID: 1653713005}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

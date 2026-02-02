@@ -940,6 +940,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poseUI: {fileID: 825823427}
+  openSe: {fileID: 8300000, guid: a04effed6a83fa34ca3079749c5139af, type: 3}
+  exitSe: {fileID: 8300000, guid: 2d4df9a6abeb1d945ac5764704818597, type: 3}
   duration: 0.2
 --- !u!4 &389424679
 Transform:
@@ -4571,6 +4573,8 @@ MonoBehaviour:
   isConnect: 0
   infoText: {fileID: 1290639272}
   waitBlinkInterval: 0.5
+  tutorialBGM: {fileID: 8300000, guid: 85bc87ed2a9b2c34e96d817b6178bc7d, type: 3}
+  textSe: {fileID: 8300000, guid: 3ea317c26aa52e444b09b2ce9a8fa555, type: 3}
   fade: {fileID: 1156871823}
   fadeInDuration: 0.8
   fadeOutDuration: 0.8

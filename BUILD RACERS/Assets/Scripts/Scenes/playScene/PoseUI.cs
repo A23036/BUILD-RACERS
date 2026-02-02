@@ -12,6 +12,11 @@ public class PoseUI : MonoBehaviour
 {
     [SerializeField] private GameObject poseUI;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip openSe;      // メニュー開く音
+    [SerializeField] private AudioClip exitSe;      // 退出音
+    private bool isClicked = false;
+
     Dictionary<GameObject, bool> upFlags = new Dictionary<GameObject, bool>();
 
     [SerializeField] private float duration = 0.2f;
@@ -37,6 +42,7 @@ public class PoseUI : MonoBehaviour
     {
         if(Keyboard.current.escapeKey.isPressed)
         {
+            SoundManager.Instance.PlaySE(openSe);
             MoveY(poseUI);
             Debug.Log("PoseUI MoveY");
         }
@@ -80,7 +86,12 @@ public class PoseUI : MonoBehaviour
 
     public void PushExitButton()
     {
-        if(PhotonNetwork.InRoom) PhotonNetwork.LeaveRoom();
+        if (!isClicked)
+        {
+            SoundManager.Instance.PlaySE(exitSe);
+            isClicked = true;
+        }
+        if (PhotonNetwork.InRoom) PhotonNetwork.LeaveRoom();
         SceneManager.LoadScene("menu");
     }
 }

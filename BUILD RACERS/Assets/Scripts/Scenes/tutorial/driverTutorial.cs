@@ -25,6 +25,10 @@ public class driverTutorial : baseScene
     [SerializeField] private TextMeshProUGUI infoText;
     [SerializeField] private float waitBlinkInterval = 0.5f;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip tutorialBGM; // チュートリアルBGM
+    [SerializeField] private AudioClip textSe;      // テキスト音
+
     [Header("Fade")]
     [SerializeField] private Fade fade;
     [SerializeField] private float fadeInDuration = 0.8f;
@@ -73,6 +77,8 @@ public class driverTutorial : baseScene
 
         // bot生成
         GenerateBotDrivers();
+
+        SoundManager.Instance.PlayBGM(tutorialBGM, 0f);
     }
 
     void Start()
@@ -141,6 +147,8 @@ public class driverTutorial : baseScene
         // 文字送り完了後で、入力待ち中なら次へ
         if (isWaitingInput)
         {
+            SoundManager.Instance.PlaySE(textSe);
+
             EndWaitForAdvance();
             isWaitingInput = false;
 

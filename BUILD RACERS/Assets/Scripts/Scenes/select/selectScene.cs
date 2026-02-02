@@ -54,6 +54,11 @@ public class selectScene : baseScene
     [SerializeField] private float fadeInDuration = 0.8f;
     [SerializeField] private float fadeOutDuration = 0.8f;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip backSe; // �߂鉹
+    private bool isClicked = false;
+
+
     void Start()
     {
         preSceneName = "robby";
@@ -516,7 +521,12 @@ public class selectScene : baseScene
 
     public void PushBackButton()
     {
-        if(ss != null) ss.DeleteMyStat();
+        if (!isClicked)
+        {
+            SoundManager.Instance.PlaySE(backSe);
+            isClicked = true;
+        }
+        if (ss != null) ss.DeleteMyStat();
 
         PhotonNetwork.LeaveRoom();
 

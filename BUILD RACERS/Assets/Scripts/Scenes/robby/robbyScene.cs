@@ -1,19 +1,21 @@
-using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 public class robbyScene : baseScene
 {
     [SerializeField] private GameObject CreateUI;
     [SerializeField] private GameObject PassInputer;
+
+    [Header("Sound")]
+    [SerializeField] private AudioClip backSe;      // 戻る音
+    [SerializeField] private AudioClip createSe;    // 部屋作成音
+    private bool isClicked = false;
 
     Dictionary<GameObject,bool> upFlags = new Dictionary<GameObject,bool>();
 
@@ -341,6 +343,8 @@ public class robbyScene : baseScene
         if (isMoving) return;
         MoveY(CreateUI);
 
+        SoundManager.Instance.PlaySE(createSe);
+
         //パスワードUI出てれば閉じる
         if (!upFlags[PassInputer]) MoveY(PassInputer);
 
@@ -449,6 +453,11 @@ public class robbyScene : baseScene
 
     public void PushBackButton()
     {
+        if (!isClicked)
+        {
+            SoundManager.Instance.PlaySE(backSe);
+            isClicked = true;
+        }
         fade.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("menu");

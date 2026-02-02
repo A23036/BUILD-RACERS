@@ -2852,6 +2852,7 @@ MonoBehaviour:
   mapSelector: {fileID: 1702779293}
   backSe: {fileID: 8300000, guid: 2d4df9a6abeb1d945ac5764704818597, type: 3}
   startSe: {fileID: 8300000, guid: 1f28857f2481b1f4781f4a769a8fab41, type: 3}
+  dropDownSe: {fileID: 0}
   fade: {fileID: 407334888}
   fadeInDuration: 0.3
   fadeOutDuration: 0.3
@@ -3422,6 +3423,7 @@ GameObject:
   - component: {fileID: 1702779297}
   - component: {fileID: 1702779296}
   - component: {fileID: 1702779295}
+  - component: {fileID: 1702779299}
   m_Layer: 5
   m_Name: MapSelector
   m_TagString: Untagged
@@ -3525,19 +3527,7 @@ MonoBehaviour:
       m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &1702779297
 MonoBehaviour:
@@ -3577,6 +3567,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1702779293}
   m_CullTransparentMesh: 1
+--- !u!114 &1702779299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702779293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e6418cfb6b2da7418585d73f874c16a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  openSe: {fileID: 8300000, guid: 8e0933bb2a1a9884c86fb33ad0561ab9, type: 3}
+  closeSe: {fileID: 8300000, guid: 40b6774947a7d164abef7f74685ac49e, type: 3}
 --- !u!1 &1815771933
 GameObject:
   m_ObjectHideFlags: 0

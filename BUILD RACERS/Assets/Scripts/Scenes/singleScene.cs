@@ -18,6 +18,7 @@ public class singleScene : baseScene
     [Header("Sound")]
     [SerializeField] private AudioClip backSe; // –ß‚é‰¹
     [SerializeField] private AudioClip startSe; // Œˆ’è‰¹
+    [SerializeField] private AudioClip dropDownSe; // ƒvƒ‹ƒ_ƒEƒ“‰¹
     private bool isClicked = false;
 
     [Header("Fade")]
