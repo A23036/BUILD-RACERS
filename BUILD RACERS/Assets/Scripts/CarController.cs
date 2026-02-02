@@ -10,6 +10,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using static Fusion.Sockets.NetBitBuffer;
 using static Unity.Burst.Intrinsics.X86;
 
 public enum State // カートの状態
@@ -465,7 +466,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         lapManager = GameObject.Find("LapManager").GetComponent<LapManager>();
 
-        flags = new bool[30];
+        flags = new bool[19];
         for (int i = 0; i < flags.Length; i++) flags[i] = true;
 
 
@@ -1096,7 +1097,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         //ラップ判定 12度ごとにチェックポイントを通過したか
         var startObj = GameObject.Find("StartPos");
-        int sector = Mathf.FloorToInt(nowAngle / 12f);
+        int sector = Mathf.FloorToInt(nowAngle / 18f);
         if(sector > 0)
         {
             for(int i = 0;i < sector;i++)
@@ -1365,6 +1366,8 @@ public class CarController : MonoBehaviourPunCallbacks
         if (PlayerPrefs.GetInt("isMonitor") == 1) return;
 
         if (rankText == null) return;
+        if (isLapClear) return;
+        if(isRaceClear) return;
 
         //全カートの角度とラップ数を取得　比較して順位を決定
         currentRank = 1;
@@ -1376,13 +1379,35 @@ public class CarController : MonoBehaviourPunCallbacks
 
             string lap = "", wp = "", angle = "";
 
-            float otherAngle = car.GetLapCount() * 360 + lapManager.NowAngle(car.transform.position);
-            float meAngle = GetLapCount() * 360 + lapManager.NowAngle(transform.position);
+            //ラップ数計算
+            if (car.GetLapCount() < GetLapCount()) continue;
 
-            if(otherAngle > meAngle)
+            if(car.GetLapCount() > GetLapCount())
             {
                 currentRank++;
+                continue;
             }
+
+            //最短ウェイポイント計算
+            int otherNearIdx = car.GetNearllyWpIdx(car.transform.position);
+            int myNearIdx = GetNearllyWpIdx(transform.position);
+
+            if (otherNearIdx < myNearIdx) continue;
+            if (otherNearIdx > myNearIdx)
+            {
+                currentRank++;
+                continue;
+            }
+
+            //次点ウェイポイントまでの距離計算
+            if (car.GetlenUntilNextWp(otherNearIdx) < GetlenUntilNextWp(myNearIdx))
+            {
+                currentRank++;
+                continue;
+            }
+
+            Debug.LogError($"順位決定不可：{car.GetName()}");
+            Debug.Log($"");
 
             continue;
 
@@ -1417,8 +1442,11 @@ public class CarController : MonoBehaviourPunCallbacks
         //エンジニアは処理なし　シングルプレイで反応しないように
         if(PlayerPrefs.GetInt("engineerNum") != -1) return;
 
+        if (isLapClear) return;
+        if (isRaceClear) return;
+
         //UIに反映
-        if (lapCount == maxLaps - 1 && lapManager.NowAngle(transform.position) >= 340f)
+        if (lapCount == maxLaps - 1 && lapManager.NowAngle(transform.position) >= 350f)
         {
             //ゴール直前なら表示なし
             rankText.text = "";
@@ -1522,6 +1550,9 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void LateUpdate()
     {
+        //テスト　ラップ数を頭上に表示
+        //SetName(lapCount.ToString());
+
         if (stunEffectInstance == null) return;
         UpdateStunEffectTransform();
     }
@@ -2017,7 +2048,7 @@ public class CarController : MonoBehaviourPunCallbacks
     //Wallオブジェクトに遮らていない最近点を返す
     public int GetNearllyWpIdx(Vector3 pos)
     {
-        int ret = 0;
+        int ret = 99;
 
         float nowAngle = lapManager.NowAngle(transform.position);
         Vector3 offsetY = new Vector3(0, 1, 0);
@@ -2057,6 +2088,47 @@ public class CarController : MonoBehaviourPunCallbacks
         Debug.DrawLine(nowPos, wpcTransform.GetChild(ret).position, Color.blue);
 
         return ret;
+    }
+
+    public float GetlenUntilNextWp(int nearIdx)
+    {
+        float len = 0f;
+
+        //壁にレイを飛ばす
+        Transform wpcTransform = wpc.transform;
+        Vector3 nowPos = transform.position;
+        Vector3 wpPos = wpcTransform.GetChild(nearIdx).position;
+        Vector3 nextWpPos = wpcTransform.GetChild((nearIdx+1) % wpcTransform.childCount).position;
+        RaycastHit[] hitList = Physics.RaycastAll(nowPos, (wpPos - nowPos).normalized, (wpPos - nowPos).magnitude);
+
+        bool isHitWall = false;
+        foreach (var hitp in hitList)
+        {
+            //Wallに遮られているものは除外
+            if (hitp.collider.CompareTag("Wall"))
+            {
+                isHitWall = true;
+                break;
+            }
+        }
+
+        //壁に遮られていれば迂回距離を計算
+        if (isHitWall)
+        {
+            len = (nowPos - wpPos).magnitude;
+            len += (wpPos - nextWpPos).magnitude;
+
+            Debug.DrawLine(nowPos, wpPos, Color.green);
+            Debug.DrawLine(wpPos, nextWpPos, Color.green);
+        }
+        else
+        {
+            len = (nowPos - nextWpPos).magnitude;
+
+            Debug.DrawLine(nowPos, nextWpPos, Color.green);
+        }
+
+        return len;
     }
 
     public int GetCurrentRank() => currentRank;
