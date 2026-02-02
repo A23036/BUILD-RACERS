@@ -198,6 +198,7 @@ MonoBehaviour:
   selectCooltime: 0.5
   offset: {x: 0, y: 0, z: 0}
   gamingColor: 0
+  selectSe: {fileID: 8300000, guid: 37a9eee7bf2bb4047a3e77eceb5e1f9d, type: 3}
 --- !u!114 &2882188682804811730
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,30 +16,19 @@ public class DropDownSound : MonoBehaviour, IPointerDownHandler
     {
         dropdown = GetComponent<TMP_Dropdown>();
         if (dropdown == null) Debug.LogError("DropDownSound: TMP_Dropdown component not found!");
+
+        // 値変更（選択確定）時に鳴らす
+        dropdown.onValueChanged.AddListener(OnValueChanged);
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (isOpen) return;
-
-        isOpen = true;
-        Debug.Log("DropDownSound: Dropdown opened.");
         SoundManager.Instance?.PlaySE(openSe);
-        StartCoroutine(WatchClose());
     }
 
-    private IEnumerator WatchClose()
+    private void OnValueChanged(int _)
     {
-        while (true)
-        {
-            if (GameObject.Find("Dropdown List") == null)
-            {
-                isOpen = false;
-                Debug.Log("DropDownSound: Dropdown closed.");
-                SoundManager.Instance?.PlaySE(closeSe);
-                yield break;
-            }
-            yield return null;
-        }
+        // 値が変わった（= 選択が確定した）時に鳴らす
+        SoundManager.Instance?.PlaySE(closeSe);
     }
 }

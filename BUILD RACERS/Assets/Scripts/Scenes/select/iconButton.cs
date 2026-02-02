@@ -8,6 +8,7 @@ public class iconButton : MonoBehaviour
 
     [SerializeField] private int driverNum = -1;
     [SerializeField] private int builderNum = -1;
+    [SerializeField] private AudioClip selectSe;
 
     private selectSystem ss;
 
@@ -34,6 +35,8 @@ public class iconButton : MonoBehaviour
             }
 
             ss.SetNumOffline(driverNum, builderNum);
+
+            SoundManager.Instance.PlaySE(selectSe);
             return;
         }
 

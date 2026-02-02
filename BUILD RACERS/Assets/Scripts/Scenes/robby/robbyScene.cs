@@ -14,7 +14,10 @@ public class robbyScene : baseScene
 
     [Header("Sound")]
     [SerializeField] private AudioClip backSe;      // 戻る音
-    [SerializeField] private AudioClip createSe;    // 部屋作成音
+    [SerializeField] private AudioClip openMenuSe;    // 部屋メニュー開く音
+    [SerializeField] private AudioClip changeValueSe;    // 人数変更音
+    [SerializeField] private AudioClip creatRoomSe;    // 部屋作る音
+
     private bool isClicked = false;
 
     Dictionary<GameObject,bool> upFlags = new Dictionary<GameObject,bool>();
@@ -321,6 +324,7 @@ public class robbyScene : baseScene
         TMP_InputField input = inputField.GetComponent<TMP_InputField>();
 
         input.text = maxPlayers.ToString();
+        SoundManager.Instance.PlaySE(changeValueSe);
     }
 
     public void PushMinusButton()
@@ -335,6 +339,7 @@ public class robbyScene : baseScene
         TMP_InputField input = inputField.GetComponent<TMP_InputField>();
 
         input.text = maxPlayers.ToString();
+        SoundManager.Instance.PlaySE(changeValueSe);
     }
 
     public void PushNewCreate()
@@ -343,7 +348,7 @@ public class robbyScene : baseScene
         if (isMoving) return;
         MoveY(CreateUI);
 
-        SoundManager.Instance.PlaySE(createSe);
+        SoundManager.Instance.PlaySE(openMenuSe);
 
         //パスワードUI出てれば閉じる
         if (!upFlags[PassInputer]) MoveY(PassInputer);
@@ -440,6 +445,12 @@ public class robbyScene : baseScene
 
         //ルームのプレイ人数上限設定　観戦はプレイ人数含めて合計20人まで
         PlayerPrefs.SetInt("roomLimitPlayers", maxPlayers);
+
+        if (!isClicked)
+        {
+            SoundManager.Instance.PlaySE(creatRoomSe);
+            isClicked = true;
+        }
 
         //シーン遷移
         fade.FadeIn(fadeInDuration, () =>

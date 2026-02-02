@@ -2229,6 +2229,7 @@ MonoBehaviour:
   bgmSlider: {fileID: 490037096}
   seSlider: {fileID: 2016448078}
   adjustSe: {fileID: 8300000, guid: b8407b887886c5043a4feb379a874244, type: 3}
+  backSe: {fileID: 8300000, guid: 2d4df9a6abeb1d945ac5764704818597, type: 3}
 --- !u!4 &1772925281
 Transform:
   m_ObjectHideFlags: 0
@@ -2257,6 +2258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guideToggle: {fileID: 358187424}
+  toggleSe: {fileID: 8300000, guid: 8e0933bb2a1a9884c86fb33ad0561ab9, type: 3}
 --- !u!1 &1910141497
 GameObject:
   m_ObjectHideFlags: 0

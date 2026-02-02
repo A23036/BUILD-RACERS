@@ -9,6 +9,7 @@ public static class OptionPrefs
 public class GuideFlag : MonoBehaviour
 {
     [SerializeField] private Toggle guideToggle;
+    [SerializeField] private AudioClip toggleSe;
 
     void Start()
     {
@@ -26,6 +27,8 @@ public class GuideFlag : MonoBehaviour
     {
         PlayerPrefs.SetInt(OptionPrefs.GUIDE_ENABLED, isOn ? 1 : 0);
         PlayerPrefs.Save();
+
+        SoundManager.Instance.PlaySE(toggleSe);
 
         Debug.Log($"Guide Enabled : {isOn}");
     }

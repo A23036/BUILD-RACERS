@@ -13,6 +13,8 @@ public class optionScene : baseScene
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider seSlider;
     [SerializeField] private AudioClip adjustSe; // 調整音
+    [SerializeField] private AudioClip backSe;
+    private bool isClicked = false;
 
     private const string KEY_BGM = "Volume_BGM_20";
     private const string KEY_SE = "Volume_SE_20";
@@ -136,6 +138,12 @@ public class optionScene : baseScene
 
     public void PushBackButton()
     {
+        if (!isClicked)
+        {
+            SoundManager.Instance.PlaySE(backSe);
+            isClicked = true;
+        }
+
         fade.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("menu");
