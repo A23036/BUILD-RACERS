@@ -10922,8 +10922,9 @@ MonoBehaviour:
   fadeInDuration: 0.3
   fadeOutDuration: 0.3
   backSe: {fileID: 8300000, guid: 2d4df9a6abeb1d945ac5764704818597, type: 3}
+  readySe: {fileID: 8300000, guid: 72fdd4acee439d14d89f20f01e8c1389, type: 3}
+  cancelSe: {fileID: 8300000, guid: 40b6774947a7d164abef7f74685ac49e, type: 3}
   commentInput: {fileID: 1211142764}
-
 --- !u!4 &2054180459
 Transform:
   m_ObjectHideFlags: 0
