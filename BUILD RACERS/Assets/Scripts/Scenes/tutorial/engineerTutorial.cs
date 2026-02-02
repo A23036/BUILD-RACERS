@@ -85,7 +85,6 @@ public class engineerTutorial : baseScene
 
         // ‰Šúó‘Ô‚Å‚Í’â~
         carController.SetState(State.Stop);
-
     }
 
     void Start()

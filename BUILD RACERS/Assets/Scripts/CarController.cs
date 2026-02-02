@@ -1630,7 +1630,7 @@ public class CarController : MonoBehaviourPunCallbacks
     public void SendParts(PartsID id)
     {
         //ゴール後は処理なし
-        if(!isTutorial && resultUI.gameObject.activeSelf)
+        if(isRaceClear)
         {
             return;
         }

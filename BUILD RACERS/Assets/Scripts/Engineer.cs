@@ -275,9 +275,10 @@ public class Engineer : MonoBehaviourPunCallbacks
         {
             // ÉLÉÖÅ[Ç…í«â¡
             carController.RPC_EnqueueItem(id);
-            RPC_RemoveUsedItem(id);
             // ë¶ç¿Ç…ê∂ê¨
             carController.RemoveUsedItem();
+
+            RPC_RemoveUsedItem(id);
             return;
         }
 
