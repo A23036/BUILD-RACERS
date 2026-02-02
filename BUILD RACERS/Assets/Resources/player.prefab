@@ -657,7 +657,6 @@ MonoBehaviour:
   fireEffectDuration: 1.5
   FireFxLocalPos: {x: -0.345, y: 0.678, z: -1.011}
   speedText: {fileID: 0}
-  coinText: {fileID: 0}
   lapText: {fileID: 0}
   rankText: {fileID: 0}
   timerText: {fileID: 0}

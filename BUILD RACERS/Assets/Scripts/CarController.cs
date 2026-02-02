@@ -394,7 +394,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
             if (logUI != null)
             {
-                logUIpv.RPC("RPC_AddHitLog", RpcTarget.All, attacekrName, myName, weaponName);
+                if(isMine) logUIpv.RPC("RPC_AddHitLog", RpcTarget.All, attacekrName, myName, weaponName);
             }
         }
         else
@@ -1610,13 +1610,6 @@ public class CarController : MonoBehaviourPunCallbacks
 
                 //スタンタイプの設定
                 StunType stunType = StunType.Light;
-                switch (tag)
-                {
-                    case "WaterBalloonExplosion":
-                    case "WaterBalloonTrap":
-                        stunType = StunType.Heavy;
-                        break;
-                }
 
                 //スタン状態付与
                 SetStun(stunType, pv.Owner.NickName, tag);

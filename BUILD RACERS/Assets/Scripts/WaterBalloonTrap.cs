@@ -258,8 +258,6 @@ public class WaterBalloonTrap : MonoBehaviour
         if (!isExploding)
         {
             car.SetStun(stunType, parentName, GetType().Name);
-
-            car.SetStun(stunType, parentName, GetType().Name);
             ExplodeImmediately();
             return;
         }
