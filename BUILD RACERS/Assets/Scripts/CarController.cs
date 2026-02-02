@@ -10,6 +10,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using static Unity.Burst.Intrinsics.X86;
 
 public enum State // カートの状態
 {
@@ -168,6 +169,7 @@ public class CarController : MonoBehaviourPunCallbacks
     private int lapCount = -1;
     private int maxLaps = 0;
     private float nowAngle = 0f;
+    private int flagsCount = 0;
     private bool[] flags;
     private bool isLapClear = false;
 
@@ -463,7 +465,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
         lapManager = GameObject.Find("LapManager").GetComponent<LapManager>();
 
-        flags = new bool[3];
+        flags = new bool[30];
         for (int i = 0; i < flags.Length; i++) flags[i] = true;
 
 
@@ -1092,16 +1094,19 @@ public class CarController : MonoBehaviourPunCallbacks
             nowAngle = cur;
         }
 
-        //ラップ判定 100度ごとにチェックポイントを通過したか
+        //ラップ判定 12度ごとにチェックポイントを通過したか
         var startObj = GameObject.Find("StartPos");
-        int sector = Mathf.FloorToInt(nowAngle / 100f);
+        int sector = Mathf.FloorToInt(nowAngle / 12f);
         if(sector > 0)
         {
             for(int i = 0;i < sector;i++)
             {
                 if (flags[i] == false)
                 {
-                    if (i == sector - 1) flags[i] = true;
+                    if (i == sector - 1)
+                    {
+                        flags[i] = true;
+                    }
                     else break;
                 }
             }
@@ -1113,6 +1118,8 @@ public class CarController : MonoBehaviourPunCallbacks
             if (f) throughFlags++;
         }
 
+        if(isMine) Debug.Log($"現在の角度：{cur}");
+
         if (throughFlags == flags.Length && 0 < cur && cur < 10)
         {
             isLapClear = true;
@@ -1121,10 +1128,30 @@ public class CarController : MonoBehaviourPunCallbacks
                 flags[i] = false;
             }
         }
+        else if(throughFlags < flags.Length && 350 < cur && cur < 360)
+        {
+            Debug.Log("逆走検知");
+            isLapClear = false;
+            lapCount--;
+            for (int i = 0; i < flags.Length; i++)
+            {
+                flags[i] = true;
+            }
+        }
         else
         {
             isLapClear = false;
         }
+
+        throughFlags = 0;
+        foreach (var f in flags)
+        {
+            if (f) throughFlags++;
+        }
+        flagsCount = throughFlags;
+
+        if (PhotonNetwork.IsConnected) 
+            photonView.RPC("RPC_SyncFlagsCount", RpcTarget.All, flagsCount, photonView.ViewID); 
     }
 
     private void DetectAndUpdateGuideUI()
@@ -1348,6 +1375,18 @@ public class CarController : MonoBehaviourPunCallbacks
             if (car == this) continue;
 
             string lap = "", wp = "", angle = "";
+
+            float otherAngle = car.GetLapCount() * 360 + lapManager.NowAngle(car.transform.position);
+            float meAngle = GetLapCount() * 360 + lapManager.NowAngle(transform.position);
+
+            if(otherAngle > meAngle)
+            {
+                currentRank++;
+            }
+
+            continue;
+
+            if (car.GetLapCount() < lapCount) continue;
 
             //ウェイポンとが同じならラップ数が多いほうが上位
             if (car.GetLapCount() > lapCount)
@@ -2115,6 +2154,13 @@ public class CarController : MonoBehaviourPunCallbacks
     public void RPC_NotifLoadFinish()
     {
         if(photonView.IsMine) isLoading = false;
+    }
+
+    [PunRPC]
+    public void RPC_SyncFlagsCount(int flagsCnt, int id)
+    {
+        if (photonView.ViewID != id) return;
+        flagsCount = flagsCnt;
     }
 
     [PunRPC]
