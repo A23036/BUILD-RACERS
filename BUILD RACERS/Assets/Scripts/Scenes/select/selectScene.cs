@@ -58,7 +58,7 @@ public class selectScene : baseScene
     [SerializeField] private AudioClip backSe; // 戻る音
     private bool isClicked = false;
 
-
+    [SerializeField] private TMP_InputField commentInput;
     void Start()
     {
         preSceneName = "robby";
@@ -277,6 +277,24 @@ public class selectScene : baseScene
             text.text = "準備OK!";
             text.color = Color.red;
         }
+
+        //自分のコメントを削除
+        var comments = FindObjectsOfType<Comment>();
+        foreach(var comment in comments)
+        {
+            var pv = comment.GetComponent<PhotonView>();
+            if(pv != null && pv.IsMine)
+            {
+                PhotonNetwork.Destroy(comment.gameObject);
+            }
+        }
+
+        //コメントのロックを更新
+        UpdateCommentLock();
+
+        //プレースホルダーの更新
+        if (ss.IsReady()) commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "他のプレイヤーを待っています";
+        else commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "コメントしよう！";
     }
 
     //オンラインプレイのみUI崩れ防止　シングルなら許容
@@ -606,6 +624,16 @@ public class selectScene : baseScene
             hash["playSceneName"] = str;
             PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
         }
+    }
+
+    public void UpdateCommentLock()
+    {
+        commentInput.interactable = !ss.IsReady();
+    }
+
+    public TMP_InputField GetCommentInput()
+    {
+        return commentInput;
     }
 
     ~selectScene()

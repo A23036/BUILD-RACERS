@@ -10088,9 +10088,9 @@ MonoBehaviour:
   m_fontSize: 14
   m_fontSizeBase: 14
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 1
+  m_fontSizeMax: 14
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -10907,6 +10907,7 @@ MonoBehaviour:
   fadeInDuration: 0.3
   fadeOutDuration: 0.3
   backSe: {fileID: 8300000, guid: 2d4df9a6abeb1d945ac5764704818597, type: 3}
+  commentInput: {fileID: 1211142764}
 --- !u!4 &2054180459
 Transform:
   m_ObjectHideFlags: 0

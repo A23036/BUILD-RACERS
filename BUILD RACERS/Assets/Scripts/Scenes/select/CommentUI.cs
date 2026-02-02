@@ -35,6 +35,11 @@ public class CommentUI : MonoBehaviourPunCallbacks
 
     public void InputComment()
     {
+        if(inputField.text == null || inputField.text.Length == 0)
+        {
+            return;
+        }
+
         if (coolTimer > 0f)
         {
             return;

@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,10 +16,15 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] private float timeUntilStart;
 
+    private TMP_InputField commentInput;
+    private selectSystem ss;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        selectScene sm = GameObject.Find("SceneManager").GetComponent<selectScene>();
+        commentInput = sm.GetCommentInput();
+        ss = GetComponent<selectSystem>();
     }
 
     private void Awake()
@@ -31,13 +37,20 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
     // Update is called once per frame
     void Update()
     {
-        if(!PhotonNetwork.IsMasterClient) return;
+        if(!photonView.IsMine || !PhotonNetwork.IsMasterClient) return;
+
+        //プレースホルダー更新
+        if (ss.IsReady()) commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "他のプレイヤーを待っています";
+        else commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "コメントしよう！";
 
         //全員が準備完了ならタイマーが作動
         if (isEveryoneReady)
         {
             startTimer -= Time.deltaTime;
             Debug.Log("TIMER START");
+
+            //プレースホルダー更新
+            commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "ゲーム開始中...";
         }
         else
         {

@@ -21,6 +21,11 @@ public class Comment : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+    }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
         GameObject canvas = GameObject.Find("CommentUI");
         transform.SetParent(canvas.transform, false);
 
@@ -31,12 +36,6 @@ public class Comment : MonoBehaviourPunCallbacks
         rt.anchoredPosition = new Vector2(StartX, rt.anchoredPosition.y);
 
         speed = baseSpeed;
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
     }
 
     // Update is called once per frame
@@ -58,6 +57,8 @@ public class Comment : MonoBehaviourPunCallbacks
 
     public void SetMessage(string s)
     {
+        textMeshPro = GetComponentInChildren<TextMeshProUGUI>(true);
+
         textMeshPro.text = s;
 
         int len = s.Length;
