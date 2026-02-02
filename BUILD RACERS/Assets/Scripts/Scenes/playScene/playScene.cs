@@ -24,6 +24,8 @@ public class playScene : baseScene
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (!PhotonNetwork.InRoom) isConnect = false;
+
         Debug.Log("=== PLAY SCENE START ===");
         
         preSceneName = "select";
@@ -36,7 +38,6 @@ public class playScene : baseScene
 
     private void Awake()
     {
-
         base.Awake();
 
         Debug.Log("=== PLAY SCENE AWAKE ===");
