@@ -6,8 +6,6 @@ using TMPro;
 
 public class singleScene : baseScene
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
     //ラップ数設定
     [SerializeField] GameObject lapSetter;
 
@@ -16,6 +14,11 @@ public class singleScene : baseScene
 
     //セレクター関係
     private selectSystem ss;
+
+    [Header("Sound")]
+    [SerializeField] private AudioClip backSe; // 戻る音
+    [SerializeField] private AudioClip startSe; // 決定音
+    private bool isClicked = false;
 
     [Header("Fade")]
     [SerializeField] private Fade fade;
@@ -62,6 +65,13 @@ public class singleScene : baseScene
 
     public void PushStartButton()
     {
+        if (!isClicked)
+        {
+            SoundManager.Instance.PlaySE(startSe);
+            SoundManager.Instance.StopBGM(0.8f);
+            isClicked = true;
+        }
+
         //名前が未入力なら処理なし
         string name = PlayerPrefs.GetString("PlayerName");
         if (name == null || name == "") return;
@@ -80,6 +90,12 @@ public class singleScene : baseScene
 
     public void PushBackButton()
     {
+        if (!isClicked)
+        {
+            SoundManager.Instance.PlaySE(backSe);
+            isClicked = true;
+        }
+
         fade.FadeIn(fadeInDuration, () =>
         {
             SceneManager.LoadScene("menu");

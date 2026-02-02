@@ -38,7 +38,8 @@ public class tittleScene : baseScene
     [SerializeField] private float maxAlpha = 1.0f;     // 最大アルファ
 
     [Header("Sound")]
-    [SerializeField] private AudioClip clickSound; // クリック音
+    [SerializeField] private AudioClip tittleBgm; // タイトルBGM
+    [SerializeField] private AudioClip clickSe; // クリック音
 
     [Header("Fade")]
     [SerializeField] private Fade fadeIn;
@@ -77,6 +78,8 @@ public class tittleScene : baseScene
 
         state = AnimationState.Panel;
         animationSequenceCoroutine = StartCoroutine(AnimationSequence());
+
+        SoundManager.Instance.PlayBGM(tittleBgm, 0f);
     }
 
     void Update()
@@ -105,8 +108,10 @@ public class tittleScene : baseScene
 
                 EnterFinishState();
             }
-            else
+            else if(isSceneChanging == false)
             {
+                SoundManager.Instance.PlaySE(clickSe);
+                SoundManager.Instance.StopBGM(0.8f);
                 if (isSceneChanging) return;
                 isSceneChanging = true;
 
@@ -116,8 +121,6 @@ public class tittleScene : baseScene
                     StopCoroutine(blinkCoroutine);
                     blinkCoroutine = null;
                 }
-
-                PlayClickSound();
 
                 // フェードイン → 完了後にシーン遷移
                 if (fadeIn != null)
@@ -132,24 +135,6 @@ public class tittleScene : baseScene
         }
 
         base.Update();
-    }
-
-    private void PlayClickSound()
-    {
-        if (clickSound != null)
-        {
-            // シーン切り替え時も音を継続させるため、専用のGameObjectを作成
-            GameObject soundObject = new GameObject("ClickSound");
-            AudioSource audioSource = soundObject.AddComponent<AudioSource>();
-            audioSource.clip = clickSound;
-            audioSource.Play();
-
-            // シーン切り替えで破棄されないようにする
-            DontDestroyOnLoad(soundObject);
-
-            // 音の再生が終わったら自動的に削除
-            Destroy(soundObject, clickSound.length);
-        }
     }
 
     private IEnumerator AnimationSequence()

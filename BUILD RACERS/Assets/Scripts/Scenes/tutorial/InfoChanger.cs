@@ -3,6 +3,10 @@ using UnityEngine.UI;
 
 public class InfoChanger : MonoBehaviour
 {
+    [SerializeField] private AudioClip clickSe; // クリック音
+    [SerializeField] private AudioClip fileSe;  // ファイル音
+    private bool isFirst = true;
+
     [System.Serializable]
     public class Tab
     {
@@ -34,6 +38,15 @@ public class InfoChanger : MonoBehaviour
     {
         if (currentIndex == index) return;
 
+        if (!isFirst)
+        {
+            PlayFileSound();
+        }
+        else
+        {
+            isFirst = false;
+        }
+
         for (int i = 0; i < tabs.Length; i++)
         {
             bool isSelected = (i == index);
@@ -54,5 +67,15 @@ public class InfoChanger : MonoBehaviour
         if (img == null) return;
 
         img.sprite = selected ? tab.selectedSprite : tab.normalSprite;
+    }
+
+    public void PlayClickSound()
+    {
+        SoundManager.Instance.PlaySE(clickSe);
+    }
+
+    public void PlayFileSound()
+    {
+        SoundManager.Instance.PlaySE(fileSe);
     }
 }
