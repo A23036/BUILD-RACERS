@@ -35,7 +35,7 @@ public class Comment : MonoBehaviourPunCallbacks
 
         rt.anchoredPosition = new Vector2(StartX, rt.anchoredPosition.y);
 
-        speed = baseSpeed;
+        //speed = baseSpeed;
     }
 
     // Update is called once per frame
