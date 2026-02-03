@@ -244,6 +244,9 @@ public class CarController : MonoBehaviourPunCallbacks
     private bool isTutorial = false;
     private RigidbodyConstraints savedConstraints;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip stunSe; // 爆発音用AudioSource
+
     public void SetIsTutorial()
     {
         isTutorial = true;
@@ -350,8 +353,8 @@ public class CarController : MonoBehaviourPunCallbacks
     public void SetStun(StunType type , string attacekrName, string weaponName)
     {
         if (state == State.Stun) return;
-
-        if(killerTimer > 0f) return;
+        if (isMine) SoundManager.Instance.PlaySE(stunSe);
+        if (killerTimer > 0f) return;
 
         state = State.Stun;
         ClearBoostEffect();

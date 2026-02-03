@@ -39,8 +39,15 @@ public class ItemBoxController : MonoBehaviour
     CarController carController;
     ItemManager itemManager;
 
+    [Header("Sound")]
+    [SerializeField] private AudioSource audioSource; // AudioSourceコンポーネント
+    [SerializeField] private AudioClip getSe; // 獲得SE
+
     void Start()
     {
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1f;
+
         // オブジェクトの元のスケールを保存しておきます
         originalScale = transform.localScale;
 
@@ -153,6 +160,9 @@ public class ItemBoxController : MonoBehaviour
             }
 
             //共通処理
+            // 1. 効果音再生
+            AudioSource.PlayClipAtPoint(getSe, transform.position, 1f);
+
             // 2. 破壊エフェクトを生成する
             if (breakEffectPrefab != null)
             {

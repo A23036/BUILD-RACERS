@@ -1,6 +1,7 @@
 using Photon.Pun;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class WaterBalloonTrap : MonoBehaviour
 {
@@ -32,6 +33,10 @@ public class WaterBalloonTrap : MonoBehaviour
     [SerializeField] private float autoExplodeDelay = 20f;     // 設置後に爆発するまで
     [SerializeField] private float preFlashTime = 2f;          // 爆発の何秒前からフラッシュ開始
 
+    [Header("Sound")]
+    [SerializeField] private AudioSource audioSource; // AudioSourceコンポーネント
+    [SerializeField] private AudioClip explosionSe; // 爆発音
+
     private Color originalColor;
     private Vector3 originalScale;
     private bool isExploding = false;
@@ -46,6 +51,9 @@ public class WaterBalloonTrap : MonoBehaviour
 
     void Start()
     {
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1f;
+
         if (balloonRenderer == null)
         {
             balloonRenderer = GetComponent<Renderer>();
@@ -231,8 +239,10 @@ public class WaterBalloonTrap : MonoBehaviour
             Destroy(effect, explosionEffectDuration);
         }
 
+        AudioSource.PlayClipAtPoint(explosionSe, transform.position, 1f);
+
         // 少し待ってから削除（Trigger判定のため）
-        Destroy(transform.parent.gameObject, 0.2f);
+        Destroy(transform.parent.gameObject, 0.5f);
     }
 
     // ----------------------------

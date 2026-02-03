@@ -27,6 +27,9 @@ public class readyUI : MonoBehaviour
     [SerializeField] Vector3 startScale = Vector3.zero;
     [SerializeField] Vector3 endScale = Vector3.one;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip gameBgm; // ゲームBGM
+
     private bool isPlayReady = false;
     private bool isPlayGo = false;
 
@@ -120,6 +123,8 @@ public class readyUI : MonoBehaviour
         yield return Animate(0, 1, startScale, endScale, scaleDuration,goImage);
 
         yield return new WaitForSeconds(stayTime);
+
+        SoundManager.Instance.PlayBGM(gameBgm);
 
         // フェードアウト
         yield return Animate(1, 0, endScale, endScale * 1.1f, fadeDuration,goImage);

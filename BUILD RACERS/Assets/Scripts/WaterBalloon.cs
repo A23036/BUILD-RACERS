@@ -1,6 +1,7 @@
 using Photon.Pun;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class WaterBalloonExplosion : MonoBehaviour
 {
@@ -22,6 +23,10 @@ public class WaterBalloonExplosion : MonoBehaviour
     [Header("スタン判定")]
     [SerializeField] private SphereCollider explosionCollider;
     [SerializeField] private StunType stunType = StunType.Heavy;
+    
+    [Header("Sound")]
+    [SerializeField] private AudioSource audioSource; // AudioSourceコンポーネント
+    [SerializeField] private AudioClip explosionSe; // 爆発音用AudioSource
 
     private Color originalColor;
     private Vector3 originalScale;
@@ -33,6 +38,9 @@ public class WaterBalloonExplosion : MonoBehaviour
 
     void Start()
     {
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1f;
+
         if (balloonRenderer == null)
         {
             balloonRenderer = GetComponent<Renderer>();
@@ -173,8 +181,10 @@ public class WaterBalloonExplosion : MonoBehaviour
             Destroy(effect, explosionEffectDuration);
         }
 
+        AudioSource.PlayClipAtPoint(explosionSe, transform.position, 1f);
+
         // 少し待ってから削除（Trigger判定のため）
-        Destroy(transform.parent.gameObject, 0.2f);
+        Destroy(transform.parent.gameObject, 1.0f);
     }
 
     // ----------------------------

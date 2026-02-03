@@ -241,6 +241,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 470704842}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -624,6 +628,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1671448861}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -742,6 +750,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1350900305}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -760,6 +772,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1314125082}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 796693745}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (1)
@@ -822,6 +838,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 769631262}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1136162931}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (1)
@@ -928,6 +948,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 130510316}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -936,6 +960,11 @@ PrefabInstance:
 --- !u!4 &130510315 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 805704947337379404, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+  m_PrefabInstance: {fileID: 130510314}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &130510316 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 8197631423482722879, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
   m_PrefabInstance: {fileID: 130510314}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &138863065
@@ -1021,6 +1050,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 769631262}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1136162931}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (2)
@@ -1433,6 +1466,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1707072975}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1350900305}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (1)
@@ -1750,6 +1787,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1707072975}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1350900305}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red
@@ -1856,6 +1897,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 470704842}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1918,6 +1963,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 796693745}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2108,6 +2157,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1671448861}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2613,6 +2666,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 470704842}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2951,6 +3008,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 130510316}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3013,6 +3074,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1671448861}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3497,6 +3562,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1492757926}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1671448861}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (1)
@@ -3765,6 +3834,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 630039725}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 130510316}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (1)
@@ -3849,6 +3922,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poseUI: {fileID: 1526891197}
+  openSe: {fileID: 0}
+  exitSe: {fileID: 0}
   duration: 0.2
 --- !u!4 &420015534
 Transform:
@@ -4278,6 +4353,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1136162931}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4539,6 +4618,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 470704842}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4547,6 +4630,11 @@ PrefabInstance:
 --- !u!4 &470704841 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1036492191842970550, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+  m_PrefabInstance: {fileID: 470704840}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &470704842 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 515212634035693575, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
   m_PrefabInstance: {fileID: 470704840}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &473294729
@@ -4795,6 +4883,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1350900305}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4879,6 +4971,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1726504207}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4919,6 +5015,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 922836828}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 470704842}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red
@@ -5120,6 +5220,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 769631262}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1136162931}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red
@@ -5351,6 +5455,7 @@ MonoBehaviour:
   stayTime: 0.3
   startScale: {x: 0.4, y: 0.4, z: 0.4}
   endScale: {x: 0.5, y: 0.5, z: 0.5}
+  gameBgm: {fileID: 8300000, guid: 47c19fae057b158488f13c8e87241c16, type: 3}
 --- !u!4 &611990104
 Transform:
   m_ObjectHideFlags: 0
@@ -5555,6 +5660,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1707072975}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1350900305}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (2)
@@ -5736,6 +5845,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1136162931}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5974,6 +6087,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 130510316}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6264,6 +6381,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 130510316}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6414,6 +6535,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1671448861}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6826,6 +6951,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 796693745}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6834,6 +6963,11 @@ PrefabInstance:
 --- !u!4 &796693744 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1036492191842970550, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+  m_PrefabInstance: {fileID: 796693743}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &796693745 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 515212634035693575, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
   m_PrefabInstance: {fileID: 796693743}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &803067822
@@ -7028,6 +7162,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1726504207}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7493,6 +7631,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1726504207}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7555,6 +7697,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 796693745}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8442,6 +8588,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 630039725}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 130510316}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (2)
@@ -8698,6 +8848,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 796693745}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8896,6 +9050,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1350900305}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9492,6 +9650,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 796693745}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9624,6 +9786,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 796693745}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10188,6 +10354,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 130510316}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10250,6 +10420,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1350900305}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10810,6 +10984,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1136162931}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10820,6 +10998,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 805704947337379404, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
   m_PrefabInstance: {fileID: 1136162929}
   m_PrefabAsset: {fileID: 0}
+--- !u!82 &1136162931 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 8197631423482722879, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+  m_PrefabInstance: {fileID: 1136162929}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1138285614
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10828,6 +11011,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1314125082}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 796693745}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red
@@ -11400,6 +11587,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1350900305}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12085,6 +12276,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1726504207}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12482,6 +12677,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1521309663}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1726504207}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red
@@ -12663,6 +12862,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1350900305}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12671,6 +12874,11 @@ PrefabInstance:
 --- !u!4 &1350900304 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 805704947337379404, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+  m_PrefabInstance: {fileID: 1350900303}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1350900305 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 8197631423482722879, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
   m_PrefabInstance: {fileID: 1350900303}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1354409978
@@ -12936,6 +13144,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 470704842}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13159,6 +13371,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 130510316}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13575,6 +13791,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1521309663}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1726504207}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (2)
@@ -14349,6 +14569,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1521309663}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1726504207}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (1)
@@ -14442,6 +14666,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1492757926}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1671448861}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red
@@ -15076,6 +15304,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1314125082}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 796693745}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (2)
@@ -15322,6 +15554,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1492757926}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1671448861}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (2)
@@ -15374,6 +15610,11 @@ PrefabInstance:
 --- !u!4 &1671448860 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8882101078457755177, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+  m_PrefabInstance: {fileID: 1671448859}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1671448861 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: -2435752829205943459, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
   m_PrefabInstance: {fileID: 1671448859}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1681168116
@@ -15857,6 +16098,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 922836828}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 470704842}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (1)
@@ -16296,6 +16541,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1726504207}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16304,6 +16553,11 @@ PrefabInstance:
 --- !u!4 &1726504206 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1036492191842970550, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+  m_PrefabInstance: {fileID: 1726504205}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1726504207 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 515212634035693575, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
   m_PrefabInstance: {fileID: 1726504205}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1732236020
@@ -16498,6 +16752,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1671448861}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17422,6 +17680,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 922836828}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 470704842}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red (2)
@@ -17692,6 +17954,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1136162931}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18747,6 +19013,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1671448861}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19096,6 +19366,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1136162931}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19465,6 +19739,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 630039725}
     m_Modifications:
+    - target: {fileID: 4035359592987277975, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 130510316}
     - target: {fileID: 8072807281771084947, guid: 0fce20c785442a143835680f6731e2b6, type: 3}
       propertyPath: m_Name
       value: ItemBox_Red
@@ -19571,6 +19849,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1136162931}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20879,6 +21161,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 470704842}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -21099,6 +21385,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8491327392522303135, guid: 4e1bbf7892bdaf24493dbab23bb9fd78, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1726504207}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
