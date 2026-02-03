@@ -40,6 +40,11 @@ public class Parts : MonoBehaviour
     [SerializeField] private float clickThreshold = 0.2f; // 短押し判定秒数
     [SerializeField] private bool isRotate = false; // 短押し判定秒数
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip catchSe;     // 持ち上げ音
+    [SerializeField] private AudioClip panelSetSe;  // パネル設置音
+    [SerializeField] private AudioClip gimmickSetSe;  // ギミック設置音
+
     private float pressTime;
     private bool isPressing;
     private float setRotation = 0f;
@@ -270,6 +275,8 @@ public class Parts : MonoBehaviour
     {
         if (cooldownTimer > 0f) return; // クールタイム中は掴めない
 
+        SoundManager.Instance.PlaySE(catchSe);
+
         isDragging = true;
         originalPosition = transform.position;
         offset = transform.position - pointerPos;
@@ -363,6 +370,8 @@ public class Parts : MonoBehaviour
 
                     // 再配置クールタイム開始
                     cooldownTimer = cooldownDuration;
+
+                    SoundManager.Instance.PlaySE(panelSetSe);
                 }
                 else
                 {
@@ -407,6 +416,7 @@ public class Parts : MonoBehaviour
 
             if (placed)
             {
+                SoundManager.Instance.PlaySE(gimmickSetSe);
                 Debug.Log("[Parts] Gimmick placed");
                 panelManager.itemUsed();
                 Destroy(gameObject); // パーツを削除

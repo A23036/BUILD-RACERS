@@ -187,6 +187,9 @@ MonoBehaviour:
   rotationGuide: {fileID: 4003480346136787872}
   clickThreshold: 0.2
   isRotate: 1
+  catchSe: {fileID: 8300000, guid: c57f235019e955d409bd99f4a3f12742, type: 3}
+  panelSetSe: {fileID: 8300000, guid: 2c072991aa7af674c979bc10532bd55a, type: 3}
+  gimmickSetSe: {fileID: 8300000, guid: 538bd9d5c45e1934bb90a9552fe9cd1c, type: 3}
 --- !u!1 &9112039489352920129
 GameObject:
   m_ObjectHideFlags: 0
