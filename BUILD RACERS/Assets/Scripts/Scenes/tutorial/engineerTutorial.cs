@@ -34,6 +34,12 @@ public class engineerTutorial : baseScene
     [SerializeField] private float fadeInDuration = 0.8f;
     [SerializeField] private float fadeOutDuration = 0.8f;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip tutorialBGM; // チュートリアルBGM
+    [SerializeField] private AudioClip textSe;      // テキスト送り音
+    [SerializeField] private AudioClip textLoopSe;  // テキスト表示音
+    private bool wasTyping = false;
+
     private Coroutine waitBlinkCo;
     private string waitBlinkBaseText;
 
@@ -85,6 +91,8 @@ public class engineerTutorial : baseScene
 
         // 初期状態では停止
         carController.SetState(State.Stop);
+
+        SoundManager.Instance.PlayBGM(tutorialBGM, 0f);
     }
 
     void Start()
@@ -107,6 +115,21 @@ public class engineerTutorial : baseScene
     {
         // 入力処理（文字送り中はスキップ、完了後は次へ）
         HandleAdvanceInput();
+
+        // 文字送りSE制御
+        if (typer != null)
+        {
+            if (typer.IsTyping && !wasTyping)
+            {
+                SoundManager.Instance.PlayLoopSE(textLoopSe);
+            }
+            else if (!typer.IsTyping && wasTyping)
+            {
+                SoundManager.Instance.StopLoopSE();
+            }
+
+            wasTyping = typer.IsTyping;
+        }
 
         base.Update();
     }
@@ -136,6 +159,8 @@ public class engineerTutorial : baseScene
         // 文字送り完了後で、入力待ち中なら次へ
         if (isWaitingInput)
         {
+            SoundManager.Instance.PlaySE(textSe);
+
             EndWaitForAdvance();
             isWaitingInput = false;
 

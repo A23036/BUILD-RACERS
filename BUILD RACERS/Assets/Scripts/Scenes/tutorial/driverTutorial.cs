@@ -27,7 +27,9 @@ public class driverTutorial : baseScene
 
     [Header("Sound")]
     [SerializeField] private AudioClip tutorialBGM; // チュートリアルBGM
-    [SerializeField] private AudioClip textSe;      // テキスト音
+    [SerializeField] private AudioClip textSe;      // テキスト送り音
+    [SerializeField] private AudioClip textLoopSe;  // テキスト表示音
+    private bool wasTyping = false;
 
     [Header("Fade")]
     [SerializeField] private Fade fade;
@@ -110,6 +112,21 @@ public class driverTutorial : baseScene
         // 入力処理（文字送り中はスキップ、完了後は次へ）
         HandleAdvanceInput();
 
+        // 文字送りSE制御
+        if (typer != null)
+        {
+            if (typer.IsTyping && !wasTyping)
+            {
+                SoundManager.Instance.PlayLoopSE(textLoopSe);
+            }
+            else if (!typer.IsTyping && wasTyping)
+            {
+                SoundManager.Instance.StopLoopSE();
+            }
+
+            wasTyping = typer.IsTyping;
+        }
+
         base.Update();
     }
 
@@ -186,7 +203,8 @@ public class driverTutorial : baseScene
         switch (state)
         {
             case dTutorialState.WelcomeText:
-                typer.Play("BUILD RACERSへようこそ！\nここでは「ドライバー」のおためしができます|\n", () =>
+                typer.Play("BUILD RACERSへようこそ！\nここでは「ドライバー」のおためしができます|\n", 
+                    () =>
                 {
                     // 文字送り完了後、入力待ち→次へ
                     WaitForInputThenNext(dTutorialState.EnjoyDrive);

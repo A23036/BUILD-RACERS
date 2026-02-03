@@ -9,6 +9,7 @@ public class SoundManager : MonoBehaviour
     [Header("Audio Sources")]
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource seSource;
+    [SerializeField] private AudioSource loopSeSource;
 
     [Header("Settings")]
     [SerializeField] private float defaultFadeTime = 1.0f;
@@ -91,6 +92,21 @@ public class SoundManager : MonoBehaviour
         {
             seSource.volume = volume01;
         }
+    }
+
+    public void PlayLoopSE(AudioClip clip)
+    {
+        if (clip == null) return;
+
+        loopSeSource.clip = clip;
+        loopSeSource.loop = true;
+        loopSeSource.Play();
+    }
+
+    public void StopLoopSE()
+    {
+        if (loopSeSource.isPlaying)
+            loopSeSource.Stop();
     }
 
     // --------------------

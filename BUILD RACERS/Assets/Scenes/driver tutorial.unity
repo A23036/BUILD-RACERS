@@ -324,6 +324,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1291797999}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: respawnTime
       value: 10
       objectReference: {fileID: 0}
@@ -2726,6 +2730,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1291797999}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: respawnTime
       value: 10
       objectReference: {fileID: 0}
@@ -3323,6 +3331,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -424}
   m_SizeDelta: {x: 1500, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!82 &1291797999 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 515212634035693575, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+  m_PrefabInstance: {fileID: 1922329922}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1388526630
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3375,6 +3388,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1291797999}
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: respawnTime
       value: 10
@@ -3657,6 +3674,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1291797999}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: respawnTime
       value: 10
       objectReference: {fileID: 0}
@@ -3916,6 +3937,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1291797999}
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: respawnTime
       value: 10
@@ -4575,6 +4600,7 @@ MonoBehaviour:
   waitBlinkInterval: 0.5
   tutorialBGM: {fileID: 8300000, guid: 85bc87ed2a9b2c34e96d817b6178bc7d, type: 3}
   textSe: {fileID: 8300000, guid: 3ea317c26aa52e444b09b2ce9a8fa555, type: 3}
+  textLoopSe: {fileID: 8300000, guid: 4bd6b712187d2ee40996209716e8c52b, type: 3}
   fade: {fileID: 1156871823}
   fadeInDuration: 0.8
   fadeOutDuration: 0.8
@@ -4663,6 +4689,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1291797999}
     - target: {fileID: 4789632358392192767, guid: 99d27c771653db8468eebe0a2373e913, type: 3}
       propertyPath: respawnTime
       value: 10
