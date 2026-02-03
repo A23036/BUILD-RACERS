@@ -193,9 +193,10 @@ public class resultUI : MonoBehaviour
 
         for (int i = 0; i < rankingUIObjects.Length; i++)
         {
-            if (rankingUIObjects[i] != null)
+            int idx = (i + 1) % rankingUIObjects.Length;
+            if (rankingUIObjects[idx] != null)
             {
-                var obj = rankingUIObjects[i];
+                var obj = rankingUIObjects[idx];
                 var nowPos = obj.GetComponent<RectTransform>().anchoredPosition;
                 StartCoroutine(MoveUIElement(obj, nowPos, (Vector3)nowPos - rankUIstartOffset));
                 yield return new WaitForSeconds(moveInterval);

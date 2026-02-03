@@ -40,7 +40,7 @@ public class PoseUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Keyboard.current.escapeKey.isPressed)
+        if(Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             SoundManager.Instance.PlaySE(openSe);
             MoveY(poseUI);
@@ -65,7 +65,7 @@ public class PoseUI : MonoBehaviour
         if (rectTransform == null) yield break;
 
         Vector2 start = rectTransform.anchoredPosition;
-        Vector2 end = start + new Vector2(0, upFlags[obj] ? 1000 : -1000);
+        Vector2 end = start + new Vector2(0, upFlags[obj] ? 1080 : -1080);
         float t = 0;
 
         while (t < 1)
@@ -93,5 +93,14 @@ public class PoseUI : MonoBehaviour
         }
         if (PhotonNetwork.InRoom) PhotonNetwork.LeaveRoom();
         SceneManager.LoadScene("menu");
+    }
+
+    public void PushExitButtonOnTittle()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+      Application.Quit();
+#endif
     }
 }
