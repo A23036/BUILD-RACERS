@@ -29,6 +29,8 @@ public class readyUI : MonoBehaviour
 
     [Header("Sound")]
     [SerializeField] private AudioClip gameBgm; // ÉQÅ[ÉÄBGM
+    [SerializeField] private AudioClip readySe;
+    [SerializeField] private AudioClip goSe;
 
     private bool isPlayReady = false;
     private bool isPlayGo = false;
@@ -81,6 +83,7 @@ public class readyUI : MonoBehaviour
     public void StartReadyImage()
     {
         if (isPlayReady) return;
+        SoundManager.Instance.PlaySE(readySe);
         loadingImage.enabled = false;
         StartCoroutine(PlayReadyImage());
         isPlayReady = true;
@@ -108,6 +111,8 @@ public class readyUI : MonoBehaviour
     public void StartGoImage()
     {
         if(isPlayGo) return;
+
+        SoundManager.Instance.PlaySE(goSe);
         StartCoroutine(PlayGoImage());
         isPlayGo = true;
     }

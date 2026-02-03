@@ -4108,6 +4108,8 @@ MonoBehaviour:
   startScale: {x: 0.4, y: 0.4, z: 0.4}
   endScale: {x: 0.5, y: 0.5, z: 0.5}
   gameBgm: {fileID: 8300000, guid: 55514a5cb25b7374b93ba71bf5954fb3, type: 3}
+  readySe: {fileID: 8300000, guid: b36137bd555743c47b7cbfbb8741779f, type: 3}
+  goSe: {fileID: 8300000, guid: 6c3a2e7ef5844ea48bdaf1eb5e396a72, type: 3}
 --- !u!4 &342015449
 Transform:
   m_ObjectHideFlags: 0
@@ -12835,6 +12837,7 @@ MonoBehaviour:
   menuUIstartOffset: {x: -1300, y: 0, z: 0}
   menuUIObjects:
   - {fileID: 745823780}
+  goalSe: {fileID: 8300000, guid: d1bbb15085599cd458757562482cafa5, type: 3}
 --- !u!4 &1283976740
 Transform:
   m_ObjectHideFlags: 0

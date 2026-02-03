@@ -37,6 +37,9 @@ public class resultUI : MonoBehaviour
     private int pairDriverID = 0;
     private int pairEngineerID = 0;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip goalSe; // ゴールSE
+
     private void Awake()
     {
         resultImage = resultImageObj.GetComponent<Image>();
@@ -135,6 +138,8 @@ public class resultUI : MonoBehaviour
         //transform.localScale = startScale;
         SetTransform(startScale, resultImage);
         SetAlpha(0, resultImage);
+
+        SoundManager.Instance.PlaySE(goalSe);
 
         // フェードイン + 拡大
         yield return Animate(0, 1, startScale, endScale, scaleDuration);
