@@ -125,8 +125,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         }
         else
         {
-            Debug.Log(" === WAIT MENBERS === ");
-            Debug.Log($"DRIVER:{nowConnectDrivers}/{driversSum} , ENGINEER:{nowConnectEngineers}/{engineersSum}");
+            Debug.Log($" === WAIT MENBERS === DRIVER:{nowConnectDrivers}/{driversSum} , ENGINEER:{nowConnectEngineers}/{engineersSum}");
         }
 
         //ルームの状態をレース終了へ
