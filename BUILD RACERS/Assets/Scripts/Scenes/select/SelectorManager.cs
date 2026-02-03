@@ -23,7 +23,11 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
     void Start()
     {
         selectScene sm = GameObject.Find("SceneManager").GetComponent<selectScene>();
-        commentInput = sm.GetCommentInput();
+        
+        if(SceneManager.GetActiveScene().name == "select")
+        {
+            commentInput = sm.GetCommentInput();
+        }
         ss = GetComponent<selectSystem>();
     }
 
@@ -40,8 +44,11 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
         if(!photonView.IsMine || !PhotonNetwork.IsMasterClient) return;
 
         //プレースホルダー更新
-        if (ss.IsReady()) commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "他のプレイヤーを待っています";
-        else commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "コメントしよう！";
+        if(commentInput != null)
+        {
+            if (ss.IsReady()) commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "他のプレイヤーを待っています";
+            else commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "コメントしよう！";
+        }
 
         //全員が準備完了ならタイマーが作動
         if (isEveryoneReady)
@@ -50,7 +57,7 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
             Debug.Log("TIMER START");
 
             //プレースホルダー更新
-            commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "ゲーム開始中...";
+            if(commentInput != null) commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "ゲーム開始中...";
         }
         else
         {

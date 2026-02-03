@@ -911,7 +911,10 @@ public class CarController : MonoBehaviourPunCallbacks
             //CPUアイテム使用
             if (driver is AIDriver && itemManager.GetItemNum() > 0 && driver.ItemUseDecision())
             {
-               RemoveUsedItem();
+                //ランダムな時間後にアイテム使用
+                int untilUse = UnityEngine.Random.Range(3, 20);
+                Invoke("RemoveUsedItem", untilUse);
+                Debug.Log($"RemoveUsedItem : {untilUse}");
             }
         }
         else
@@ -1406,9 +1409,6 @@ public class CarController : MonoBehaviourPunCallbacks
                 continue;
             }
 
-            Debug.LogError($"順位決定不可：{car.GetName()}");
-            Debug.Log($"");
-
             continue;
 
             if (car.GetLapCount() < lapCount) continue;
@@ -1732,7 +1732,9 @@ public class CarController : MonoBehaviourPunCallbacks
     public void RemoveUsedItem()
     {
         // 使用するアイテムIDを取り出す
-        PartsID usedId = (PartsID)itemManager.ItemDequeue(true);
+        int? id = itemManager.ItemDequeue(true);
+        if (id == null) return;
+        PartsID usedId = (PartsID)id;
 
         // ----------------------------
         // エンジニア側に使用したアイテムパーツ削除を通知
