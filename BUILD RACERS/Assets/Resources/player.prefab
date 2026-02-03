@@ -703,6 +703,7 @@ MonoBehaviour:
   searchLimitTime: 20
   guideResetDelay: 2
   killerEffect: {fileID: 6817927595226889595}
+  stunSe: {fileID: 8300000, guid: bf73ade857d78214fb75c938586d12b2, type: 3}
 --- !u!114 &2777997212412123024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -787,6 +788,9 @@ MonoBehaviour:
   ItemCapacity: 25
   PassiveCapacity: 15
   rankedTable: {fileID: 11400000, guid: 2d372db464062304c8f5f4ce151f7bf6, type: 2}
+  energySe: {fileID: 8300000, guid: 276486da4f5cbf44fa40af1ddcd0e7cf, type: 3}
+  rocketSe: {fileID: 8300000, guid: 07cb432a3833b374b8c765d798a846a3, type: 3}
+  balloonSe: {fileID: 8300000, guid: f10197034bf931b41bb1e5cea43ddf26, type: 3}
 --- !u!82 &1841567047509945236
 AudioSource:
   m_ObjectHideFlags: 0
@@ -909,10 +913,6 @@ MonoBehaviour:
   jitterUpdateMin: 0.15
   jitterUpdateMax: 0.35
   jitterSmooth: 6
-  minCutoff: 800
-  maxCutoff: 6000
-  cutoffSmooth: 8
-  lowPass: {fileID: 0}
   pitchSmooth: 10
   volumeSmooth: 10
   fadeTime: 0.12

@@ -29,6 +29,11 @@ public class ItemManager : MonoBehaviour
     private int nowPassiveCapacity;
     private int nowItemCapacity;
 
+    [Header("Sound")]
+    [SerializeField] private AudioClip energySe;    // エナジー
+    [SerializeField] private AudioClip rocketSe;    // ロケット
+    [SerializeField] private AudioClip balloonSe;   // 水風船
+
     private LinkedList<int> itemQueue = new LinkedList<int>();
 
     // シングルのみで使うパッシブ用キュー
@@ -279,6 +284,9 @@ public class ItemManager : MonoBehaviour
         {
             // 加速状態を付与
             carController.SetBoost(BoostType.Short);
+
+            if(carController.isMine)
+                SoundManager.Instance.PlaySE(energySe);
         }
 
         if(id == PartsID.Rocket)
@@ -319,7 +327,8 @@ public class ItemManager : MonoBehaviour
                 if(carController.isMine) rocket.SetParentName(PlayerPrefs.GetString("PlayerName"));
                 else rocket.SetParentName(carController.GetName());
             }
-
+            if (carController.isMine)
+                SoundManager.Instance.PlaySE(rocketSe);
             return;
         }
         if (id == PartsID.RocketHoming)
@@ -364,7 +373,8 @@ public class ItemManager : MonoBehaviour
                 if (carController.isMine) rocketRed.SetParentName(PlayerPrefs.GetString("PlayerName"));
                 else rocketRed.SetParentName(carController.GetName());
             }
-
+            if (carController.isMine)
+                SoundManager.Instance.PlaySE(rocketSe);
             return;
         }
         if (id == PartsID.BalloonTrap)
@@ -406,6 +416,8 @@ public class ItemManager : MonoBehaviour
                 else balloonTrap.SetParentName(carController.GetName());
             }
 
+            if (carController.isMine)
+                SoundManager.Instance.PlaySE(balloonSe);
             return;
         }
 

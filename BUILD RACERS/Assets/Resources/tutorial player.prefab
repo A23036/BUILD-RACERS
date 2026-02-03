@@ -558,6 +558,8 @@ GameObject:
   - component: {fileID: 2777997212412123024}
   - component: {fileID: 1908105701660319189}
   - component: {fileID: 8753930163125487384}
+  - component: {fileID: 2932858156185909484}
+  - component: {fileID: 60580347998608260}
   m_Layer: 0
   m_Name: tutorial player
   m_TagString: Player
@@ -655,7 +657,6 @@ MonoBehaviour:
   fireEffectDuration: 1.5
   FireFxLocalPos: {x: -0.345, y: 0.678, z: -1.011}
   speedText: {fileID: 0}
-  coinText: {fileID: 0}
   lapText: {fileID: 0}
   rankText: {fileID: 0}
   timerText: {fileID: 0}
@@ -699,6 +700,7 @@ MonoBehaviour:
   searchLimitTime: 20
   guideResetDelay: 2
   killerEffect: {fileID: 0}
+  stunSe: {fileID: 8300000, guid: bf73ade857d78214fb75c938586d12b2, type: 3}
 --- !u!114 &2777997212412123024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -764,6 +766,134 @@ MonoBehaviour:
   ItemCapacity: 25
   PassiveCapacity: 15
   rankedTable: {fileID: 11400000, guid: 3c4755182b27bca4db91370808b144d6, type: 2}
+  energySe: {fileID: 8300000, guid: 276486da4f5cbf44fa40af1ddcd0e7cf, type: 3}
+  rocketSe: {fileID: 8300000, guid: 07cb432a3833b374b8c765d798a846a3, type: 3}
+  balloonSe: {fileID: 8300000, guid: f10197034bf931b41bb1e5cea43ddf26, type: 3}
+--- !u!82 &2932858156185909484
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7426679782645938324}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &60580347998608260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7426679782645938324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31b6c25109086d74d8b8793029d4d638, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 7215359094200591830, guid: 45f88518632884140b5f53c821a159e5, type: 3}
+  engineSource: {fileID: 1841567047509945236, guid: 45f88518632884140b5f53c821a159e5, type: 3}
+  engineLoopClip: {fileID: 8300000, guid: 65afdbf8de99b2e48b7e99dcfee315e7, type: 3}
+  startSpeed: 3
+  fullSpeed: 50
+  minPitch: 1
+  maxPitch: 8
+  minVolume: 0
+  maxVolume: 0.5
+  jitterAmount: 0.03
+  jitterUpdateMin: 0.15
+  jitterUpdateMax: 0.35
+  jitterSmooth: 6
+  pitchSmooth: 10
+  volumeSmooth: 10
+  fadeTime: 0.12
 --- !u!1 &8388995873041266228
 GameObject:
   m_ObjectHideFlags: 0
