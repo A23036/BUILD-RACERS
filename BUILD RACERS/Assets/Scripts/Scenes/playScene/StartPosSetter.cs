@@ -195,13 +195,14 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
         {
             var pv = eng.GetComponent<PhotonView>();
 
+            if (!pv.IsMine) continue;
+
             //フェードアウト
             if (fade != null)
             {
                 fade.FadeOut(fadeOutDuration);
             }
 
-            if (!pv.IsMine) continue;
             if (pv.ViewID == e_id)
             {
                 eng.RPC_NotifLoadFinish();
