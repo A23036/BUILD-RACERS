@@ -235,7 +235,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     //順位計算を何秒ごとに行うか
     private float rankTimer = 0f;
-    private float rankUpdateInterval = 0.5f;
+    [SerializeField] private float rankUpdateInterval = 0.5f;
 
     //ヒット通知用
     private LogUI logUI;
@@ -246,6 +246,10 @@ public class CarController : MonoBehaviourPunCallbacks
 
     [Header("Sound")]
     [SerializeField] private AudioClip stunSe; // 爆発音用AudioSource
+
+    private int myNearIdx;
+    private int myNextIdx;
+
 
     public void SetIsTutorial()
     {
@@ -817,6 +821,8 @@ public class CarController : MonoBehaviourPunCallbacks
             UpdateRank();
             if (isMine) UpdateRankUI();
 
+            GetlenUntilNextWp(GetNearllyWpIdx(transform.position));
+
             rankTimer = 0f;
         }
         else
@@ -957,14 +963,17 @@ public class CarController : MonoBehaviourPunCallbacks
         //UI更新
         if(!isTutorial && isMine && PlayerPrefs.GetInt("driverNum") != -1)
         {
-            //周回数をUIに反映
-            lapText.text = $"Lap:{Mathf.Clamp(lapCount + 1, 1, maxLaps)}/{maxLaps}";
+            if(!isRaceClear)
+            {
+                //周回数をUIに反映
+                lapText.text = $"Lap:{Mathf.Clamp(lapCount + 1, 1, maxLaps)}/{maxLaps}";
 
-            //順位更新
-            UpdateRank();
+                //順位更新
+                UpdateRank();
 
-            //タイムをUIに反映
-            UpdateTimerUI();
+                //タイムをUIに反映
+                UpdateTimerUI();
+            }
         }
 
         // combine motor & brake: motorInput 0..1, brakeInput 0..1 -> netMotor (-1..1) or separate
@@ -1127,27 +1136,30 @@ public class CarController : MonoBehaviourPunCallbacks
 
         if(isMine) Debug.Log($"現在の角度：{cur}");
 
-        if (throughFlags == flags.Length && 0 < cur && cur < 10)
+        if(0 <= myNextIdx && myNextIdx <= 1)
         {
-            isLapClear = true;
-            for (int i = 0; i < flags.Length; i++)
+            if (throughFlags == flags.Length && 0 < cur && cur < 10)
             {
-                flags[i] = false;
+                isLapClear = true;
+                for (int i = 0; i < flags.Length; i++)
+                {
+                    flags[i] = false;
+                }
             }
-        }
-        else if(throughFlags < flags.Length && 350 < cur && cur < 360)
-        {
-            Debug.Log("逆走検知");
-            isLapClear = false;
-            lapCount--;
-            for (int i = 0; i < flags.Length; i++)
+            else if (throughFlags < flags.Length && 350 < cur && cur < 360)
             {
-                flags[i] = true;
+                Debug.Log("逆走検知");
+                isLapClear = false;
+                lapCount--;
+                for (int i = 0; i < flags.Length; i++)
+                {
+                    flags[i] = true;
+                }
             }
-        }
-        else
-        {
-            isLapClear = false;
+            else
+            {
+                isLapClear = false;
+            }
         }
 
         throughFlags = 0;
@@ -1396,7 +1408,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
             //最短ウェイポイント計算
             int otherNearIdx = car.GetNearllyWpIdx(car.transform.position);
-            int myNearIdx = GetNearllyWpIdx(transform.position);
+            myNearIdx = GetNearllyWpIdx(transform.position);
 
             if (otherNearIdx < myNearIdx) continue;
             if (otherNearIdx > myNearIdx)
@@ -1449,10 +1461,10 @@ public class CarController : MonoBehaviourPunCallbacks
         if (isRaceClear) return;
 
         //UIに反映
-        if (lapCount == maxLaps - 1 && lapManager.NowAngle(transform.position) >= 350f)
+        if (350f <= lapManager.NowAngle(transform.position) || lapManager.NowAngle(transform.position) <= 10f)
         {
             //ゴール直前なら表示なし
-            rankText.text = "";
+            if(lapCount == maxLaps - 1) rankText.text = "";
         }
         else
         {
@@ -1553,8 +1565,9 @@ public class CarController : MonoBehaviourPunCallbacks
 
     private void LateUpdate()
     {
-        //テスト　ラップ数を頭上に表示
+        //テスト　変数監視用
         //SetName(lapCount.ToString());
+        //SetName(myNextIdx.ToString());
 
         if (stunEffectInstance == null) return;
         UpdateStunEffectTransform();
@@ -2098,6 +2111,8 @@ public class CarController : MonoBehaviourPunCallbacks
         Vector3 wpPos = wpcTransform.GetChild(nearIdx).position;
         Vector3 nextWpPos = wpcTransform.GetChild((nearIdx+1) % wpcTransform.childCount).position;
         RaycastHit[] hitList = Physics.RaycastAll(nowPos, (wpPos - nowPos).normalized, (wpPos - nowPos).magnitude);
+
+        if (isMine) myNextIdx = (nearIdx + 1) % wpcTransform.childCount;
 
         bool isHitWall = false;
         foreach (var hitp in hitList)

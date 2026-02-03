@@ -22,14 +22,19 @@ public class PoseUI : MonoBehaviour
     [SerializeField] private float duration = 0.2f;
     private bool isMoving = false;
 
+    private Image backImage;
+
     private void Awake()
     {
+        
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         upFlags[poseUI] = false;
+
+        backImage = GameObject.Find("poseRootBackImage").GetComponent<Image>();
     }
 
     void OnEnable()
@@ -65,7 +70,7 @@ public class PoseUI : MonoBehaviour
         if (rectTransform == null) yield break;
 
         Vector2 start = rectTransform.anchoredPosition;
-        Vector2 end = start + new Vector2(0, upFlags[obj] ? 1080 : -1080);
+        Vector2 end = start + new Vector2(0, upFlags[obj] ? backImage.rectTransform.rect.height : -backImage.rectTransform.rect.height);
         float t = 0;
 
         while (t < 1)
