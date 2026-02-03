@@ -234,7 +234,7 @@ public class driverTutorial : baseScene
                 break;
             case dTutorialState.ItemInfo2:
                 // アイテム説明テキスト
-                typer.Play("アイテムには様々な種類があります\nチュートリアルで情報を確認できますよ|", () =>
+                typer.Play("アイテムには様々な種類があります\n使って試してみましょう|", () =>
                 {
                     WaitForInputThenNext(dTutorialState.FinishInfo);
                     BeginWaitForAdvance();
