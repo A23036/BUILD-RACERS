@@ -703,6 +703,7 @@ MonoBehaviour:
   searchLimitTime: 20
   guideResetDelay: 2
   killerEffect: {fileID: 6817927595226889595}
+  rankUpdateInterval: 0.5
   stunSe: {fileID: 8300000, guid: bf73ade857d78214fb75c938586d12b2, type: 3}
 --- !u!114 &2777997212412123024
 MonoBehaviour:
@@ -1383,6 +1384,10 @@ PrefabInstance:
     - target: {fileID: 2653153344604433488, guid: f6bbcfa7e746d0340bd78dd22f35b3b3, type: 3}
       propertyPath: m_Name
       value: VFX_Trail_Cosmos
+      objectReference: {fileID: 0}
+    - target: {fileID: 2653153344604433488, guid: f6bbcfa7e746d0340bd78dd22f35b3b3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3836811505428075909, guid: f6bbcfa7e746d0340bd78dd22f35b3b3, type: 3}
       propertyPath: m_LocalPosition.x

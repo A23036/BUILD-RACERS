@@ -59,6 +59,11 @@ public class driverTutorial : baseScene
 
     private void Awake()
     {
+        // 状態の初期化
+        PlayerPrefs.SetInt("driverNum", 1);
+        PlayerPrefs.SetInt("engineerNum", -1);
+        PlayerPrefs.SetInt("isMonitor", 0);
+
         //ドライバーの生成
         var player = Instantiate(Resources.Load("tutorial player"), new Vector3(0, 0, -5), Quaternion.identity);
         player.GetComponent<CarController>().SetCamera();
@@ -71,11 +76,6 @@ public class driverTutorial : baseScene
 
         // 初期状態では停止
         carController.SetState(State.Stop);
-
-        // 状態の初期化
-        PlayerPrefs.SetInt("driverNum", 1);
-        PlayerPrefs.SetInt("engineerNum", -1);
-        PlayerPrefs.SetInt("isMonitor", 0);
 
         // bot生成
         GenerateBotDrivers();
@@ -186,7 +186,7 @@ public class driverTutorial : baseScene
     {
         var wpContainer = FindObjectOfType<WaypointContainer>();
         
-        var bot = Instantiate(Resources.Load("Player"), new Vector3(-80f, 0, -5f), Quaternion.identity);
+        var bot = Instantiate(Resources.Load("tutorial player"), new Vector3(-80f, 0, -5f), Quaternion.identity);
         botPlayer = bot.GetComponent<CarController>();
         botPlayer.SetAI<AIDriver>(wpContainer);
         botPlayer.SetName("CPU");
