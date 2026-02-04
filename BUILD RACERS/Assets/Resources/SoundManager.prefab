@@ -41,7 +41,7 @@ AudioSource:
   m_GameObject: {fileID: 1009478713879088175}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 545786044997227731, guid: 96ed2393edcb8324eb7e864ead99ba1f, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
@@ -170,7 +170,7 @@ AudioSource:
   m_GameObject: {fileID: 2752323881618655558}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 8543169715772151869, guid: 96ed2393edcb8324eb7e864ead99ba1f, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
@@ -299,7 +299,7 @@ AudioSource:
   m_GameObject: {fileID: 6727799214822996908}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 545786044997227731, guid: 96ed2393edcb8324eb7e864ead99ba1f, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
@@ -437,4 +437,7 @@ MonoBehaviour:
   bgmSource: {fileID: 4399005336677578901}
   seSource: {fileID: 4087474115246515841}
   loopSeSource: {fileID: 6036253283299042798}
+  mixer: {fileID: 24100000, guid: 96ed2393edcb8324eb7e864ead99ba1f, type: 2}
+  paramBgm: BGM_Vol
+  paramSe: SE_Vol
   defaultFadeTime: 1

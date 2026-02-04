@@ -1,4 +1,4 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -11,8 +11,21 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource seSource;
     [SerializeField] private AudioSource loopSeSource;
 
+    [Header("Mixer")]
+    [SerializeField] private AudioMixer mixer;
+    [SerializeField] private string paramBgm = "BGM_Vol"; // Exposed ParametersÂêç„Å®‰∏ÄËá¥
+    [SerializeField] private string paramSe = "SE_Vol";  // Exposed ParametersÂêç„Å®‰∏ÄËá¥
+
     [Header("Settings")]
     [SerializeField] private float defaultFadeTime = 1.0f;
+
+    // ‰øùÂ≠ò„Ç≠„ÉºÔºàOptionScene„Å®Âêà„Çè„Åõ„ÇãÔºâ
+    private const string KEY_BGM = "Volume_BGM_20";
+    private const string KEY_SE = "Volume_SE_20";
+    private const int STEP_MAX = 20;
+
+    private int bgmStep = STEP_MAX;
+    private int seStep = STEP_MAX;
 
     private Coroutine bgmFadeCoroutine;
 
@@ -26,17 +39,67 @@ public class SoundManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // îOÇÃÇΩÇﬂç≈í·å¿ÇÃèâä˙âª
-        if (bgmSource != null)
+        if (bgmSource != null) { bgmSource.loop = true; bgmSource.playOnAwake = false; }
+        if (seSource != null) { seSource.loop = false; seSource.playOnAwake = false; }
+        if (loopSeSource != null) { loopSeSource.loop = false; loopSeSource.playOnAwake = false; }
+
+        // ‰øùÂ≠òÂÄ§„É≠„Éº„ÉâÔºà0„Äú20Ôºâ
+        bgmStep = Mathf.Clamp(PlayerPrefs.GetInt(KEY_BGM, STEP_MAX), 0, STEP_MAX);
+        seStep = Mathf.Clamp(PlayerPrefs.GetInt(KEY_SE, STEP_MAX), 0, STEP_MAX);
+
+        // Mixer„Å∏ÂèçÊò†
+        ApplyMixerVolumes(save: false);
+    }
+
+    // --------------------
+    // Volume APIÔºàOptionScene„ÅØ„Åì„Çå„ÇíÂëº„Å∂„ÅÆ„ÅåÊ•ΩÔºâ
+    // --------------------
+    public void SetBgmStep(int step, bool save = true)
+    {
+        bgmStep = Mathf.Clamp(step, 0, STEP_MAX);
+        ApplyMixerVolumes(save);
+    }
+
+    public void SetSeStep(int step, bool save = true)
+    {
+        seStep = Mathf.Clamp(step, 0, STEP_MAX);
+        ApplyMixerVolumes(save);
+    }
+
+    // 0..1 „ÅßËß¶„Çä„Åü„ÅÑÂ†¥ÂêàÁî®
+    public void SetBGMVolume01(float volume01, bool save = true)
+    {
+        SetBgmStep(Mathf.RoundToInt(Mathf.Clamp01(volume01) * STEP_MAX), save);
+    }
+
+    public void SetSEVolume01(float volume01, bool save = true)
+    {
+        SetSeStep(Mathf.RoundToInt(Mathf.Clamp01(volume01) * STEP_MAX), save);
+    }
+
+    public float GetBGMVolume01() => bgmStep / (float)STEP_MAX;
+    public float GetSEVolume01() => seStep / (float)STEP_MAX;
+
+    private void ApplyMixerVolumes(bool save)
+    {
+        if (mixer != null)
         {
-            bgmSource.loop = true;
-            bgmSource.playOnAwake = false;
+            mixer.SetFloat(paramBgm, ToDecibel(GetBGMVolume01()));
+            mixer.SetFloat(paramSe, ToDecibel(GetSEVolume01()));
         }
-        if (seSource != null)
+
+        if (save)
         {
-            seSource.loop = false;
-            seSource.playOnAwake = false;
+            PlayerPrefs.SetInt(KEY_BGM, bgmStep);
+            PlayerPrefs.SetInt(KEY_SE, seStep);
+            PlayerPrefs.Save();
         }
+    }
+
+    private float ToDecibel(float value01)
+    {
+        if (value01 <= 0.0001f) return -80f;
+        return Mathf.Log10(value01) * 20f;
     }
 
     // --------------------
@@ -45,12 +108,10 @@ public class SoundManager : MonoBehaviour
     public void PlayBGM(AudioClip clip, float fadeTime = -1f, bool keepIfSame = true)
     {
         if (clip == null || bgmSource == null) return;
-
         if (keepIfSame && bgmSource.isPlaying && bgmSource.clip == clip) return;
 
         if (fadeTime < 0f) fadeTime = defaultFadeTime;
 
-        // ÉtÉFÅ[ÉhÇµÇ»Ç™ÇÁêÿÇËë÷Ç¶ÅiÉNÉçÉXÉtÉFÅ[ÉhÇ≈ÇÕÇ»Ç≠ÅAÇ¢Ç¡ÇΩÇÒâ∫Ç∞Çƒç∑Çµë÷Ç¶Çƒè„Ç∞ÇÈÅj
         if (bgmFadeCoroutine != null) StopCoroutine(bgmFadeCoroutine);
         bgmFadeCoroutine = StartCoroutine(FadeSwapBGM(clip, fadeTime));
     }
@@ -64,67 +125,16 @@ public class SoundManager : MonoBehaviour
         bgmFadeCoroutine = StartCoroutine(FadeOutStop(fadeTime));
     }
 
-    public void SetBGMVolume(float volume01)
-    {
-        // AudioSourceíº or MixerÇ«ÇøÇÁÇ≈Ç‡OK
-        volume01 = Mathf.Clamp01(volume01);
-
-        if (bgmSource != null)
-        {
-            bgmSource.volume = volume01;
-        }
-    }
-
-    // --------------------
-    // SE
-    // --------------------
-    public void PlaySE(AudioClip clip, float volumeScale = 1f)
-    {
-        if (clip == null || seSource == null) return;
-        seSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
-    }
-
-    public void SetSEVolume(float volume01)
-    {
-        volume01 = Mathf.Clamp01(volume01);
-
-        if (seSource != null)
-        {
-            seSource.volume = volume01;
-        }
-    }
-
-    public void PlayLoopSE(AudioClip clip)
-    {
-        if (clip == null) return;
-
-        loopSeSource.clip = clip;
-        loopSeSource.loop = true;
-        loopSeSource.Play();
-    }
-
-    public void StopLoopSE()
-    {
-        if (loopSeSource.isPlaying)
-            loopSeSource.Stop();
-    }
-
-    // --------------------
-    // Coroutines
-    // --------------------
+    // „Éï„Çß„Éº„Éâ„ÅØ AudioSource.volume „Åß 0‚Üí1Ôºà„Éû„Çπ„Çø„Éº„ÅØMixerÔºâ
     private IEnumerator FadeSwapBGM(AudioClip next, float fadeTime)
     {
-        // 1) ç°ñ¬Ç¡ÇƒÇΩÇÁÉtÉFÅ[ÉhÉAÉEÉg
         if (bgmSource.isPlaying && bgmSource.volume > 0f)
-        {
             yield return FadeVolume(bgmSource, 0f, fadeTime);
-        }
 
-        // 2) ç∑Çµë÷Ç¶Åïçƒê∂
         bgmSource.clip = next;
+        bgmSource.volume = 0f;
         bgmSource.Play();
 
-        // 3) ÉtÉFÅ[ÉhÉCÉìÅiå≥ÇÃç≈ëÂâπó Ç1Ç∆ÇµÇƒàµÇ§Åj
         yield return FadeVolume(bgmSource, 1f, fadeTime);
     }
 
@@ -150,17 +160,38 @@ public class SoundManager : MonoBehaviour
 
         while (t < time)
         {
-            t += Time.unscaledDeltaTime; // É|Å[ÉYíÜÇ≈Ç‡ÉtÉFÅ[ÉhÇµÇΩÇ¢Ç»ÇÁ unscaled
+            t += Time.unscaledDeltaTime;
             src.volume = Mathf.Lerp(start, target, t / time);
             yield return null;
         }
         src.volume = target;
     }
 
-    private float ToDecibel(float value01)
+    // --------------------
+    // SE
+    // --------------------
+    // „Éû„Çπ„Çø„Éº„ÅØMixer„ÅåÊéõ„Åë„Çã„ÅÆ„Åß volumeScale „Å†„Åë
+    public void PlaySE(AudioClip clip, float volumeScale = 1f)
     {
-        // 0 -> -80dB Ç≠ÇÁÇ¢Ç…óéÇ∆Ç∑Åiñ≥âπÅj
-        if (value01 <= 0.0001f) return -80f;
-        return Mathf.Log10(value01) * 20f;
+        if (clip == null || seSource == null) return;
+        seSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
+    }
+
+    public void PlayLoopSE(AudioClip clip, float volumeScale = 1f)
+    {
+        if (clip == null || loopSeSource == null) return;
+
+        loopSeSource.clip = clip;
+        loopSeSource.loop = true;
+        loopSeSource.volume = Mathf.Clamp01(volumeScale);
+
+        if (!loopSeSource.isPlaying)
+            loopSeSource.Play();
+    }
+
+    public void StopLoopSE()
+    {
+        if (loopSeSource != null && loopSeSource.isPlaying)
+            loopSeSource.Stop();
     }
 }

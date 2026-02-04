@@ -700,6 +700,7 @@ MonoBehaviour:
   searchLimitTime: 20
   guideResetDelay: 2
   killerEffect: {fileID: 0}
+  rankUpdateInterval: 0.5
   stunSe: {fileID: 8300000, guid: bf73ade857d78214fb75c938586d12b2, type: 3}
 --- !u!114 &2777997212412123024
 MonoBehaviour:
@@ -778,7 +779,7 @@ AudioSource:
   m_GameObject: {fileID: 7426679782645938324}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 545786044997227731, guid: 96ed2393edcb8324eb7e864ead99ba1f, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
