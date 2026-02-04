@@ -126,7 +126,7 @@ public class ItemBoxController : MonoBehaviour
             else if(!PhotonNetwork.IsConnected)
             {
                 //シングル or チュートリアルならそのままアイテム獲得する
-                if(PlayerPrefs.GetInt("driverNum") != -1) // ドライバーの時
+                if(PlayerPrefs.GetInt("driverNum") != -1 || carController.isMine == false) // ドライバーの時
                 {
                     PartsID id = itemManager.GetRandomItem(carController.GetCurrentRank(), partsType);
 
