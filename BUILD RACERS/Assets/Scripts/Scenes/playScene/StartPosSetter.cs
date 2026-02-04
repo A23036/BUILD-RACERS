@@ -79,6 +79,12 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
 
         //白い画面から始める
         fade.SetStartRange();
+
+        //観戦者は読み込みなしでフェードアウト
+        if (PlayerPrefs.GetInt("isMonitor") == 1 && fade != null)
+        {
+            fade.FadeOut(fadeOutDuration);
+        }
     }
 
     // Update is called once per frame
