@@ -2148,12 +2148,34 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
+        if (!photonView.IsMine) return;
+
         //切断がペアならメニューへ戻る
-        if (otherPlayer.CustomProperties.TryGetValue("engineerNum", out var en) && (int)en == PlayerPrefs.GetInt("driverNum")
-            && otherPlayer.CustomProperties.TryGetValue("isRaceClear", out var flag) && (bool)flag == false)
+        var view = PhotonView.Find(pairViewID);
+        if (view == null) return;
+
+        if (view.OwnerActorNr == otherPlayer.ActorNumber)
         {
+            //切断
+            /*
             Debug.Log("ペアが切断したのでメニューへ戻ります");
             SceneManager.LoadScene("menu");
+            */
+
+            //観戦に回す
+            ///*
+            PhotonNetwork.Destroy(gameObject);
+
+            var sceneManager = GameObject.Find("SceneManager").GetComponent<playScene>();
+            if (sceneManager != null)
+            {
+                sceneManager.ToValidMonitor();
+            }
+            //*/
+        }
+        else
+        {
+            Debug.Log("切断がペアではありません");
         }
     }
 

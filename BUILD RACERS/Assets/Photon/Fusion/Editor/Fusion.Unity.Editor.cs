@@ -2239,7 +2239,8 @@ namespace Fusion.Editor {
     /// <summary>
     /// Register a handler that will be called when an addressable asset with a specific label is added or removed.
     /// </summary>
-    public static void AddAddressableAssetsWithLabelMonitor(string label, Action<Hash128> handler) {
+    public static void AddAddressableAssetsWithLabel
+    (string label, Action<Hash128> handler) {
       AddressableAssetSettings.OnModificationGlobal += (settings, modificationEvent, data) => {
         switch (modificationEvent) {
           case AddressableAssetSettings.ModificationEvent.EntryAdded:

@@ -159,21 +159,27 @@ public class playScene : baseScene
         }
         else if (PlayerPrefs.GetInt("isMonitor") == 1)
         {
-            //UIの表示・非表示
-            DriverUI.SetActive(false);
-            EngineerUI.SetActive(false);
-            MonitorUI.SetActive(true);
-
-            //カメラの初期設定
-            Transform carTf = FindAnyObjectByType<CarController>()?.transform;
-            var cameraController = Camera.main.GetComponent<CameraController>();
-            if (cameraController != null)
-                cameraController.SetTarget(carTf);
+            ToValidMonitor();
         }
         else
         {
             Debug.Log("セレクトされていません");
         }
+    }
+
+
+    public void ToValidMonitor()
+    {
+        //UIの表示・非表示
+        DriverUI.SetActive(false);
+        EngineerUI.SetActive(false);
+        MonitorUI.SetActive(true);
+
+        //カメラの初期設定
+        Transform carTf = FindAnyObjectByType<CarController>()?.transform;
+        var cameraController = Camera.main.GetComponent<CameraController>();
+        if (cameraController != null)
+            cameraController.SetTarget(carTf);
     }
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)

@@ -48,6 +48,8 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
 
     void Awake()
     {
+        target = null;
+
         var textObj = GameObject.Find("MonitorTargetName");
         if (textObj != null) targetName = textObj.GetComponent<TextMeshProUGUI>();
     }
@@ -116,20 +118,21 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
 
     void Update()
     {
+    }
+
+    void LateUpdate()
+    {
         //1回のみ実行　初期化　適当なカートに追従
-        if(isInit == false)
+        if (isInit == false)
         {
             var karts = FindObjectsOfType<CarController>();
-            if(karts.Length > 0)
+            if (karts.Length > 0)
             {
                 SetNextTarget(1);
                 isInit = true;
             }
         }
-    }
 
-    void LateUpdate()
-    {
         if (target == null) return;
 
         Vector3 desired;
