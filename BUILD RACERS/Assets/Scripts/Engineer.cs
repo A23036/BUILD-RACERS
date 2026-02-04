@@ -365,7 +365,7 @@ public class Engineer : MonoBehaviourPunCallbacks
         //シングルプレイの処理
         if (!PhotonNetwork.IsConnected)
         {
-            var carController = FindObjectOfType<CarController>();
+            carController = FindObjectOfType<CarController>();
             carController.SetPassiveState(id,isAdd);
             return;
         }

@@ -323,7 +323,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 break;
         }
 
-        Debug.Log("PassiveState: Acceleration: " + passiveNumList[0] + " Speed: " + passiveNumList[1] + " AntiStun: " + passiveNumList[2]);
+        if(isMine) Debug.Log("PassiveState: Acceleration: " + passiveNumList[0] + " Speed: " + passiveNumList[1] + " AntiStun: " + passiveNumList[2]);
 
         //パッシブのUI更新
         if (isMine && isRaceClear == false)
@@ -1134,7 +1134,7 @@ public class CarController : MonoBehaviourPunCallbacks
             if (f) throughFlags++;
         }
 
-        if(isMine) Debug.Log($"現在の角度：{cur}");
+        //if(isMine) Debug.Log($"現在の角度：{cur}");
 
         if(0 <= myNextIdx && myNextIdx <= 1)
         {

@@ -243,8 +243,6 @@ public class Parts : MonoBehaviour
 
         // 減少
         lifeTimeTimer -= Time.deltaTime;
-        Debug.Log("減少中");
-        Debug.Log("lifetimer:" + lifeTimeTimer);
 
         // fillAmount（1→0）
         if (lifeTimeGauge != null)

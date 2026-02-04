@@ -127,7 +127,9 @@ public class ItemManager : MonoBehaviour
     // パッシブ追加(シングルプレイ)
     public void PassiveEnqueue(int itemId)
     {
-        if(!carController.isMine) return;
+        //if(!carController.isMine) return;
+
+        if (carController.isMine) Debug.Log("PassiveEnqueue");
 
         PartsID id = (PartsID)itemId;
 
@@ -164,7 +166,7 @@ public class ItemManager : MonoBehaviour
 
         carController.RPC_SetPassiveState(id, true);
 
-        Debug.Log("PassiveCapacity : " + nowPassiveCapacity);
+        if(carController.isMine) Debug.Log("PassiveCapacity : " + nowPassiveCapacity);
     }
 
     // 最も古いアイテムを取り出す
