@@ -16,8 +16,6 @@ public class optionScene : baseScene
     [SerializeField] private AudioClip backSe;
     private bool isClicked = false;
 
-    private const string KEY_BGM = "Volume_BGM_20";
-    private const string KEY_SE = "Volume_SE_20";
     private const int STEP_MAX = 20;
 
     void Start()
@@ -40,14 +38,13 @@ public class optionScene : baseScene
 
     private void SetupSliders()
     {
-        // スライダー未設定なら何もしない（null事故回避）
         if (bgmSlider == null || seSlider == null)
         {
             Debug.LogWarning("OptionScene: sliders are not assigned.");
             return;
         }
 
-        // Slider設定（念のためコード側でも矯正）
+        // Slider設定
         bgmSlider.minValue = 0;
         bgmSlider.maxValue = STEP_MAX;
         bgmSlider.wholeNumbers = true;
@@ -56,23 +53,32 @@ public class optionScene : baseScene
         seSlider.maxValue = STEP_MAX;
         seSlider.wholeNumbers = true;
 
-        // 保存値を読み込む（無ければ初期値20）
-        int bgmStep = PlayerPrefs.GetInt(KEY_BGM, STEP_MAX);
-        int seStep = PlayerPrefs.GetInt(KEY_SE, STEP_MAX);
+        // SoundManagerが既にロードしている想定なので、まずそこから取得
+        int bgmStep = STEP_MAX;
+        int seStep = STEP_MAX;
 
-        // 0〜20に丸め
+        if (SoundManager.Instance != null)
+        {
+            bgmStep = Mathf.RoundToInt(SoundManager.Instance.GetBGMVolume01() * STEP_MAX);
+            seStep = Mathf.RoundToInt(SoundManager.Instance.GetSEVolume01() * STEP_MAX);
+        }
+
         bgmStep = Mathf.Clamp(bgmStep, 0, STEP_MAX);
         seStep = Mathf.Clamp(seStep, 0, STEP_MAX);
 
-        // 値を入れる前にリスナーを外す（初期化時の二重呼び出し防止）
+        // 初期化時の二重呼び出し防止
         bgmSlider.onValueChanged.RemoveListener(OnBgmSliderChanged);
         seSlider.onValueChanged.RemoveListener(OnSeSliderChanged);
 
         bgmSlider.value = bgmStep;
         seSlider.value = seStep;
 
-        // 反映（起動時にも適用）
-        ApplyVolumes(bgmStep, seStep);
+        // 念のため反映（※SoundManager側がPrefs→Mixer反映済みなら不要。残しても害は少ない）
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.SetBgmStep(bgmStep, save: false);
+            SoundManager.Instance.SetSeStep(seStep, save: false);
+        }
 
         // リスナー登録
         bgmSlider.onValueChanged.AddListener(OnBgmSliderChanged);
@@ -88,7 +94,6 @@ public class optionScene : baseScene
         var hook = slider.GetComponent<SliderPointUpSE>();
         if (hook == null) hook = slider.gameObject.AddComponent<SliderPointUpSE>();
 
-        // 多重登録防止のため上書き
         hook.OnPointerUpAction = PlayAdjustSE;
     }
 
@@ -98,49 +103,23 @@ public class optionScene : baseScene
         SoundManager.Instance?.PlaySE(adjustSe);
     }
 
-
     private void OnBgmSliderChanged(float value)
     {
-        int step = Mathf.RoundToInt(value);
-        step = Mathf.Clamp(step, 0, STEP_MAX);
-
-        PlayerPrefs.SetInt(KEY_BGM, step);
-        PlayerPrefs.Save();
-
-        // 0〜1に変換して反映
-        SoundManager.Instance?.SetBGMVolume(StepTo01(step));
+        int step = Mathf.Clamp(Mathf.RoundToInt(value), 0, STEP_MAX);
+        SoundManager.Instance?.SetBgmStep(step, save: true); // 保存もSoundManager側
     }
 
     private void OnSeSliderChanged(float value)
     {
-        int step = Mathf.RoundToInt(value);
-        step = Mathf.Clamp(step, 0, STEP_MAX);
-
-        PlayerPrefs.SetInt(KEY_SE, step);
-        PlayerPrefs.Save();
-
-        SoundManager.Instance?.SetSEVolume(StepTo01(step));
-    }
-
-    private void ApplyVolumes(int bgmStep, int seStep)
-    {
-        if (SoundManager.Instance == null) return;
-
-        SoundManager.Instance.SetBGMVolume(StepTo01(bgmStep));
-        SoundManager.Instance.SetSEVolume(StepTo01(seStep));
-    }
-
-    private float StepTo01(int step)
-    {
-        // 20段階 -> 0.0~1.0
-        return step / (float)STEP_MAX;
+        int step = Mathf.Clamp(Mathf.RoundToInt(value), 0, STEP_MAX);
+        SoundManager.Instance?.SetSeStep(step, save: true); // 保存もSoundManager側
     }
 
     public void PushBackButton()
     {
         if (!isClicked)
         {
-            SoundManager.Instance.PlaySE(backSe);
+            SoundManager.Instance?.PlaySE(backSe);
             isClicked = true;
         }
 
