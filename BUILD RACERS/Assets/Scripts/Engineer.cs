@@ -150,6 +150,9 @@ public class Engineer : MonoBehaviourPunCallbacks
 
         foreach (var car in cars)
         {
+            //CPUならペア検索なし
+            if (car.isCPU) continue;
+
             var carPv = car.GetComponent<PhotonView>();
             Player searchPlayer = carPv.Owner;
             if(searchPlayer.CustomProperties.TryGetValue("driverNum",out var propDn) && propDn is int)
@@ -272,6 +275,8 @@ public class Engineer : MonoBehaviourPunCallbacks
         //シングルプレイの処理
         if (!PhotonNetwork.IsConnected)
         {
+            Debug.Log($"PAIR NAME: {carController.GetName()}");
+
             // キューに追加
             carController.RPC_EnqueueItem(id);
             // 即座に生成
@@ -300,7 +305,6 @@ public class Engineer : MonoBehaviourPunCallbacks
         //シングルプレイの処理
         if (!PhotonNetwork.IsConnected)
         {
-            var carController = FindObjectOfType<CarController>();
             carController.RPC_RemoveItem(id);
             return;
         }
@@ -322,7 +326,6 @@ public class Engineer : MonoBehaviourPunCallbacks
         //シングルプレイの処理
         if(!PhotonNetwork.IsConnected)
         {
-            var carController = FindObjectOfType<CarController>();
             carController.RPC_RemovePartsNum();
             return;
         }
@@ -343,7 +346,6 @@ public class Engineer : MonoBehaviourPunCallbacks
         //シングルプレイの処理
         if (!PhotonNetwork.IsConnected)
         {
-            var carController = FindObjectOfType<CarController>();
             carController.RPC_AddPartsNum();
             return;
         }
@@ -364,7 +366,6 @@ public class Engineer : MonoBehaviourPunCallbacks
         //シングルプレイの処理
         if (!PhotonNetwork.IsConnected)
         {
-            carController = FindObjectOfType<CarController>();
             carController.SetPassiveState(id,isAdd);
             return;
         }

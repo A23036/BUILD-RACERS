@@ -165,11 +165,18 @@ public class playScene : baseScene
         {
             Debug.Log("セレクトされていません");
         }
+
+        //マスターならBOT生成
+        GenerateBotDrivers();
     }
 
 
     public void ToValidMonitor()
     {
+        PlayerPrefs.SetInt("driverNum", -1);
+        PlayerPrefs.SetInt("engineerNum", -1);
+        PlayerPrefs.SetInt("isMonitor", 1);
+
         //UIの表示・非表示
         DriverUI.SetActive(false);
         EngineerUI.SetActive(false);
@@ -193,6 +200,20 @@ public class playScene : baseScene
 
     public void GenerateBotDrivers()
     {
+        //オンラインなら生成数を求める
+        if(PhotonNetwork.InRoom)
+        {
+            var Players = PhotonNetwork.PlayerList;
+            GenerateBotsNum = 8;
+            foreach (var p in Players)
+            {
+                if(p.CustomProperties.TryGetValue("driverNum" , out var n) && n is int && (int)n != -1)
+                {
+                    GenerateBotsNum--;
+                }
+            }
+        }
+
         var wpContainer = FindObjectOfType<WaypointContainer>();
         for (int i = 0; i < GenerateBotsNum; i++)
         {

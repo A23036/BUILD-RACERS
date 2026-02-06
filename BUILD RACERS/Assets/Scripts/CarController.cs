@@ -250,6 +250,7 @@ public class CarController : MonoBehaviourPunCallbacks
     private int myNearIdx;
     private int myNextIdx;
 
+    public bool isCPU = false;
 
     public void SetIsTutorial()
     {
@@ -1639,6 +1640,8 @@ public class CarController : MonoBehaviourPunCallbacks
         where T : Component , IDriver
     {
         Debug.Log("SET AI");
+
+        isCPU = true;
 
         if (driver == null)
         {
