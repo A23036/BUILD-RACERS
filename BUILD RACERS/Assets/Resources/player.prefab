@@ -705,6 +705,8 @@ MonoBehaviour:
   killerEffect: {fileID: 6817927595226889595}
   rankUpdateInterval: 0.5
   stunSe: {fileID: 8300000, guid: bf73ade857d78214fb75c938586d12b2, type: 3}
+  isCPU: 0
+  isSolo: 0
 --- !u!114 &2777997212412123024
 MonoBehaviour:
   m_ObjectHideFlags: 0

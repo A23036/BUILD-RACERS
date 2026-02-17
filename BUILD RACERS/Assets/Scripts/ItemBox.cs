@@ -112,7 +112,7 @@ public class ItemBoxController : MonoBehaviour
             itemManager = other.GetComponentInParent<ItemManager>();
             carController = other.GetComponentInParent<CarController>();
 
-            if (carController.isMine && PhotonNetwork.IsConnected)
+            if (carController.isSolo == false && carController.isMine && PhotonNetwork.IsConnected)
             {
                 // --- アイテムボックスが破壊されるときの処理 ---
                 // 1. アイテムを渡す処理をここに記述（あれば）
@@ -123,9 +123,9 @@ public class ItemBoxController : MonoBehaviour
                     carController.AddPartsNum(); // アイテム数を追加
                 }
             }
-            else if(!PhotonNetwork.IsConnected)
+            else if(carController.isSolo || carController.isCPU || !PhotonNetwork.IsConnected)
             {
-                //シングル or チュートリアルならそのままアイテム獲得する
+                //シングル or チュートリアル or ソロならそのままアイテム獲得する
                 if(PlayerPrefs.GetInt("driverNum") != -1 || carController.isMine == false) // ドライバーの時
                 {
                     PartsID id = itemManager.GetRandomItem(carController.GetCurrentRank(), partsType);

@@ -167,7 +167,7 @@ public class playScene : baseScene
         }
 
         //マスターならBOT生成
-        GenerateBotDrivers();
+        if(PhotonNetwork.IsMasterClient) GenerateBotDrivers();
     }
 
 
@@ -200,8 +200,10 @@ public class playScene : baseScene
 
     public void GenerateBotDrivers()
     {
+        bool isOnline = PhotonNetwork.InRoom ? true : false;
+
         //オンラインなら生成数を求める
-        if(PhotonNetwork.InRoom)
+        if(isOnline)
         {
             var Players = PhotonNetwork.PlayerList;
             GenerateBotsNum = 8;
@@ -214,14 +216,24 @@ public class playScene : baseScene
             }
         }
 
+        //テスト　生成数固定
+        //GenerateBotsNum = 1;
+
         var wpContainer = FindObjectOfType<WaypointContainer>();
         for (int i = 0; i < GenerateBotsNum; i++)
         {
-            var bot = Instantiate(Resources.Load("Player"), new Vector3(0, 1, (i + 1) * -6f), Quaternion.identity);
+            //オンラインか否かで生成方法を切り替える
+            var bot = isOnline ? 
+                PhotonNetwork.Instantiate("Player", new Vector3(0, 1, (i + 1) * -6f), Quaternion.identity):
+                Instantiate(Resources.Load("Player"), new Vector3(0, 1, (i + 1) * -6f), Quaternion.identity);
+            
             var botCc = bot.GetComponent<CarController>();
             botCc.SetAI<AIDriver>(wpContainer);
+
             //0埋め2桁で名前を設定
             botCc.SetName("CPU_" + (i + 1).ToString("00"));
         }
+
+        Debug.Log($"BOT生成数: {GenerateBotsNum}");
     }
 }

@@ -29,6 +29,12 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
             commentInput = sm.GetCommentInput();
         }
         ss = GetComponent<selectSystem>();
+
+        //ソロフラグの初期化
+        if(PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LocalPlayer.CustomProperties["isSolo"] = true;
+        }
     }
 
     private void Awake()
@@ -97,7 +103,10 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
 
+        //全員準備完了
         isEveryoneReady = true;
+
+        //ペア検索
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -203,6 +212,10 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
             props["masterGameScene"] = "Starting";
             PhotonNetwork.CurrentRoom.SetCustomProperties(props);
 
+            //プレイヤーの分布
+            Dictionary<int,Player> driversDist = new Dictionary<int,Player>();
+            Dictionary<int,Player> engineersDist = new Dictionary<int,Player>();
+
             Debug.Log($"Set {props["masterGameScene"]}");
 
             //ドライバー　エンジニア　観戦者の人数を記録
@@ -212,9 +225,36 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
 
             foreach (var p in PhotonNetwork.PlayerList)
             {
-                if (p.CustomProperties.TryGetValue("driverNum", out var d) && (int)d != -1) drivers++;
-                if (p.CustomProperties.TryGetValue("engineerNum", out var e) && (int)e != -1) engineers++;
-                if (p.CustomProperties.TryGetValue("isMonitor", out var m) && (int)m == 1) monitors++;
+                if (p.CustomProperties.TryGetValue("driverNum", out var d) && (int)d != -1)
+                {
+                    drivers++;
+                    driversDist[(int)d] = p;
+                }
+                if (p.CustomProperties.TryGetValue("engineerNum", out var e) && (int)e != -1)
+                {
+                    engineers++;
+                    engineersDist[(int)e] = p;
+                }
+                if (p.CustomProperties.TryGetValue("isMonitor", out var m) && (int)m == 1)
+                {
+                    monitors++;
+                }
+            }
+
+            //ペアの有無を確認　ペア検索の実行の際に使用
+            foreach (var p in driversDist)
+            {
+                if (engineersDist.TryGetValue(p.Key, out var engineer))
+                {
+                    p.Value.CustomProperties["isSolo"] = false;
+                }
+            }
+            foreach (var p in engineersDist)
+            {
+                if (driversDist.TryGetValue(p.Key, out var engineer))
+                {
+                    p.Value.CustomProperties["isSolo"] = false;
+                }
             }
 
             Debug.Log("人数カウント完了");

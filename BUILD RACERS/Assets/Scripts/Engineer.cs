@@ -29,6 +29,8 @@ public class Engineer : MonoBehaviourPunCallbacks
     [SerializeField] private float searchLimitTime = 20f;
     private float searchTimer = 0f;
 
+    private bool isSolo = false;
+
     public void SetPairDriver(CarController car)
     {
         carController = car;
@@ -103,6 +105,11 @@ public class Engineer : MonoBehaviourPunCallbacks
         panelManager = GameObject.Find("PanelManager").GetComponent<PanelManager>();
         panelManager.SetEngineer(this);
 
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("isSolo", out var b) && b is bool)
+        {
+            isSolo = (bool)b;
+        }
+
         TryPairPlayers();
     }
 
@@ -142,6 +149,22 @@ public class Engineer : MonoBehaviourPunCallbacks
         {
             Debug.Log($"ペア発見済み：{pairViewID}");
             return;
+        }
+
+        if(isNotifyEngineerConnected)
+        {
+            return;
+        }
+
+        //ソロなら処理なし
+        if (isSolo)
+        {
+            //マスタークライアントへエンジニアの生成を通知する
+            PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
+
+            startPosPv.RPC("RPC_NotifyEngineerConnected", RpcTarget.AllBuffered, photonView.ViewID);
+
+            isNotifyEngineerConnected = true;
         }
 
         CarController[] cars = FindObjectsOfType<CarController>();

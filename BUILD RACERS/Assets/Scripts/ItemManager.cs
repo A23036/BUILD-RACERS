@@ -92,7 +92,7 @@ public class ItemManager : MonoBehaviour
     public void ItemEnqueue(int itemId)
     {
         //シングルプレイなら重みチェック
-        if (!PhotonNetwork.IsConnected && carController.isMine)
+        if (carController.isSolo || (!PhotonNetwork.IsConnected && carController.isMine))
         {
             //キャパオーバーなら処理なし
             if (nowItemCapacity + itemWeightMap[(PartsID)itemId] > ItemCapacity)
@@ -128,6 +128,7 @@ public class ItemManager : MonoBehaviour
     public void PassiveEnqueue(int itemId)
     {
         //if(!carController.isMine) return;
+        if(carController.isCPU) return;
 
         if (carController.isMine) Debug.Log("PassiveEnqueue");
 
