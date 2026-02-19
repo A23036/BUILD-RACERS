@@ -65,7 +65,7 @@ public class ItemManager : MonoBehaviour
     private void Start()
     {
         var pv = GetComponent<PhotonView>();
-        if(PhotonNetwork.IsConnected && pv != null && pv.IsMine == false)
+        if(PhotonNetwork.IsConnected && pv != null && pv.IsMine == false && !PhotonNetwork.IsMasterClient)
         {
             return;
         }
@@ -91,8 +91,10 @@ public class ItemManager : MonoBehaviour
     // アイテム追加（同じIDも追加可能）
     public void ItemEnqueue(int itemId)
     {
+        bool? isSolo = carController.isSolo;
+
         //シングルプレイなら重みチェック
-        if (carController.isSolo || (!PhotonNetwork.IsConnected && carController.isMine))
+        if ((isSolo != null && isSolo == true) || (!PhotonNetwork.IsConnected && carController.isMine))
         {
             //キャパオーバーなら処理なし
             if (nowItemCapacity + itemWeightMap[(PartsID)itemId] > ItemCapacity)
@@ -181,8 +183,10 @@ public class ItemManager : MonoBehaviour
         
         PrintItemQueue();
 
-        //シングルプレイなら重み計算
-        if(!PhotonNetwork.IsConnected && carController.isMine && isUse)
+        bool? isSolo = carController.isSolo;
+
+        //シングルプレイ or ソロなら重み計算
+        if((isSolo != null && isSolo == true) || (!PhotonNetwork.IsConnected && carController.isMine && isUse))
         {
             nowItemCapacity -= itemWeightMap[(PartsID)id];
             Debug.Log("ItemCapacity : " + nowItemCapacity);
@@ -314,7 +318,8 @@ public class ItemManager : MonoBehaviour
 
                 //所有者名のセット
                 RocketGreen rocket = obj.GetComponent<RocketGreen>();
-                rocket.SetParentName(obj.GetComponent<PhotonView>().Owner.NickName);
+                if(carController.isCPU) rocket.SetParentName(carController.GetName());
+                else rocket.SetParentName(obj.GetComponent<PhotonView>().Owner.NickName);
             }
             else
             {
@@ -359,7 +364,8 @@ public class ItemManager : MonoBehaviour
 
                 //所有者名のセット
                 RocketRed rocketRed = rocket.GetComponent<RocketRed>();
-                rocketRed.SetParentName(rocket.GetComponent<PhotonView>().Owner.NickName);
+                if(carController.isCPU) rocketRed.SetParentName(carController.GetName());
+                else rocketRed.SetParentName(rocket.GetComponent<PhotonView>().Owner.NickName);
             }
             else
             {
@@ -402,7 +408,8 @@ public class ItemManager : MonoBehaviour
 
                 //所有者名のセット
                 WaterBalloonTrap balloonTrap = balloon.GetComponentInChildren<WaterBalloonTrap>();
-                balloonTrap.SetParentName(balloon.GetComponentInChildren<PhotonView>().Owner.NickName);
+                if(carController.isCPU) balloonTrap.SetParentName(carController.GetName());
+                else balloonTrap.SetParentName(balloon.GetComponentInChildren<PhotonView>().Owner.NickName);
             }
             else
             {

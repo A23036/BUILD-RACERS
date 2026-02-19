@@ -13,3 +13,10 @@ public interface IDriver
 
     bool IsKiller() { return false; }
 }
+
+public interface IStanRelated
+{
+    void SetParentName(string str);
+
+    string GetParentName();
+}

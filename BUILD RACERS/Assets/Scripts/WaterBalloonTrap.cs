@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class WaterBalloonTrap : MonoBehaviour
+public class WaterBalloonTrap : MonoBehaviour , IStanRelated
 {
     [Header("爆発設定")]
     [SerializeField] private float flashDuration = 2f;
@@ -109,6 +109,8 @@ public class WaterBalloonTrap : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log($"balloonParent: {parentName}");
+
         if (isExploding) return;
 
         // 爆発2秒前になったらフラッシュ開始（1回だけ）
@@ -255,13 +257,6 @@ public class WaterBalloonTrap : MonoBehaviour
         var car = other.GetComponentInParent<CarController>();
         if (car == null) return;
 
-        //攻撃者名を渡す
-        var photonView = GetComponentInChildren<PhotonView>();
-        if (PhotonNetwork.InRoom && photonView != null)
-        {
-            parentName = photonView.Owner.NickName;
-        }
-
         // ----------------------------
         // 設置中トラップ判定（爆発前）
         // ----------------------------
@@ -287,9 +282,13 @@ public class WaterBalloonTrap : MonoBehaviour
             Destroy(materialInstance);
         }
     }
+
+
+    // IStunRelated ----------
     public void SetParentName(string name)
     {
         parentName = name;
+        Debug.Log($"balloonTrapParent: {parentName}");
     }
 
     public string GetParentName()

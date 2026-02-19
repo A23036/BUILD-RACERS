@@ -26,7 +26,7 @@ public class NameDisp : MonoBehaviourPunCallbacks
         //Ž©•ª‚Í”ñ•\Ž¦
         var parent = transform.parent;
         var cc = parent.gameObject.GetComponent<CarController>();
-        if (cc.isMine) nameLabel.text = "";
+        if (cc.isMine && PlayerPrefs.GetInt("driverNum") != -1) nameLabel.text = "";
     }
 
     private void Update()

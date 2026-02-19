@@ -1,7 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 
-public class RocketGreen : MonoBehaviourPunCallbacks , IPunObservable
+public class RocketGreen : MonoBehaviourPunCallbacks , IPunObservable , IStanRelated
 {
     // Inspectorで速度を設定できるように public にします
     public float speed = 50f;
@@ -30,6 +30,7 @@ public class RocketGreen : MonoBehaviourPunCallbacks , IPunObservable
     [Tooltip("エフェクトが自動で消えるまでの時間")]
     public float effectLifeTime = 2f;
 
+    private GameObject parentObj = null;
     private string parentName = "";
 
     private bool isDestroyed = false;
@@ -181,15 +182,6 @@ public class RocketGreen : MonoBehaviourPunCallbacks , IPunObservable
         }
     }
 
-    public void SetParentName(string name)
-    {
-        parentName = name;
-    }
-
-    public string GetParentName()
-    {
-        return parentName;
-    }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
@@ -219,5 +211,16 @@ public class RocketGreen : MonoBehaviourPunCallbacks , IPunObservable
         // エフェクトを再生
         PlayDestroyEffect();
         if (photonView.IsMine) PhotonNetwork.Destroy(gameObject);
+    }
+
+    // IStunRelated ----------
+    public void SetParentName(string name)
+    {
+        parentName = name;
+    }
+
+    public string GetParentName()
+    {
+        return parentName;
     }
 }

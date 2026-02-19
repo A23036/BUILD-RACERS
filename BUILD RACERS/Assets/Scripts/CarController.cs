@@ -252,7 +252,10 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public bool isCPU = false;
 
-    public bool isSolo = false;
+    //CPUなんだけどソロプレイのエンジニアの相方がいるときtrue
+    public bool designation = false;
+
+    public bool? isSolo = null;
 
     private void Start()
     {
@@ -262,9 +265,10 @@ public class CarController : MonoBehaviourPunCallbacks
         }
 
         //マスターが生成したCPUなら名前共有　NPC以外はowner.nicknameで共有
+        //CPUフラグも同時に共有
         if(PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient && isCPU)
         {
-            photonView.RPC("RPC_SetName", RpcTarget.All, GetName(), photonView.ViewID);
+            photonView.RPC("RPC_SetName", RpcTarget.All, GetName(), photonView.ViewID,isCPU);
         }
     }
 
@@ -414,11 +418,12 @@ public class CarController : MonoBehaviourPunCallbacks
         
         if (PhotonNetwork.InRoom)
         {
-            myName = photonView.Owner.NickName;
+            if (isMine) myName = photonView.Owner.NickName;
+            else myName = GetName();
 
             if (logUI != null)
             {
-                if(isMine || PhotonNetwork.IsMasterClient) logUIpv.RPC("RPC_AddHitLog", RpcTarget.All, attacekrName, myName, weaponName);
+                if (isMine || PhotonNetwork.IsMasterClient) logUIpv.RPC("RPC_AddHitLog", RpcTarget.All, attacekrName, myName, weaponName);
             }
             else
             {
@@ -441,8 +446,6 @@ public class CarController : MonoBehaviourPunCallbacks
                 logUI.AddHitLog(attacekrName, myName, weaponName);
             }
         }
-
-        Debug.Log($"SET STAN : {GetName()}");
     }
 
     private void Awake()
@@ -614,8 +617,14 @@ public class CarController : MonoBehaviourPunCallbacks
             return;
         }
 
+        //CPUなら処理なし
+        if(isCPU)
+        {
+            return;
+        }
+
         //ソロなら処理なし
-        if (isSolo)
+        if (isSolo != null && isSolo == true)
         {
             //マスタークライアントへエンジニアの生成を通知する
             PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
@@ -623,6 +632,8 @@ public class CarController : MonoBehaviourPunCallbacks
             startPosPv.RPC("RPC_NotifyDriverConnected", RpcTarget.AllBuffered, photonView.ViewID);
 
             isNotifyDriverConnected = true;
+
+            return;
         }
 
         Engineer[] engineers = FindObjectsOfType<Engineer>();
@@ -891,8 +902,14 @@ public class CarController : MonoBehaviourPunCallbacks
                     Debug.Log($"GOAL TIME : {timer}");
                     if (photonView.IsMine)
                     {
-                        if(!isCPU) photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, photonView.Owner.NickName, timer, photonView.ViewID, pairViewID);
-                        else photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, GetName(), timer, photonView.ViewID, pairViewID);
+                        if(!isCPU)
+                        {
+                            photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, photonView.Owner.NickName, timer, photonView.ViewID, pairViewID);
+                        }
+                        else
+                        {
+                            photonView.RPC("RPC_UpdateRankUI", RpcTarget.All, GetName(), timer, photonView.ViewID, pairViewID);
+                        }
 
                         //ゴール済みフラグをプロパティに登録
                         Hashtable hash = new Hashtable();
@@ -915,7 +932,7 @@ public class CarController : MonoBehaviourPunCallbacks
             }
 
             //リザルトUIを表示開始
-            if(isMine) result.StartCoroutines();
+            if (isMine) result.StartCoroutines();
 
             //ゴール後自動走行のAIに切り替え
             ChangeToAutoDriver();
@@ -1609,6 +1626,7 @@ public class CarController : MonoBehaviourPunCallbacks
         //SetName(lapCount.ToString());
         //SetName(myNextIdx.ToString());
         //SetName(state.ToString());
+        //SetName(state.ToString());
 
         if (stunEffectInstance == null) return;
         UpdateStunEffectTransform();
@@ -1660,16 +1678,23 @@ public class CarController : MonoBehaviourPunCallbacks
 
                 //削除命令
                 var pv = collision.gameObject.GetComponent<PhotonView>();
+                var iStun = collision.gameObject.GetComponentInParent<IStanRelated>();
+                string attackerName = "";
                 if (pv != null)
                 {
                     pv.RPC("RPC_HitAndDestroy", RpcTarget.All);
+                }
+
+                if(iStun != null)
+                {
+                    attackerName = iStun.GetParentName();
                 }
 
                 //スタンタイプの設定
                 StunType stunType = StunType.Light;
 
                 //スタン状態付与
-                SetStun(stunType, pv.Owner.NickName, tag);
+                SetStun(stunType, attackerName, tag);
 
                 break;
         }
@@ -1709,10 +1734,11 @@ public class CarController : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void RPC_SetName(string name,int id)
+    public void RPC_SetName(string name,int id,bool isComputer = false)
     {
         if (id != photonView.ViewID) return;
         SetName(name);
+        isCPU = isComputer;
     }
 
     public void SetName(string s)
@@ -1742,7 +1768,6 @@ public class CarController : MonoBehaviourPunCallbacks
             }
         }
 
-        Debug.Log($"GetName: {ret}");
         return ret;
     }
 
@@ -1759,15 +1784,15 @@ public class CarController : MonoBehaviourPunCallbacks
     public void SendParts(PartsID id)
     {
         //ゴール後は処理なし
-        if(isRaceClear)
+        if (isRaceClear)
         {
             return;
         }
 
         //シングルプレイ時の操作
-        if (!PhotonNetwork.IsConnected && isMine || isSolo)
+        if (!PhotonNetwork.IsConnected && isMine || (isSolo != null && isSolo == true) || isCPU)
         {
-            if(PlayerPrefs.GetInt("driverNum") != -1) // ドライバーの時
+            if (PlayerPrefs.GetInt("driverNum") != -1 || isMine == false) // ドライバーの時
             {
                 itemManager.SpawnItem(id);
             }
@@ -1775,10 +1800,11 @@ public class CarController : MonoBehaviourPunCallbacks
             {
                 engineer.RPC_SpawnParts(id); // パーツ生成
             }
-                return;
+            
+            return;
         }
 
-        if (!photonView.IsMine) return;
+        //if (!photonView.IsMine) return;
 
         PhotonView target = PhotonView.Find(pairViewID);
 
@@ -1805,7 +1831,7 @@ public class CarController : MonoBehaviourPunCallbacks
         // ----------------------------
         // エンジニア側に使用したアイテムパーツ削除を通知
         // ----------------------------
-        if (isSolo == false && PhotonNetwork.IsConnected && isMine)
+        if (isSolo == false && PhotonNetwork.IsConnected && isMine || pairViewID != -1)
         {
             PhotonView target = PhotonView.Find(pairViewID);
             if (target != null)
@@ -1813,7 +1839,7 @@ public class CarController : MonoBehaviourPunCallbacks
                 target.RPC("RPC_RemoveUsedItem", pairPlayer, usedId);
             }
         }
-        else if (isCPU || !PhotonNetwork.IsConnected || isSolo)
+        else if (isCPU || !PhotonNetwork.IsConnected || (isSolo != null && isSolo == true))
         {
             RPC_RemoveItem(usedId);
         }
@@ -2240,6 +2266,7 @@ public class CarController : MonoBehaviourPunCallbacks
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
+        /*
         //自身のViewIDを登録
         PhotonView pv = GetComponent<PhotonView>();
         if (pv.IsMine)
@@ -2247,6 +2274,7 @@ public class CarController : MonoBehaviourPunCallbacks
             PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
             Debug.Log($"ID登録：{pv.ViewID}");
         }
+        */
 
         var prop = PhotonNetwork.CurrentRoom.CustomProperties;
         if (maxLaps != -1 && prop.TryGetValue("lapCnt", out var lapCnt) && lapCnt is int)
@@ -2328,5 +2356,15 @@ public class CarController : MonoBehaviourPunCallbacks
     {
         if (photonView.ViewID != id) return;
         lapCount = lapCnt;
+    }
+
+    [PunRPC]
+    public void PRC_DesignationPairViewID(int carID , int pv)
+    {
+        if (carID != photonView.ViewID) return;
+        pairViewID = pv;
+        pairPlayer = PhotonView.Find(pv).Owner;
+
+        designation = true;
     }
 }

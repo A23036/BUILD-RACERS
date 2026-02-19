@@ -1,7 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
+public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable , IStanRelated
 {
     // Inspectorで速度を設定できるように public にします
     public float speed = 50f;
@@ -40,6 +40,7 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
 
     private bool isLockedOn = false;
 
+    private GameObject parentObj;
     private string parentName = "";
 
     private bool isDestroyed = false;
@@ -147,7 +148,6 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
                         targetPlayer = hitPlayer;
                         isLockedOn = true;
 
-                        Debug.Log($"[Rocket] Lock On {hitPlayer.name}");
                         return;
                     }
                 }
@@ -303,16 +303,6 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
         }
     }
 
-    public void SetParentName(string name)
-    {
-        parentName = name;
-    }
-
-    public string GetParentName()
-    {
-        return parentName;
-    }
-
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
@@ -342,5 +332,16 @@ public class RocketRed : MonoBehaviourPunCallbacks , IPunObservable
         // エフェクトを再生
         PlayDestroyEffect();
         if (photonView.IsMine) PhotonNetwork.Destroy(gameObject);
+    }
+
+    // IStunRelated ----------
+    public void SetParentName(string name)
+    {
+        parentName = name;
+    }
+
+    public string GetParentName()
+    {
+        return parentName;
     }
 }

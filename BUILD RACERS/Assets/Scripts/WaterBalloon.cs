@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class WaterBalloonExplosion : MonoBehaviour
+public class WaterBalloonExplosion : MonoBehaviour , IStanRelated
 {
     [Header("爆発設定")]
     [SerializeField] private float flashDuration = 2f;
@@ -201,13 +201,6 @@ public class WaterBalloonExplosion : MonoBehaviour
 
             if (car != null)
             {
-                //攻撃者名を渡す
-                var photonView = GetComponentInChildren<PhotonView>();
-                if (PhotonNetwork.InRoom && photonView != null)
-                {
-                    parentName = photonView.Owner.NickName;
-                }
-
                 // ヒットしたPlayerに中程度のスタン状態を設定
                 car.SetStun(stunType, parentName, GetType().Name);
 
@@ -224,6 +217,9 @@ public class WaterBalloonExplosion : MonoBehaviour
             Destroy(materialInstance);
         }
     }
+
+
+    // IStunRelated ----------
     public void SetParentName(string name)
     {
         parentName = name;

@@ -29,7 +29,8 @@ public class Engineer : MonoBehaviourPunCallbacks
     [SerializeField] private float searchLimitTime = 20f;
     private float searchTimer = 0f;
 
-    private bool isSolo = false;
+    private bool? isSolo = null;
+    private int soloNum = 1;
 
     public void SetPairDriver(CarController car)
     {
@@ -108,6 +109,22 @@ public class Engineer : MonoBehaviourPunCallbacks
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("isSolo", out var b) && b is bool)
         {
             isSolo = (bool)b;
+
+            //ソロエンジニアの中で何番目か判定
+            var players = PhotonNetwork.PlayerList;
+            foreach (var player in players)
+            {
+                if (player.CustomProperties.TryGetValue("engineerNum", out var e) && (int)e == -1) continue;
+                if (player.CustomProperties.TryGetValue("isSolo", out var solo) && (bool)solo == false) continue;
+                if (player != PhotonNetwork.LocalPlayer)
+                {
+                    soloNum++;
+                    continue;
+                }
+                break;
+            }
+
+            Debug.Log($"ソロエンジニアの中で{soloNum}番目*");
         }
 
         TryPairPlayers();
@@ -156,23 +173,62 @@ public class Engineer : MonoBehaviourPunCallbacks
             return;
         }
 
-        //ソロなら処理なし
-        if (isSolo)
-        {
-            //マスタークライアントへエンジニアの生成を通知する
-            PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
-
-            startPosPv.RPC("RPC_NotifyEngineerConnected", RpcTarget.AllBuffered, photonView.ViewID);
-
-            isNotifyEngineerConnected = true;
-        }
-
         CarController[] cars = FindObjectsOfType<CarController>();
 
         Debug.Log($"{cars.Length}人の中からペアを検索");
 
         foreach (var car in cars)
         {
+            //ソロ処理
+            if (isSolo != null && isSolo == true)
+            {
+                if (car.isCPU == false) continue;
+
+                string cpuNum = car.GetName().Substring((car.GetName().Length) - 1);
+                if (soloNum != int.Parse(cpuNum)) continue;
+
+                Debug.Log($"PAIR CPU DRIVER IS {soloNum}");
+
+                var cpuPv = car.GetComponent<PhotonView>();
+                cpuPv.RPC("PRC_DesignationPairViewID",RpcTarget.All,cpuPv.ViewID,photonView.ViewID);
+
+                pairViewID = cpuPv.ViewID;
+                pairPlayer = cpuPv.Owner;
+
+                SetPairDriver(car);
+                car.isMine = true;
+
+                //マスターのCPUの名前が空になるので
+                cpuPv.RPC("RPC_SetName", RpcTarget.All, photonView.Owner.NickName, cpuPv.ViewID , true);
+
+                //カメラの追従
+                SetCamera();
+
+                //PhotonViewの有効性を確認
+                PhotonView pairPhotonView = PhotonView.Find(pairViewID);
+
+                //マスタークライアントへエンジニアの生成を通知する
+                PhotonView startPosPv = GameObject.Find("StartPos").GetComponent<PhotonView>();
+
+                startPosPv.RPC("RPC_NotifyEngineerConnected", RpcTarget.AllBuffered, photonView.ViewID);
+
+                isNotifyEngineerConnected = true;
+
+                // ペアのドライバーのミニマップ上強調UIを有効化
+                car.SetMapFrame();
+
+                var logUI = FindObjectOfType<LogUI>();
+                PhotonView logUIpv = null;
+                if (logUI != null)
+                {
+                    logUIpv = logUI.GetComponent<PhotonView>();
+                }
+
+                logUIpv.RPC("RPC_SetPairName", RpcTarget.All, pairPhotonView.Owner.NickName, photonView.Owner.NickName);
+
+                return;
+            }
+
             //CPUならペア検索なし
             if (car.isCPU) continue;
 
@@ -439,11 +495,18 @@ public class Engineer : MonoBehaviourPunCallbacks
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changed)
     {
         Debug.Log("CALL BACK");
+
+        foreach(var prop in changed)
+        {
+            Debug.Log($"{prop.Key} : {prop.Value}");
+        }
+
         TryPairPlayers();
     }
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
+        /*
         //自身のViewIDを登録
         var pv = GetComponent<PhotonView>();
         if(pv.IsMine)
@@ -451,6 +514,7 @@ public class Engineer : MonoBehaviourPunCallbacks
             PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerViewID", pv.ViewID } });
             Debug.Log($"ID登録：{pv.ViewID}");
         }
+        */
 
         //ラップ数の設定　オンラインはカスタムコールバックで取得する
         if (!PhotonNetwork.IsConnected)
@@ -493,22 +557,19 @@ public class Engineer : MonoBehaviourPunCallbacks
     public void RPC_ReceiveGoalNotif(int id)
     {
         //ペア以外の通知は処理なし
-        if (id != pairViewID || !photonView.IsMine) return;
+        if (id == -1 || id != pairViewID || !photonView.IsMine) return;
 
         //リザルトUIを有効化
-        if (resultUI.activeSelf == false)
-        {
-            resultUI.SetActive(true);
+        resultUI.SetActive(true);
 
-            //リザルトUIを表示開始
-            var result = resultUI.GetComponent<resultUI>();
-            result.SetPairDriverID(id);
+        //リザルトUIを表示開始
+        var result = resultUI.GetComponent<resultUI>();
+        result.SetPairDriverID(id);
 
-            result.SetTextColor(Color.white);
-            //result.SetOutLine(0.3f,Color.black);
+        result.SetTextColor(Color.white);
+        //result.SetOutLine(0.3f,Color.black);
 
-            result.StartCoroutines();
-        }
+        result.StartCoroutines();
 
         //ゴール済みフラグをプロパティに登録
         Hashtable hash = new Hashtable();

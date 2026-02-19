@@ -76,6 +76,7 @@ MonoBehaviour:
   - RPC_SetMessage
   - RPC_SyncFlagsCount
   - RPC_SetName
+  - PRC_DesignationPairViewID
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

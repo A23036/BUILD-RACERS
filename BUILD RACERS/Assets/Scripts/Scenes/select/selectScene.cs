@@ -299,6 +299,12 @@ public class selectScene : baseScene
         //プレースホルダーの更新
         if (ss.IsReady()) commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "他のプレイヤーを待っています";
         else commentInput.placeholder.GetComponent<TextMeshProUGUI>().text = "コメントしよう！";
+
+        if(PhotonNetwork.IsMasterClient)
+        {
+            var sm = ss.GetComponent<SelectorManager>();
+
+        }
     }
 
     //オンラインプレイのみUI崩れ防止　シングルなら許容

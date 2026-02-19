@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -158,6 +159,49 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     public void RPC_OnSelectorChanged(bool isReady, int senderID)
     {
+        //プレイヤーの分布
+        Dictionary<int, Player> driversDist = new Dictionary<int, Player>();
+        Dictionary<int, Player> engineersDist = new Dictionary<int, Player>();
+
+        foreach (var p in PhotonNetwork.PlayerList)
+        {
+            if (p.CustomProperties.TryGetValue("driverNum", out var d) && (int)d != -1)
+            {
+                driversDist[(int)d] = p;
+            }
+            if (p.CustomProperties.TryGetValue("engineerNum", out var e) && (int)e != -1)
+            {
+                engineersDist[(int)e] = p;
+            }
+        }
+
+        //ペアの有無を確認　ペア検索の実行の際に使用
+        foreach (var p in driversDist)
+        {
+            if (engineersDist.TryGetValue(p.Key, out var engineer))
+            {
+                p.Value.CustomProperties["isSolo"] = false;
+            }
+        }
+        foreach (var p in engineersDist)
+        {
+            if (driversDist.TryGetValue(p.Key, out var engineer))
+            {
+                p.Value.CustomProperties["isSolo"] = false;
+            }
+        }
+
+        var players = PhotonNetwork.PlayerList;
+        foreach (var p in players)
+        {
+            bool? ret = null;
+            if (p.CustomProperties.TryGetValue("isSolo", out var b)) ret = (bool)b;
+
+            if (ret != null && ret == true) Debug.Log($"{p.NickName} is SOLO");
+            else if (ret != null && ret == false) Debug.Log($"{p.NickName} is NOT SOLO");
+            else if (ret == null) Debug.Log($"{p.NickName} has no SOLO info");
+        }
+
         //接続数と登録数
         Debug.Log($"Connect:{PhotonNetwork.PlayerList.Length} , regist:{selectorsStat.Count}");
         foreach (var vk in selectorsStat)
@@ -212,10 +256,6 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
             props["masterGameScene"] = "Starting";
             PhotonNetwork.CurrentRoom.SetCustomProperties(props);
 
-            //プレイヤーの分布
-            Dictionary<int,Player> driversDist = new Dictionary<int,Player>();
-            Dictionary<int,Player> engineersDist = new Dictionary<int,Player>();
-
             Debug.Log($"Set {props["masterGameScene"]}");
 
             //ドライバー　エンジニア　観戦者の人数を記録
@@ -255,6 +295,16 @@ public class SelectorManager : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     p.Value.CustomProperties["isSolo"] = false;
                 }
+            }
+
+            foreach (var p in players)
+            {
+                bool? ret = null;
+                if (p.CustomProperties.TryGetValue("isSolo", out var b)) ret = (bool)b;
+
+                if (ret != null && ret == true) Debug.Log($"{p.NickName} is SOLO");
+                else if (ret != null && ret == false) Debug.Log($"{p.NickName} is NOT SOLO");
+                else if(ret == null) Debug.Log($"{p.NickName} has no SOLO info");
             }
 
             Debug.Log("人数カウント完了");

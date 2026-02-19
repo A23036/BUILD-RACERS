@@ -324,7 +324,7 @@ public class resultUI : MonoBehaviour
         string pairName = "--------";
         if(pairPv != null)
         {
-            pairName = pairPv.Owner.NickName    ;
+            pairName = pairPv.Owner.NickName;
         }
 
         string format = $"<mspace=0.7em>{rankStr} , {name.PadRight(8)} & {pairName.PadRight(8)} , {timeStr}</mspace>";
