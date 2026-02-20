@@ -233,34 +233,6 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
         target = karts[watchIndex].transform;
         targetName.text = karts[watchIndex].GetName();
         return;
-
-        UpdateCaches();
-        if (cachedPlayers == null || cachedPlayers.Length == 0) return;
-
-        watchIndex += step;
-        if (watchIndex < 0) watchIndex = cachedPlayers.Length - 1;
-        else if (watchIndex >= cachedPlayers.Length) watchIndex = 0;
-
-        Player p = cachedPlayers[watchIndex];
-
-        var cars = FindObjectsByType<CarController>(FindObjectsSortMode.None);
-        foreach (var car in cars)
-        {
-            PhotonView pv = car.GetComponent<PhotonView>();
-            if (pv != null && pv.Owner == p)
-            {
-                target = car.transform;
-                targetName.text = pv.Owner.NickName;
-
-                return;
-            }
-        }
-
-        //Pがドライバーじゃなかったら再度呼び出し
-        if (cars.Length > 1 && step != 0)
-        {
-            SetNextTarget(step);
-        }
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
