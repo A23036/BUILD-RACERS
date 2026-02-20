@@ -268,7 +268,7 @@ public class CarController : MonoBehaviourPunCallbacks
         //CPUフラグも同時に共有
         if(PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient && isCPU)
         {
-            photonView.RPC("RPC_SetName", RpcTarget.All, GetName(), photonView.ViewID,isCPU);
+            photonView.RPC("RPC_SetName", RpcTarget.AllBuffered, GetName(), photonView.ViewID,isCPU);
         }
     }
 

@@ -198,9 +198,6 @@ public class Engineer : MonoBehaviourPunCallbacks
                 SetPairDriver(car);
                 car.isMine = true;
 
-                //マスターのCPUの名前が空になるので
-                cpuPv.RPC("RPC_SetName", RpcTarget.All, photonView.Owner.NickName, cpuPv.ViewID , true);
-
                 //カメラの追従
                 SetCamera();
 

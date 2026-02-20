@@ -225,6 +225,15 @@ public class MonitorCameraController : MonoBehaviourPunCallbacks, IPunInstantiat
 
     public void SetNextTarget(int step)
     {
+        var karts = FindObjectsByType<CarController>(FindObjectsSortMode.None);
+        if (karts == null || karts.Length <= 0) return;
+        watchIndex += step;
+        if (watchIndex < 0) watchIndex = karts.Length - 1;
+        if (karts.Length - 1 < watchIndex) watchIndex = 0;
+        target = karts[watchIndex].transform;
+        targetName.text = karts[watchIndex].GetName();
+        return;
+
         UpdateCaches();
         if (cachedPlayers == null || cachedPlayers.Length == 0) return;
 

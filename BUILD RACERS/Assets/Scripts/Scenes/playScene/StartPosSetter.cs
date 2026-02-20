@@ -90,7 +90,7 @@ public class StartPosSetter : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if(!PhotonNetwork.IsConnected) return;
+        if(!PhotonNetwork.InRoom) return;
 
         //総ドライバー数を取得
         var props = PhotonNetwork.CurrentRoom.CustomProperties;

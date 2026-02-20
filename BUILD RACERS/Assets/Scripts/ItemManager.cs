@@ -287,6 +287,7 @@ public class ItemManager : MonoBehaviour
 
     public void SpawnItem(PartsID id)
     {
+        if (carController == null) return;
         if (carController.isRaceClear) return;
 
         if(id == PartsID.Energy)
